@@ -145,5 +145,8 @@
       }
     }
   },
-  "defaultProject": "BeyondTheBubble"
+  "defaultProject": "BeyondTheBubble",
+  "cli": {
+    "defaultCollection": "@angular-eslint/schematics"
+  }
 }
