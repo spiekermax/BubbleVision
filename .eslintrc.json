@@ -64,6 +64,7 @@
       ],
       "rules": {
         "indent": ["error", 4],
+        "brace-style": [2, "stroustrup", { "allowSingleLine": false }],
         "quotes": [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }],
         "eol-last": ["error", "never"]
       }
