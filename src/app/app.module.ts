@@ -7,10 +7,13 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppRoot } from "./app.root";
 import { AppRoutingModule } from "./app-routing.module";
 
+import { HomePage } from "./feature/page/home-page/home.page";
+
 
 @NgModule({
     declarations: [
-        AppRoot
+        AppRoot,
+        HomePage
     ],
     imports: [
         BrowserModule,

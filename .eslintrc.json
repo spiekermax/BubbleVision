@@ -24,6 +24,7 @@
         "brace-style": [2, "allman", { "allowSingleLine": true }],
         "quotes": [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }],
         "eol-last": ["error", "never"],
+        "@angular-eslint/component-class-suffix": "off",
         "@angular-eslint/directive-selector": [
           "error",
           {
