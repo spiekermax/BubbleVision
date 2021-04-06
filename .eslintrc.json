@@ -20,6 +20,9 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "indent": ["error", 4],
+        "brace-style": [2, "allman", { "allowSingleLine": true }],
+        "quotes": [2, "double", { "avoidEscape": true, "allowTemplateLiterals": true }],
         "@angular-eslint/directive-selector": [
           "error",
           {
