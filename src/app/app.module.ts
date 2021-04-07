@@ -12,7 +12,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { AppRoot } from "./app.root";
 import { AppRoutingModule } from "./app-routing.module";
 
-import { HomePage } from "./feature/page/home-page/home.page";
+import { HomePage } from "./feature/page/home/home.page";
 
 
 @NgModule({

@@ -3,7 +3,7 @@ import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
 // Internal dependencies
-import { HomePage } from "./feature/page/home-page/home.page";
+import { HomePage } from "./feature/page/home/home.page";
 
 
 const routes: Routes =
