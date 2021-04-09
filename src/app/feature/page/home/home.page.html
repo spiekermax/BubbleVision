@@ -1,10 +1,12 @@
 <mat-toolbar color="primary">
-    <span class="toolbar-title">BeyondTheBubble</span>
+    <span class="toolbar-title">BubbleVision</span>
     <span class="toolbar-spacer"></span>
     <button mat-icon-button aria-label="Search button">
         <mat-icon>search</mat-icon>
     </button>
-    <button mat-icon-button aria-label="Settings button">
+    <button mat-icon-button 
+        (click)="onSettingsButtonClicked()"
+        aria-label="Settings button">
         <mat-icon>settings</mat-icon>
     </button>
 </mat-toolbar>

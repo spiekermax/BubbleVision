@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "BeyondTheBubble": {
+    "BubbleVision": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -42,7 +42,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/BeyondTheBubble",
+            "outputPath": "dist/BubbleVision",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -91,18 +91,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "BeyondTheBubble:build"
+            "browserTarget": "BubbleVision:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "BeyondTheBubble:build:production"
+              "browserTarget": "BubbleVision:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "BeyondTheBubble:build"
+            "browserTarget": "BubbleVision:build"
           }
         },
         "test": {
@@ -136,18 +136,18 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "BeyondTheBubble:serve"
+            "devServerTarget": "BubbleVision:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "BeyondTheBubble:serve:production"
+              "devServerTarget": "BubbleVision:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "BeyondTheBubble",
+  "defaultProject": "BubbleVision",
   "cli": {
     "defaultCollection": "@angular-eslint/schematics"
   }
