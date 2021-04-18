@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 
 @Component({
-    selector: "app-settings-dialog",
+    selector: "settings-dialog",
     templateUrl: "./settings.dialog.html",
     styleUrls: ["./settings.dialog.scss"]
 })
