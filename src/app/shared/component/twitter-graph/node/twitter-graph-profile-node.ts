@@ -62,7 +62,18 @@ export default class TwitterGraphProfileNode extends PIXI.Container
 
     private addLabel() : void
     {
-        const label: PIXI.Text = new PIXI.Text(this.profile.name, new PIXI.TextStyle({ fill: "white", fontSize: 28 }));
+        const labelStyle: PIXI.TextStyle = new PIXI.TextStyle
+        ({ 
+            fill: "white",
+            fontSize: 24,
+            fontFamily: "Roboto", 
+            align: "center",
+            letterSpacing: 1.5,
+            wordWrap: true,
+            wordWrapWidth: 200,
+            breakWords: true
+        });
+        const label: PIXI.Text = new PIXI.Text("@" + this.profile.username.toUpperCase(), labelStyle);
 
         const labelBounds: PIXI.Rectangle = new PIXI.Rectangle();
         label.getLocalBounds(labelBounds);
@@ -70,7 +81,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         const labelWidth: number = labelBounds.width;
         const labelHeight: number = labelBounds.height;
         
-        label.position.set(TwitterGraphProfileNode.NODE_SIZE - labelWidth / 2, TwitterGraphProfileNode.NODE_SIZE - labelHeight / 2);
+        label.position.set(TwitterGraphProfileNode.NODE_SIZE - labelWidth / 2, 1.6 * TwitterGraphProfileNode.NODE_SIZE - labelHeight / 2);
 
         label.cacheAsBitmap = true;
 
