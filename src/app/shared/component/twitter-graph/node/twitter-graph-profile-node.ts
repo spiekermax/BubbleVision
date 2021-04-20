@@ -32,6 +32,9 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         // Add graphics
         this.addBackground();
         this.addLabel();
+
+        // Add callbacks
+        this.on("click", this.onClicked.bind(this));
     }
 
 
@@ -43,7 +46,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         {
             // Create background graphics
             const circle: PIXI.Graphics = new PIXI.Graphics();
-            circle.beginFill(0xFF0000);
+            circle.beginFill(0xEB5757);
             circle.drawCircle(0, 0, TwitterGraphProfileNode.NODE_SIZE);
             circle.endFill();
 
@@ -72,5 +75,13 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         label.cacheAsBitmap = true;
 
         this.addChild(label);
+    }
+
+
+    /* CALLBACKS */
+
+    private onClicked() : void
+    {
+        console.log(this.profile);
     }
 }

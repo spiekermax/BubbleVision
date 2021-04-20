@@ -47,6 +47,9 @@ export class TwitterGraph implements OnInit, OnDestroy
     {
         this.ngZone.runOutsideAngular(() => 
         {
+            // Skip hello message
+            PIXI.utils.skipHello();
+
             // Initialize PIXI application
             this.app = new PIXI.Application
             ({
