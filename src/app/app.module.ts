@@ -2,6 +2,7 @@
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { HttpClientModule } from "@angular/common/http";
 
 // Material Design
 import { MatButtonModule } from "@angular/material/button";
@@ -31,6 +32,7 @@ import { TwitterGraph } from "./shared/component/twitter-graph/twitter-graph";
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
+        HttpClientModule,
 
         MatButtonModule,
         MatDialogModule,

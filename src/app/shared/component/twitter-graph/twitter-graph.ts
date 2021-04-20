@@ -1,13 +1,14 @@
 // Angular
-import { OnInit, Component, ElementRef, NgZone, OnDestroy } from "@angular/core";
+import { OnInit, Component, ElementRef, NgZone, OnDestroy, Input } from "@angular/core";
 
 // PIXI
 import * as PIXI from "pixi.js";
 
 // Internal dependencies
 import Position from "../../model/position/position";
+import TwitterProfile from "../../model/twitter/twitter-profile";
 import TwitterGraphCamera from "./camera/twitter-graph-camera";
-import TwitterGraphNode from "./node/twitter-graph-node";
+import TwitterGraphProfileNode from "./node/twitter-graph-profile-node";
 
 
 @Component
@@ -17,6 +18,12 @@ import TwitterGraphNode from "./node/twitter-graph-node";
 })
 export class TwitterGraph implements OnInit, OnDestroy
 {
+    /* DIRECTIVES */
+
+    // Inputs
+    private _twitterProfiles: TwitterProfile[] = [];
+
+
     /* ATTRIBUTES */
 
     // Application
@@ -24,6 +31,7 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     // Containers
     private nodeContainer!: PIXI.Container;
+    private labelContainer!: PIXI.Container;
 
     // Components
     private camera!: TwitterGraphCamera;
@@ -63,8 +71,8 @@ export class TwitterGraph implements OnInit, OnDestroy
         this.nodeContainer = new PIXI.Container();
         this.pixiApp.stage.addChild(this.nodeContainer);
 
-        // Add nodes
-        this.nodeContainer.addChild(new TwitterGraphNode("Hello Graph!"))
+        this.labelContainer = new PIXI.ParticleContainer();
+        this.pixiApp.stage.addChild(this.labelContainer);
     }
 
     public ngOnDestroy() : void 
@@ -147,5 +155,39 @@ export class TwitterGraph implements OnInit, OnDestroy
 
         this.camera.animatePosition(newPosition);
         this.camera.animateZoom(newZoom);
+    }
+
+
+    /* GETTER & SETTER */
+
+    public get twitterProfiles() : TwitterProfile[]
+    {
+        return this._twitterProfiles;
+    }
+
+    @Input() 
+    public set twitterProfiles(newTwitterProfiles: TwitterProfile[])
+    {
+        this._twitterProfiles = newTwitterProfiles;
+
+        if(!this.nodeContainer) return;
+
+        // Remove old nodes
+        this.nodeContainer.removeChildren();
+
+        const circle: PIXI.Graphics = new PIXI.Graphics();
+        circle.beginFill(0xFF0000);
+        circle.drawCircle(0, 0, 150);
+        circle.endFill();
+
+        const texture = this.pixiApp.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
+
+        // Add new nodes
+        for(const twitterProfile of this._twitterProfiles)
+        {
+            const sprite = PIXI.Sprite.from(texture);
+            sprite.hitArea = new PIXI.Circle(150, 150, 150);
+            this.nodeContainer.addChild(new TwitterGraphProfileNode(twitterProfile, sprite));
+        }
     }
 }
