@@ -14,8 +14,13 @@ import TwitterProfile from "../../model/twitter/twitter-profile";
 ({
     providedIn: "root"
 })
-export default class GraphDataService 
+export default class TwitterDataService 
 {
+    /* CONSTANTS */
+
+    private static readonly GRAPH_SCALING_FACTOR: number = 1000;
+
+
     /* LIFECYCLE */
 
     public constructor(private http: HttpClient) {}
@@ -23,9 +28,9 @@ export default class GraphDataService
 
     /* METHODS */
 
-    public getGraph() : Observable<TwitterProfile[]>
+    public getProfiles() : Observable<TwitterProfile[]>
     {
-        return this.http.get<string>("assets/graph/de_1000_mapping.json").pipe(map((json: any) =>
+        return this.http.get<any>("assets/graph/de_1000_mapping.json").pipe(map((json: any) =>
         {
             // Transform profiles
             return json.profiles.map((profile: any) =>
@@ -37,8 +42,8 @@ export default class GraphDataService
                     username: profile.username,
                     position:
                     {
-                        x: profile.position[0] * 1000,
-                        y: profile.position[1] * 1000
+                        x: profile.position[0] * TwitterDataService.GRAPH_SCALING_FACTOR,
+                        y: profile.position[1] * TwitterDataService.GRAPH_SCALING_FACTOR
                     }
                 };
 

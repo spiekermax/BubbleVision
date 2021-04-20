@@ -1,6 +1,5 @@
 // PIXI
 import * as PIXI from "pixi.js";
-import { AbstractRenderer } from "pixi.js";
 
 // Internal dependencies
 import TwitterProfile from "src/app/shared/model/twitter/twitter-profile";
@@ -8,50 +7,70 @@ import TwitterProfile from "src/app/shared/model/twitter/twitter-profile";
 
 export default class TwitterGraphProfileNode extends PIXI.Container
 {
-    /* CONSTANTS */
+    /* STATIC */
 
-    private static readonly NODE_SIZE: number = 75;
+    // Constants
+    private static readonly NODE_SIZE: number = 150;
+
+    // Variables
+    private static BACKGROUND_TEXTURE?: PIXI.RenderTexture;
 
 
     /* LIFECYCLE */
 
-    public constructor(private profile: TwitterProfile, private background: PIXI.DisplayObject)
+    public constructor(private renderer: PIXI.Renderer, private profile: TwitterProfile)
     {
         super();
 
         // Configure properties
         this.position.x = profile.position.x;
         this.position.y = profile.position.y;
+
         this.cursor = "pointer";
         this.interactive = true;
         
         // Add graphics
-        this.addCircle();
+        this.addBackground();
         this.addLabel();
     }
 
 
     /* INITIALIZATION */
 
-    private addCircle() : void
+    private addBackground() : void
     {
-        this.addChild(this.background);
+        if(!TwitterGraphProfileNode.BACKGROUND_TEXTURE)
+        {
+            // Create background graphics
+            const circle: PIXI.Graphics = new PIXI.Graphics();
+            circle.beginFill(0xFF0000);
+            circle.drawCircle(0, 0, TwitterGraphProfileNode.NODE_SIZE);
+            circle.endFill();
+
+            // Generate texture
+            TwitterGraphProfileNode.BACKGROUND_TEXTURE = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
+        }
+
+        const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileNode.BACKGROUND_TEXTURE);
+        background.hitArea = new PIXI.Circle(150, 150, 150);
+
+        this.addChild(background);
     }
 
     private addLabel() : void
     {
-        const text: PIXI.Text = new PIXI.Text(this.profile.name, new PIXI.TextStyle({ fill: "white", fontSize: 28 }));
-        text.resolution = 1;
+        const label: PIXI.Text = new PIXI.Text(this.profile.name, new PIXI.TextStyle({ fill: "white", fontSize: 28 }));
 
-        const textBounds: PIXI.Rectangle = new PIXI.Rectangle();
-        text.getLocalBounds(textBounds);
+        const labelBounds: PIXI.Rectangle = new PIXI.Rectangle();
+        label.getLocalBounds(labelBounds);
 
-        const textWidth: number = textBounds.width;
-        const textHeight: number = textBounds.height;
+        const labelWidth: number = labelBounds.width;
+        const labelHeight: number = labelBounds.height;
         
-        text.position.set(150 - textWidth / 2, 150 - textHeight / 2);
-        text.cacheAsBitmap = true;
+        label.position.set(TwitterGraphProfileNode.NODE_SIZE - labelWidth / 2, TwitterGraphProfileNode.NODE_SIZE - labelHeight / 2);
 
-        this.addChild(text);
+        label.cacheAsBitmap = true;
+
+        this.addChild(label);
     }
 }

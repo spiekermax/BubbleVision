@@ -27,11 +27,10 @@ export class TwitterGraph implements OnInit, OnDestroy
     /* ATTRIBUTES */
 
     // Application
-    private pixiApp!: PIXI.Application;
+    private app!: PIXI.Application;
 
     // Containers
     private nodeContainer!: PIXI.Container;
-    private labelContainer!: PIXI.Container;
 
     // Components
     private camera!: TwitterGraphCamera;
@@ -49,36 +48,33 @@ export class TwitterGraph implements OnInit, OnDestroy
         this.ngZone.runOutsideAngular(() => 
         {
             // Initialize PIXI application
-            this.pixiApp = new PIXI.Application
+            this.app = new PIXI.Application
             ({
                 resizeTo: window,
                 antialias: true,
                 transparent: true
             });
-            this.elementRef.nativeElement.appendChild(this.pixiApp.view);
+            this.elementRef.nativeElement.appendChild(this.app.view);
 
             // Bind listeners
-            this.pixiApp.view.addEventListener("mousedown", this.onMouseDown.bind(this));
-            this.pixiApp.view.addEventListener("mouseup", this.onMouseUp.bind(this));
-            this.pixiApp.view.addEventListener("mousemove", this.onMouseMove.bind(this));
-            this.pixiApp.view.addEventListener("wheel", this.onMouseWheel.bind(this));
+            this.app.view.addEventListener("mousedown", this.onMouseDown.bind(this));
+            this.app.view.addEventListener("mouseup", this.onMouseUp.bind(this));
+            this.app.view.addEventListener("mousemove", this.onMouseMove.bind(this));
+            this.app.view.addEventListener("wheel", this.onMouseWheel.bind(this));
         });
 
         // Initialize camera
-        this.camera = new TwitterGraphCamera(this.pixiApp.ticker, this.pixiApp.stage);
+        this.camera = new TwitterGraphCamera(this.app.stage, this.app.ticker);
         
         // Initialize containers
         this.nodeContainer = new PIXI.Container();
-        this.pixiApp.stage.addChild(this.nodeContainer);
-
-        this.labelContainer = new PIXI.ParticleContainer();
-        this.pixiApp.stage.addChild(this.labelContainer);
+        this.app.stage.addChild(this.nodeContainer);
     }
 
     public ngOnDestroy() : void 
     {
         // Destroy PIXI application
-        this.pixiApp.destroy();
+        this.app.destroy();
     }
 
 
@@ -168,26 +164,20 @@ export class TwitterGraph implements OnInit, OnDestroy
     @Input() 
     public set twitterProfiles(newTwitterProfiles: TwitterProfile[])
     {
+        //
         this._twitterProfiles = newTwitterProfiles;
 
+        //
         if(!this.nodeContainer) return;
 
         // Remove old nodes
         this.nodeContainer.removeChildren();
 
-        const circle: PIXI.Graphics = new PIXI.Graphics();
-        circle.beginFill(0xFF0000);
-        circle.drawCircle(0, 0, 150);
-        circle.endFill();
-
-        const texture = this.pixiApp.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
-
         // Add new nodes
         for(const twitterProfile of this._twitterProfiles)
         {
-            const sprite = PIXI.Sprite.from(texture);
-            sprite.hitArea = new PIXI.Circle(150, 150, 150);
-            this.nodeContainer.addChild(new TwitterGraphProfileNode(twitterProfile, sprite));
+            const twitterProfileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app.renderer, twitterProfile);
+            this.nodeContainer.addChild(twitterProfileNode);
         }
     }
 }

@@ -24,7 +24,7 @@ export default class TwitterGraphCamera
 
     /* LIFECYCLE */
 
-    public constructor(private ticker: PIXI.Ticker, private target: PIXI.Container) {}
+    public constructor(private target: PIXI.Container, private ticker: PIXI.Ticker) {}
 
 
     /* CALLBACKS */

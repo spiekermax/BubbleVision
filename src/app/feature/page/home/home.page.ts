@@ -3,7 +3,7 @@ import { Component } from "@angular/core";
 
 // Internal dependencies
 import TwitterProfile from "src/app/shared/model/twitter/twitter-profile";
-import GraphDataService from "src/app/shared/service/graph-data/graph-data.service";
+import TwitterDataService from "src/app/shared/service/twitter-data/twitter-data.service";
 
 
 @Component
@@ -21,9 +21,9 @@ export class HomePage
 
     /* LIFECYCLE */
 
-    public constructor(private graphDataService: GraphDataService)
+    public constructor(private twitterDataService: TwitterDataService)
     {
-        this.graphDataService.getGraph().subscribe(twitterProfiles => 
+        this.twitterDataService.getProfiles().subscribe(twitterProfiles => 
         {
             this.twitterProfiles = twitterProfiles;
         });
