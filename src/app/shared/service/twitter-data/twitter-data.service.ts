@@ -7,6 +7,7 @@ import { forkJoin, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 
 // Internal dependencies
+import TwitterCommunity from "../../model/twitter/twitter-community";
 import TwitterProfile from "../../model/twitter/twitter-profile";
 
 
@@ -54,17 +55,41 @@ export default class TwitterDataService
                 };
 
                 // Find associated community
-                for(const key of Object.keys(json.communities))
+                for(const communityId of Object.keys(json.communities))
                 {
-                    if(json.communities[key].includes(profile.username))
+                    if(json.communities[communityId].includes(profile.username))
                     {
-                        twitterProfile.communityId = Number(key);
+                        twitterProfile.community =
+                        {
+                            id: Number(communityId),
+                            size: json.communities[communityId].length
+                        }
                         break;
                     }
                 }
 
                 return twitterProfile;
             });
+        }));
+    }
+
+    public getCommunities() : Observable<TwitterCommunity[]>
+    {
+        return this.http.get<any>("assets/graph/de_1000_communities.json").pipe(map((json: any) =>
+        {
+            const twitterCommunities: TwitterCommunity[] = [];
+            for(const communityId of Object.keys(json))
+            {
+                const twitterCommunity: TwitterCommunity =
+                {
+                    id: Number(communityId),
+                    size: json[communityId].length
+                };
+
+                twitterCommunities.push(twitterCommunity);
+            }
+
+            return twitterCommunities;
         }));
     }
 }

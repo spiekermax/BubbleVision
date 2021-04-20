@@ -6,6 +6,7 @@ import * as PIXI from "pixi.js";
 
 // Internal dependencies
 import Position from "../../model/position/position";
+import TwitterCommunity from "../../model/twitter/twitter-community";
 import TwitterProfile from "../../model/twitter/twitter-profile";
 import TwitterGraphCamera from "./camera/twitter-graph-camera";
 import TwitterGraphProfileNode from "./node/twitter-graph-profile-node";
@@ -55,7 +56,7 @@ export class TwitterGraph implements OnInit, OnDestroy
             ({
                 resizeTo: window,
                 antialias: true,
-                transparent: true
+                backgroundColor: 0xFAFAFA
             });
             this.elementRef.nativeElement.appendChild(this.app.view);
 
