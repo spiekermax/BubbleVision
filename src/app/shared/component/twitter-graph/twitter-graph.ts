@@ -68,7 +68,9 @@ export class TwitterGraph implements OnInit, OnDestroy
 
         // Initialize camera
         this.camera = new TwitterGraphCamera(this.app.stage, this.app.ticker);
-        
+        this.camera.position = { x: 726.5162014223629, y: 467.8062470166967 };
+        this.camera.zoom = 0.006258799038784077;
+
         // Initialize containers
         this.nodeContainer = new PIXI.Container();
         this.app.stage.addChild(this.nodeContainer);

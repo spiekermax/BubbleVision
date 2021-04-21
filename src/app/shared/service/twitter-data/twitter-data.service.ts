@@ -33,7 +33,7 @@ export default class TwitterDataService
     {
         return forkJoin
         ({
-            mapping: this.http.get<any>("assets/graph/de_1000_mapping.json"),
+            mapping: this.http.get<any>("assets/graph/de_1000_community_mapping.json"),
             communities: this.http.get<any>("assets/graph/de_1000_communities.json")
         })
         .pipe(map((json: any) =>

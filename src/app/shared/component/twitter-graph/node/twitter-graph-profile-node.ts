@@ -11,9 +11,32 @@ export default class TwitterGraphProfileNode extends PIXI.Container
 
     // Constants
     private static readonly NODE_SIZE: number = 150;
+    private static readonly COLOR_MAP: number[] =
+    [
+        0xe6194B,
+        0x3cb44b,
+        0xffe119,
+        0x4363d8,
+        0xf58231,
+        0x911eb4,
+        0x42d4f4,
+        0xf032e6,
+        0xbfef45,
+        0xfabed4,
+        0x469990,
+        0xdcbeff,
+        0x9A6324,
+        0xfffac8,
+        0x800000,
+        0xaaffc3,
+        0x808000,
+        0xffd8b1,
+        0x000075,
+        0xa9a9a9
+    ]
 
     // Variables
-    private static BACKGROUND_TEXTURE?: PIXI.RenderTexture;
+    private static BACKGROUND_TEXTURE_MAP: PIXI.RenderTexture[] = new Array(20);
 
 
     /* LIFECYCLE */
@@ -42,19 +65,19 @@ export default class TwitterGraphProfileNode extends PIXI.Container
 
     private addBackground() : void
     {
-        if(!TwitterGraphProfileNode.BACKGROUND_TEXTURE)
+        if(!TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.community.id % 21])
         {
             // Create background graphics
             const circle: PIXI.Graphics = new PIXI.Graphics();
-            circle.beginFill(0xEB5757);
+            circle.beginFill(TwitterGraphProfileNode.COLOR_MAP[this.profile.community.id % 21]);
             circle.drawCircle(0, 0, TwitterGraphProfileNode.NODE_SIZE);
             circle.endFill();
 
             // Generate texture
-            TwitterGraphProfileNode.BACKGROUND_TEXTURE = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
+            TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.community.id % 21] = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
         }
 
-        const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileNode.BACKGROUND_TEXTURE);
+        const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.community.id % 21]);
         background.hitArea = new PIXI.Circle(150, 150, 150);
 
         this.addChild(background);
