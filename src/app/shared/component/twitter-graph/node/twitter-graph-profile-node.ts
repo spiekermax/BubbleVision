@@ -3,6 +3,7 @@ import * as PIXI from "pixi.js";
 
 // Internal dependencies
 import TwitterProfile from "src/app/shared/model/twitter/twitter-profile";
+import TwitterGraphResourceLoader from "../resource-loader/twitter-graph-resource-loader";
 
 
 export default class TwitterGraphProfileNode extends PIXI.Container
@@ -55,6 +56,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         // Add graphics
         this.addBackground();
         this.addLabel();
+        this.addProfileImage();
 
         // Add callbacks
         this.on("click", this.onClicked.bind(this));
@@ -104,11 +106,40 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         const labelWidth: number = labelBounds.width;
         const labelHeight: number = labelBounds.height;
         
-        label.position.set(TwitterGraphProfileNode.NODE_SIZE - labelWidth / 2, 1.6 * TwitterGraphProfileNode.NODE_SIZE - labelHeight / 2);
+        label.position.set(TwitterGraphProfileNode.NODE_SIZE - labelWidth / 2, 1.65 * TwitterGraphProfileNode.NODE_SIZE - labelHeight / 2);
 
         label.cacheAsBitmap = true;
 
         this.addChild(label);
+    }
+
+    private addProfileImage() : void
+    {
+        TwitterGraphResourceLoader.await(`assets/profile-images/${this.profile.imageUrl.replace("https://", "").split("/").join("_")}`).subscribe((image) =>
+        {
+            const profileImage: PIXI.Sprite = new PIXI.Sprite(image.texture);
+            profileImage.width = 276;
+            profileImage.height = 276;
+            
+            const contanier = new PIXI.Container();
+
+            const profileImageMask: PIXI.Graphics = new PIXI.Graphics();
+            profileImageMask.beginFill(0xFFFFFF);
+            profileImageMask.arc(138, 138, 138, 0.86 * Math.PI, 0.14 * Math.PI);
+            profileImageMask.endFill();
+            
+            contanier.addChild(profileImageMask);
+            contanier.addChild(profileImage);
+            contanier.mask = profileImageMask;
+
+            const tex = this.renderer.generateTexture(contanier, PIXI.SCALE_MODES.LINEAR, 1);
+            const sprite = PIXI.Sprite.from(tex);
+
+            sprite.position.x = (TwitterGraphProfileNode.NODE_SIZE - 138);
+            sprite.position.y = (TwitterGraphProfileNode.NODE_SIZE - 138);
+
+            this.addChild(sprite);
+        });
     }
 
 
