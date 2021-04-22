@@ -7,12 +7,20 @@ import * as PIXI from "pixi.js";
 
 export default class TwitterGraphResourceManager
 {
+    /* VARIABLES */
+
+    // private static RESOURCE_QUEUE: string[] = [];
+
+
     /* FUNCTIONS */
 
     public static add(url: string) : void
     {
         if(PIXI.Loader.shared.resources[url]) return;
 
+        // if(PIXI.Loader.shared.loading)
+            // TwitterGraphResourceManager.RESOURCE_QUEUE.push(url);
+        
         PIXI.Loader.shared.add(url);
     }
 

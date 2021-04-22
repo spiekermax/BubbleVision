@@ -13,6 +13,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
     // Constants
     private static readonly NODE_SIZE: number = 300;
     private static readonly IMAGE_PADDING: number = 24;
+
     private static readonly COLOR_MAP: number[] =
     [
         0xe6194B,
@@ -35,10 +36,15 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         0xffd8b1,
         0x000075,
         0xa9a9a9
-    ]
+    ];
 
     // Variables
-    private static BACKGROUND_TEXTURE_MAP: PIXI.RenderTexture[] = new Array(20);
+    private static BACKGROUND_TEXTURE_MAP: PIXI.Texture[] = new Array(20);
+
+
+    /* ATTRIBUTES */
+
+    private placeholderImage?: PIXI.Sprite;
 
 
     /* LIFECYCLE */
@@ -57,7 +63,8 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         // Add graphics
         this.addBackground();
         this.addLabel();
-        this.addProfileImage();
+        this.addPlaceholderImage();
+        this.addImage();
 
         // Add callbacks
         this.on("click", this.onClicked.bind(this));
@@ -81,7 +88,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         }
 
         const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.community.id % 21]);
-        background.hitArea = new PIXI.Circle(150, 150, 150);
+        background.hitArea = new PIXI.Circle(TwitterGraphProfileNode.NODE_SIZE / 2, TwitterGraphProfileNode.NODE_SIZE / 2, TwitterGraphProfileNode.NODE_SIZE / 2);
 
         this.addChild(background);
     }
@@ -99,7 +106,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
             wordWrapWidth: 200,
             breakWords: true
         });
-        const label: PIXI.Text = new PIXI.Text("@" + this.profile.username.toUpperCase(), labelStyle);
+        const label: PIXI.Text = new PIXI.Text(this.profile.username.toUpperCase(), labelStyle);
 
         const labelBounds: PIXI.Rectangle = new PIXI.Rectangle();
         label.getLocalBounds(labelBounds);
@@ -114,7 +121,37 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         this.addChild(label);
     }
 
-    private addProfileImage() : void
+    private addPlaceholderImage() : void
+    {
+        TwitterGraphResourceManager.await("assets/avatar.jpg").subscribe(((imageResource) =>
+        {
+            const image: PIXI.Sprite = PIXI.Sprite.from(imageResource.texture);
+            
+            const imageSize: number = TwitterGraphProfileNode.NODE_SIZE - TwitterGraphProfileNode.IMAGE_PADDING;
+            image.width = imageSize;
+            image.height = imageSize;
+            
+            const imageMask: PIXI.Graphics = new PIXI.Graphics();
+            imageMask.beginFill(0xFFFFFF);
+            imageMask.arc(imageSize / 2, imageSize / 2 + 30, imageSize / 2, 0.86 * Math.PI, 0.14 * Math.PI);
+            imageMask.endFill();
+
+            const maskedContainer: PIXI.Container = new PIXI.Container();
+            maskedContainer.addChild(image);
+            maskedContainer.addChild(imageMask);
+            maskedContainer.mask = imageMask;
+
+            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, 1);
+
+            this.placeholderImage = PIXI.Sprite.from(maskedImageTexture);
+            this.placeholderImage.position.x = TwitterGraphProfileNode.IMAGE_PADDING / 2;
+            this.placeholderImage.position.y = TwitterGraphProfileNode.IMAGE_PADDING / 2 - 30;
+
+            this.addChild(this.placeholderImage);
+        }));
+    }
+
+    private addImage() : void
     {
         TwitterGraphResourceManager.await(`assets/profile-images/${this.profile.imageUrl.replace("https://", "").split("/").join("_")}`).subscribe((imageResource) =>
         {
@@ -141,6 +178,9 @@ export default class TwitterGraphProfileNode extends PIXI.Container
             maskedImage.position.y = TwitterGraphProfileNode.IMAGE_PADDING / 2;
 
             this.addChild(maskedImage);
+            
+            if(this.placeholderImage) 
+                this.removeChild(this.placeholderImage);
         });
     }
 

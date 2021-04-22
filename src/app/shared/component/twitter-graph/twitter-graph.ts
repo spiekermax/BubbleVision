@@ -65,6 +65,7 @@ export class TwitterGraph implements OnInit, OnDestroy
             this.app.view.addEventListener("mouseup", this.onMouseUp.bind(this));
             this.app.view.addEventListener("mousemove", this.onMouseMove.bind(this));
             this.app.view.addEventListener("wheel", this.onMouseWheel.bind(this));
+            this.app.view.addEventListener("mouseleave", this.onMouseLeave.bind(this));
         });
 
         // Initialize camera
@@ -137,6 +138,12 @@ export class TwitterGraph implements OnInit, OnDestroy
         this.zoomToMousePosition(scalingFactor, mousePosition);
     }
 
+    public onMouseLeave(event: MouseEvent) : void
+    {
+        // Clear mouse position state
+        this.lastMousePosition = undefined;
+    }
+
 
     /* METHODS - CAMERA */
 
@@ -178,6 +185,9 @@ export class TwitterGraph implements OnInit, OnDestroy
 
         // Remove old nodes
         this.nodeContainer.removeChildren();
+
+        // Request placeholder avatar
+        TwitterGraphResourceManager.add("assets/avatar.jpg");
 
         // Add new nodes
         for(const twitterProfile of this._twitterProfiles)
