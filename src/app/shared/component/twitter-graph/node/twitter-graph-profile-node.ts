@@ -3,7 +3,7 @@ import * as PIXI from "pixi.js";
 
 // Internal dependencies
 import TwitterProfile from "src/app/shared/model/twitter/twitter-profile";
-import TwitterGraphResourceLoader from "../resource-loader/twitter-graph-resource-loader";
+import TwitterGraphResourceManager from "../resource-manager/twitter-graph-resource-manager";
 
 
 export default class TwitterGraphProfileNode extends PIXI.Container
@@ -115,7 +115,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
 
     private addProfileImage() : void
     {
-        TwitterGraphResourceLoader.await(`assets/profile-images/${this.profile.imageUrl.replace("https://", "").split("/").join("_")}`).subscribe((image) =>
+        TwitterGraphResourceManager.await(`assets/profile-images/${this.profile.imageUrl.replace("https://", "").split("/").join("_")}`).subscribe((image) =>
         {
             const profileImage: PIXI.Sprite = new PIXI.Sprite(image.texture);
             profileImage.width = 276;

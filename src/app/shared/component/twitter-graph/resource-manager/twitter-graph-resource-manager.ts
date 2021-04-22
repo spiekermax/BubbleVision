@@ -5,7 +5,7 @@ import { Observable, of, Subject } from "rxjs";
 import * as PIXI from "pixi.js";
 
 
-export default class TwitterGraphResourceLoader
+export default class TwitterGraphResourceManager
 {
     /* FUNCTIONS */
 

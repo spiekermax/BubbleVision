@@ -9,7 +9,7 @@ import Position from "../../model/position/position";
 import TwitterProfile from "../../model/twitter/twitter-profile";
 import TwitterGraphCamera from "./camera/twitter-graph-camera";
 import TwitterGraphProfileNode from "./node/twitter-graph-profile-node";
-import TwitterGraphResourceLoader from "./resource-loader/twitter-graph-resource-loader";
+import TwitterGraphResourceManager from "./resource-manager/twitter-graph-resource-manager";
 
 
 @Component
@@ -190,11 +190,11 @@ export class TwitterGraph implements OnInit, OnDestroy
             if(twitterProfile.imageUrl)
             {
                 const imagePath: string = `assets/profile-images/${twitterProfile.imageUrl.replace("https://", "").split("/").join("_")}`;
-                TwitterGraphResourceLoader.add(imagePath);
+                TwitterGraphResourceManager.add(imagePath);
             }
         }
 
         //
-        TwitterGraphResourceLoader.load();
+        TwitterGraphResourceManager.load();
     }
 }
