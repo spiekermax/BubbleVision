@@ -11,7 +11,8 @@ export default class TwitterGraphProfileNode extends PIXI.Container
     /* STATIC */
 
     // Constants
-    private static readonly NODE_SIZE: number = 150;
+    private static readonly NODE_SIZE: number = 300;
+    private static readonly IMAGE_PADDING: number = 24;
     private static readonly COLOR_MAP: number[] =
     [
         0xe6194B,
@@ -72,7 +73,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
             // Create background graphics
             const circle: PIXI.Graphics = new PIXI.Graphics();
             circle.beginFill(TwitterGraphProfileNode.COLOR_MAP[this.profile.community.id % 21]);
-            circle.drawCircle(0, 0, TwitterGraphProfileNode.NODE_SIZE);
+            circle.drawCircle(0, 0, TwitterGraphProfileNode.NODE_SIZE / 2);
             circle.endFill();
 
             // Generate texture
@@ -106,7 +107,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
         const labelWidth: number = labelBounds.width;
         const labelHeight: number = labelBounds.height;
         
-        label.position.set(TwitterGraphProfileNode.NODE_SIZE - labelWidth / 2, 1.65 * TwitterGraphProfileNode.NODE_SIZE - labelHeight / 2);
+        label.position.set((TwitterGraphProfileNode.NODE_SIZE - labelWidth) / 2, 1.65 * (TwitterGraphProfileNode.NODE_SIZE / 2) - (labelHeight / 2));
 
         label.cacheAsBitmap = true;
 
@@ -115,30 +116,31 @@ export default class TwitterGraphProfileNode extends PIXI.Container
 
     private addProfileImage() : void
     {
-        TwitterGraphResourceManager.await(`assets/profile-images/${this.profile.imageUrl.replace("https://", "").split("/").join("_")}`).subscribe((image) =>
+        TwitterGraphResourceManager.await(`assets/profile-images/${this.profile.imageUrl.replace("https://", "").split("/").join("_")}`).subscribe((imageResource) =>
         {
-            const profileImage: PIXI.Sprite = new PIXI.Sprite(image.texture);
-            profileImage.width = 276;
-            profileImage.height = 276;
+            const image: PIXI.Sprite = new PIXI.Sprite(imageResource.texture);
             
-            const contanier = new PIXI.Container();
-
-            const profileImageMask: PIXI.Graphics = new PIXI.Graphics();
-            profileImageMask.beginFill(0xFFFFFF);
-            profileImageMask.arc(138, 138, 138, 0.86 * Math.PI, 0.14 * Math.PI);
-            profileImageMask.endFill();
+            const imageSize: number = TwitterGraphProfileNode.NODE_SIZE - TwitterGraphProfileNode.IMAGE_PADDING;
+            image.width = imageSize;
+            image.height = imageSize;
             
-            contanier.addChild(profileImageMask);
-            contanier.addChild(profileImage);
-            contanier.mask = profileImageMask;
+            const imageMask: PIXI.Graphics = new PIXI.Graphics();
+            imageMask.beginFill(0xFFFFFF);
+            imageMask.arc(imageSize / 2, imageSize / 2, imageSize / 2, 0.86 * Math.PI, 0.14 * Math.PI);
+            imageMask.endFill();
 
-            const tex = this.renderer.generateTexture(contanier, PIXI.SCALE_MODES.LINEAR, 1);
-            const sprite = PIXI.Sprite.from(tex);
+            const maskedContainer: PIXI.Container = new PIXI.Container();
+            maskedContainer.addChild(image);
+            maskedContainer.addChild(imageMask);
+            maskedContainer.mask = imageMask;
 
-            sprite.position.x = (TwitterGraphProfileNode.NODE_SIZE - 138);
-            sprite.position.y = (TwitterGraphProfileNode.NODE_SIZE - 138);
+            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, 1);
 
-            this.addChild(sprite);
+            const maskedImage: PIXI.Sprite = PIXI.Sprite.from(maskedImageTexture);
+            maskedImage.position.x = TwitterGraphProfileNode.IMAGE_PADDING / 2;
+            maskedImage.position.y = TwitterGraphProfileNode.IMAGE_PADDING / 2;
+
+            this.addChild(maskedImage);
         });
     }
 

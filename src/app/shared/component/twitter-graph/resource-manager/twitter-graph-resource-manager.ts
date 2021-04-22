@@ -28,7 +28,7 @@ export default class TwitterGraphResourceManager
         if(PIXI.Loader.shared.resources[url]?.isComplete)
             return of(PIXI.Loader.shared.resources[url]);
 
-        PIXI.Loader.shared.onProgress.add(() =>
+        PIXI.Loader.shared.onLoad.add(() =>
         {
             if(!PIXI.Loader.shared.resources[url]?.isComplete) return;
             
