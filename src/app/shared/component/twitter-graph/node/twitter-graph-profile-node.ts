@@ -153,7 +153,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
 
     private addImage() : void
     {
-        TwitterGraphResourceManager.await(`assets/profile-images/${this.profile.imageUrl.replace("https://", "").split("/").join("_")}`).subscribe((imageResource) =>
+        TwitterGraphResourceManager.await(this.profile.imageUrl).subscribe((imageResource) =>
         {
             const image: PIXI.Sprite = new PIXI.Sprite(imageResource.texture);
             

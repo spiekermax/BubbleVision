@@ -1,6 +1,3 @@
-// Reactive X
-import { Observable, Subject } from "rxjs";
-
 // PIXI
 import * as PIXI from "pixi.js";
 
@@ -12,65 +9,78 @@ export default class TwitterGraphCamera
 {
     /* ATTRIBUTES */
 
-    private targetPosition!: Position;
-    private targetZoom!: number;
+    private targetPosition?: Position;
+    private targetZoom?: number;
 
     private positionUpdater?: () => void = undefined;
     private zoomUpdater?: () => void = undefined;
 
-    private positionUpdateSubject: Subject<void> = new Subject();
-    private zoomUpdateSubject: Subject<void> = new Subject();
-
 
     /* LIFECYCLE */
 
-    public constructor(private target: PIXI.Container, private ticker: PIXI.Ticker) {}
+    public constructor(private app: PIXI.Application)
+    {
+        this.app.ticker.add(this.onUtilityUpdate.bind(this), undefined, PIXI.UPDATE_PRIORITY.UTILITY);
+    }
 
 
     /* CALLBACKS */
 
-    private interpolatePosition() : void
+    private onUtilityUpdate() : void
     {
-        this.target.position.x = this.lerp(this.target.x, this.targetPosition.x, 0.1);
-        this.target.position.y = this.lerp(this.target.y, this.targetPosition.y, 0.1);
+        // Position animations
+        if(this.targetPosition && Math.abs(this.app.stage.position.x - this.targetPosition.x) < 0.00001 && Math.abs(this.app.stage.position.y - this.targetPosition.y) < 0.00001)
+        {
+            // Cancel stale animations
+            this.cancelPositionAnimations();
+        }
 
-        this.positionUpdateSubject.next();
-    }
-
-    private interpolateZoom() : void
-    {
-        this.target.scale.x = this.lerp(this.target.scale.x, this.targetZoom, 0.1);
-        this.target.scale.y = this.lerp(this.target.scale.y, this.targetZoom, 0.1);
-
-        this.zoomUpdateSubject.next();
+        // Zoom animations
+        if(this.targetZoom && Math.abs(this.app.stage.scale.x - this.targetZoom) < 0.00001)
+        {
+            // Cancel stale animations
+            this.cancelZoomAnimations();
+        }
     }
 
 
     /* METHODS */
 
+    private interpolatePosition() : void
+    {
+        this.app.stage.position.x = this.lerp(this.app.stage.x, this.targetPosition!.x, 0.1);
+        this.app.stage.position.y = this.lerp(this.app.stage.y, this.targetPosition!.y, 0.1);
+    }
+
+    private interpolateZoom() : void
+    {
+        this.app.stage.scale.x = this.lerp(this.app.stage.scale.x, this.targetZoom!, 0.1);
+        this.app.stage.scale.y = this.lerp(this.app.stage.scale.y, this.targetZoom!, 0.1);
+    }
+
     public animatePosition(newPosition: Position) : void
     {
-        // Update target position
+        // Update app.stage position
         this.targetPosition = newPosition;
 
         // Bind position updater
         if(!this.positionUpdater)
         {
             this.positionUpdater = this.interpolatePosition.bind(this);
-            this.ticker.add(this.positionUpdater);
+            this.app.ticker.add(this.positionUpdater);
         }
     }
 
     public animateZoom(newZoom: any) : void
     {
-        // Update target zoom
+        // Update app.stage zoom
         this.targetZoom = newZoom;
 
         // Bind zoom updater
         if(!this.zoomUpdater)
         {
             this.zoomUpdater = this.interpolateZoom.bind(this);
-            this.ticker.add(this.zoomUpdater);
+            this.app.ticker.add(this.zoomUpdater);
         }
     }
 
@@ -79,8 +89,9 @@ export default class TwitterGraphCamera
         if(!this.positionUpdater) return;
 
         // Unbind position updater
-        this.ticker.remove(this.positionUpdater);
+        this.app.ticker.remove(this.positionUpdater);
         this.positionUpdater = undefined;
+        this.targetPosition = undefined;
     }
 
     public cancelZoomAnimations() : void
@@ -88,8 +99,20 @@ export default class TwitterGraphCamera
         if(!this.zoomUpdater) return;
 
         // Unbind zoom updater
-        this.ticker.remove(this.zoomUpdater);
+        this.app.ticker.remove(this.zoomUpdater);
         this.zoomUpdater = undefined;
+        this.targetZoom = undefined;
+    }
+
+    public calculateVisibleBounds() : PIXI.Rectangle
+    {
+        const x: number = -this.app.stage.position.x / this.app.stage.scale.x;
+        const y: number = -this.app.stage.position.y / this.app.stage.scale.y;
+            
+        const width: number = this.app.renderer.width / this.zoom;
+        const height: number = this.app.renderer.height / this.zoom;
+    
+        return new PIXI.Rectangle(x, y, width, height);
     }
 
 
@@ -102,37 +125,27 @@ export default class TwitterGraphCamera
 
     public get position() : Position
     {
-        return { x: this.target.position.x, y: this.target.position.y };
+        return { x: this.app.stage.position.x, y: this.app.stage.position.y };
     }
 
     public set position(newPosition: Position)
     {
         this.cancelPositionAnimations();
 
-        this.target.position.x = newPosition.x;
-        this.target.position.y = newPosition.y;
+        this.app.stage.position.x = newPosition.x;
+        this.app.stage.position.y = newPosition.y;
     }
 
     public get zoom() : number
     {
-        return this.target.scale.x;
+        return this.app.stage.scale.x;
     }
 
     public set zoom(newZoom: number)
     {
         this.cancelZoomAnimations();
 
-        this.target.scale.x = newZoom;
-        this.target.scale.y = newZoom;
-    }
-
-    public get positionUpdates() : Observable<void>
-    {
-        return this.positionUpdateSubject;
-    }
-
-    public get zoomUpdates() : Observable<void>
-    {
-        return this.zoomUpdateSubject;
+        this.app.stage.scale.x = newZoom;
+        this.app.stage.scale.y = newZoom;
     }
 }
