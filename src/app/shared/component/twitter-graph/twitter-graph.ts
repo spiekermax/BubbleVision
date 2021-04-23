@@ -46,6 +46,12 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     public ngOnInit() : void 
     {
+        if(!PIXI.utils.isWebGLSupported())
+        {
+            alert("Your browser or device doesn't support WebGL. This software needs WebGL in order to work properly, sorry!");
+            return;
+        }
+
         this.ngZone.runOutsideAngular(() => 
         {
             // Skip hello message
