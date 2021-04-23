@@ -9,7 +9,12 @@ export default interface TwitterProfile
 
     name: string;
     username: string;
-    position: Position;
+    verified: boolean;
+    imageUrl: string;
 
+    followerCount: number;
+    followeeCount: number;
+
+    position: Position;
     community: TwitterCommunity;
 }

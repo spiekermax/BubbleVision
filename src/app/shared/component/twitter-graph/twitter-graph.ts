@@ -9,6 +9,7 @@ import Position from "../../model/position/position";
 import TwitterProfile from "../../model/twitter/twitter-profile";
 import TwitterGraphCamera from "./camera/twitter-graph-camera";
 import TwitterGraphProfileNode from "./node/twitter-graph-profile-node";
+import TwitterGraphResourceManager from "./resource-manager/twitter-graph-resource-manager";
 
 
 @Component
@@ -36,7 +37,7 @@ export class TwitterGraph implements OnInit, OnDestroy
     private camera!: TwitterGraphCamera;
     
     // State
-    private lastMousePosition?: Position;
+    private lastMouseDownPosition?: Position;
 
 
     /* LIFECYCLE */
@@ -45,6 +46,12 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     public ngOnInit() : void 
     {
+        if(!PIXI.utils.isWebGLSupported())
+        {
+            alert("Your browser or device doesn't support WebGL. This software needs WebGL in order to work properly, sorry!");
+            return;
+        }
+
         this.ngZone.runOutsideAngular(() => 
         {
             // Skip hello message
@@ -64,16 +71,23 @@ export class TwitterGraph implements OnInit, OnDestroy
             this.app.view.addEventListener("mouseup", this.onMouseUp.bind(this));
             this.app.view.addEventListener("mousemove", this.onMouseMove.bind(this));
             this.app.view.addEventListener("wheel", this.onMouseWheel.bind(this));
+            this.app.view.addEventListener("mouseleave", this.onMouseLeave.bind(this));
         });
 
+        // Initialize resource manager
+        TwitterGraphResourceManager.init();
+
         // Initialize camera
-        this.camera = new TwitterGraphCamera(this.app.stage, this.app.ticker);
-        this.camera.position = { x: 726.5162014223629, y: 467.8062470166967 };
-        this.camera.zoom = 0.006258799038784077;
+        this.camera = new TwitterGraphCamera(this.app);
+        this.camera.position = { x: 900, y: 400 };
+        this.camera.zoom = 0.012;
 
         // Initialize containers
         this.nodeContainer = new PIXI.Container();
         this.app.stage.addChild(this.nodeContainer);
+
+        // Load profile images on demand
+        this.autoLoadVisibleProfileImages();
     }
 
     public ngOnDestroy() : void 
@@ -83,48 +97,48 @@ export class TwitterGraph implements OnInit, OnDestroy
     }
 
 
-    /* CALLBACKS */
+    /* CALLBACKS - EVENTS */
 
-    public onMouseDown(event: MouseEvent) : void
+    private onMouseDown(event: MouseEvent) : void
     {
         // Cancel camera animations
         this.camera.cancelPositionAnimations();
         this.camera.cancelZoomAnimations();
 
         // Update mouse position state
-        this.lastMousePosition =
+        this.lastMouseDownPosition =
         {
             x: event.offsetX,
             y: event.offsetY
         };
     }
 
-    public onMouseUp(event: MouseEvent) : void
+    private onMouseUp(event: MouseEvent) : void
     {
         // Clear mouse position state
-        this.lastMousePosition = undefined;
+        this.lastMouseDownPosition = undefined;
     }
 
-    public onMouseMove(event: MouseEvent) : void
+    private onMouseMove(event: MouseEvent) : void
     {
-        if(!this.lastMousePosition) return;
+        if(!this.lastMouseDownPosition) return;
 
         // Update camera position
         this.camera.position =
         {
-            x: this.camera.position.x + event.offsetX - this.lastMousePosition.x,
-            y: this.camera.position.y + event.offsetY - this.lastMousePosition.y
+            x: this.camera.position.x + event.offsetX - this.lastMouseDownPosition.x,
+            y: this.camera.position.y + event.offsetY - this.lastMouseDownPosition.y
         };
 
         // Update mouse position state
-        this.lastMousePosition = 
+        this.lastMouseDownPosition = 
         { 
             x: event.offsetX, 
             y: event.offsetY 
         };
     }
 
-    public onMouseWheel(event: WheelEvent) : void
+    private onMouseWheel(event: WheelEvent) : void
     {
         // Zoom to mouse position
         const scalingFactor: number = event.deltaY < 0 ? 2 : 0.5;
@@ -134,6 +148,63 @@ export class TwitterGraph implements OnInit, OnDestroy
             y: event.offsetY 
         };
         this.zoomToMousePosition(scalingFactor, mousePosition);
+    }
+
+    private onMouseLeave(event: MouseEvent) : void
+    {
+        // Clear mouse position state
+        this.lastMouseDownPosition = undefined;
+    }
+
+
+    /* CALLBACKS - STATE */
+
+    private onTwitterProfilesChanged() : void
+    {
+        //
+        if(!this.nodeContainer) return;
+
+        // Remove old nodes
+        this.nodeContainer.removeChildren();
+
+        // Load placeholder avatar
+        TwitterGraphResourceManager.add("assets/avatar.jpg");
+        TwitterGraphResourceManager.load();
+
+        // Add new nodes
+        for(const twitterProfile of this._twitterProfiles)
+        {
+            const twitterProfileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app.renderer, twitterProfile);
+            this.nodeContainer.addChild(twitterProfileNode);
+        }
+    }
+
+
+    /* METHODS */
+
+    private autoLoadVisibleProfileImages() : void
+    {
+        this.app.ticker.add(() =>
+        {
+            //
+            if(!this.twitterProfiles || this.lastMouseDownPosition || this.camera.zoom < 0.12) return;
+
+            // Get visible bounds
+            const visibleBounds: PIXI.Rectangle = this.camera.calculateVisibleBounds();
+
+            // Request visible images
+            for(const twitterProfile of this.twitterProfiles)
+            {
+                if(twitterProfile.position.x < visibleBounds.left || twitterProfile.position.y < visibleBounds.top) continue;
+                if(twitterProfile.position.x > visibleBounds.right || twitterProfile.position.y > visibleBounds.bottom) continue;
+    
+                TwitterGraphResourceManager.add(twitterProfile.imageUrl);
+            }
+
+            // Load visible images
+            TwitterGraphResourceManager.load();
+
+        }, undefined, PIXI.UPDATE_PRIORITY.UTILITY);
     }
 
 
@@ -173,16 +244,6 @@ export class TwitterGraph implements OnInit, OnDestroy
         this._twitterProfiles = newTwitterProfiles;
 
         //
-        if(!this.nodeContainer) return;
-
-        // Remove old nodes
-        this.nodeContainer.removeChildren();
-
-        // Add new nodes
-        for(const twitterProfile of this._twitterProfiles)
-        {
-            const twitterProfileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app.renderer, twitterProfile);
-            this.nodeContainer.addChild(twitterProfileNode);
-        }
+        this.onTwitterProfilesChanged();
     }
 }

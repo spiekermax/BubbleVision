@@ -33,8 +33,8 @@ export default class TwitterDataService
     {
         return forkJoin
         ({
-            mapping: this.http.get<any>("assets/graph/de_1000_mapping.json"),
-            communities: this.http.get<any>("assets/graph/de_1000_communities_ward.json")
+            mapping: this.http.get<any>("assets/graph/de_1000_mapping_base.json"),
+            communities: this.http.get<any>("assets/graph/de_1000_communities_weighted_louvain.json")
         })
         .pipe(map((json: any) =>
         {
@@ -47,6 +47,10 @@ export default class TwitterDataService
                     id: profile.twitterId,
                     name: profile.name,
                     username: profile.username,
+                    verified: profile.verified,
+                    imageUrl: profile.profileImageUrl,
+                    followerCount: profile.followerCount,
+                    followeeCount: profile.followeeCount,
                     position:
                     {
                         x: profile.position[0] * TwitterDataService.GRAPH_SCALING_FACTOR,
@@ -75,7 +79,7 @@ export default class TwitterDataService
 
     public getCommunities() : Observable<TwitterCommunity[]>
     {
-        return this.http.get<any>("assets/graph/de_1000_communities_ward.json").pipe(map((json: any) =>
+        return this.http.get<any>("assets/graph/de_1000_communities_weighted_louvain.json").pipe(map((json: any) =>
         {
             const twitterCommunities: TwitterCommunity[] = [];
             for(const communityId of Object.keys(json))
