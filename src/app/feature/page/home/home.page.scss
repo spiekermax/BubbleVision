@@ -40,6 +40,11 @@
     line-height: inherit;
 }
 
+::ng-deep .searchbar-autocomplete {
+    margin-left: 32px;
+    margin-right: 32px;
+}
+
 .searchbar-autocomplete-icon {
     color: #666666 !important;
 }
