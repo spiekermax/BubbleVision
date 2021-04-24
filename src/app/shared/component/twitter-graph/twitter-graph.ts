@@ -22,7 +22,7 @@ export class TwitterGraph implements OnInit, OnDestroy
     /* DIRECTIVES */
 
     // Inputs
-    private _twitterProfiles: TwitterProfile[] = [];
+    private _profiles: TwitterProfile[] = [];
 
 
     /* ATTRIBUTES */
@@ -62,7 +62,7 @@ export class TwitterGraph implements OnInit, OnDestroy
             ({
                 resizeTo: window,
                 antialias: true,
-                backgroundColor: 0xFAFAFA
+                backgroundColor: 0xF2F2F2
             });
             this.elementRef.nativeElement.appendChild(this.app.view);
 
@@ -140,6 +140,8 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     private onMouseWheel(event: WheelEvent) : void
     {
+        if(this.lastMouseDownPosition) return;
+
         // Zoom to mouse position
         const scalingFactor: number = event.deltaY < 0 ? 2 : 0.5;
         const mousePosition: Position =
@@ -159,7 +161,7 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     /* CALLBACKS - STATE */
 
-    private onTwitterProfilesChanged() : void
+    private onProfilesChanged() : void
     {
         //
         if(!this.nodeContainer) return;
@@ -172,9 +174,9 @@ export class TwitterGraph implements OnInit, OnDestroy
         TwitterGraphResourceManager.load();
 
         // Add new nodes
-        for(const twitterProfile of this._twitterProfiles)
+        for(const profile of this._profiles)
         {
-            const twitterProfileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app.renderer, twitterProfile);
+            const twitterProfileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app.renderer, profile);
             this.nodeContainer.addChild(twitterProfileNode);
         }
     }
@@ -187,18 +189,18 @@ export class TwitterGraph implements OnInit, OnDestroy
         this.app.ticker.add(() =>
         {
             //
-            if(!this.twitterProfiles || this.lastMouseDownPosition || this.camera.zoom < 0.12) return;
+            if(!this.profiles || this.lastMouseDownPosition || this.camera.zoom < 0.12 || this.camera.isAnimating(10)) return;
 
             // Get visible bounds
             const visibleBounds: PIXI.Rectangle = this.camera.calculateVisibleBounds();
 
             // Request visible images
-            for(const twitterProfile of this.twitterProfiles)
+            for(const profile of this.profiles)
             {
-                if(twitterProfile.position.x < visibleBounds.left || twitterProfile.position.y < visibleBounds.top) continue;
-                if(twitterProfile.position.x > visibleBounds.right || twitterProfile.position.y > visibleBounds.bottom) continue;
+                if(profile.position.x < visibleBounds.left || profile.position.y < visibleBounds.top) continue;
+                if(profile.position.x > visibleBounds.right || profile.position.y > visibleBounds.bottom) continue;
     
-                TwitterGraphResourceManager.add(twitterProfile.imageUrl);
+                TwitterGraphResourceManager.add(profile.imageUrl);
             }
 
             // Load visible images
@@ -209,6 +211,18 @@ export class TwitterGraph implements OnInit, OnDestroy
 
 
     /* METHODS - CAMERA */
+
+    public zoomToProfile(profile: TwitterProfile) : void
+    {
+        const newZoom: number = 0.33;
+
+        this.camera.animatePosition
+        ({
+            x: (-profile.position.x * newZoom) + (this.app.renderer.width) / 2,
+            y: (-profile.position.y * newZoom) + (this.app.renderer.height - TwitterGraphProfileNode.NODE_SIZE / 2) / 2
+        });
+        this.camera.animateZoom(newZoom);
+    }
 
     private zoomToMousePosition(scalingFactor: number, mousePosition: Position) : void
     {
@@ -232,18 +246,18 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     /* GETTER & SETTER */
 
-    public get twitterProfiles() : TwitterProfile[]
+    public get profiles() : TwitterProfile[]
     {
-        return this._twitterProfiles;
+        return this._profiles;
     }
 
     @Input() 
-    public set twitterProfiles(newTwitterProfiles: TwitterProfile[])
+    public set profiles(newProfiles: TwitterProfile[])
     {
         //
-        this._twitterProfiles = newTwitterProfiles;
+        this._profiles = newProfiles;
 
         //
-        this.onTwitterProfilesChanged();
+        this.onProfilesChanged();
     }
 }

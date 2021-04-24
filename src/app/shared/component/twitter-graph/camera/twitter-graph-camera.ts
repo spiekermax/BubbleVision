@@ -7,6 +7,11 @@ import Position from "src/app/shared/model/position/position";
 
 export default class TwitterGraphCamera
 {
+    /* CONSTANTS */
+
+    private static readonly ANIMATION_TOLERANCE: number = 0.00001;
+
+
     /* ATTRIBUTES */
 
     private targetPosition?: Position;
@@ -29,14 +34,14 @@ export default class TwitterGraphCamera
     private onUtilityUpdate() : void
     {
         // Position animations
-        if(this.targetPosition && Math.abs(this.app.stage.position.x - this.targetPosition.x) < 0.00001 && Math.abs(this.app.stage.position.y - this.targetPosition.y) < 0.00001)
+        if(this.targetPosition && Math.abs(this.app.stage.position.x - this.targetPosition.x) < TwitterGraphCamera.ANIMATION_TOLERANCE && Math.abs(this.app.stage.position.y - this.targetPosition.y) < TwitterGraphCamera.ANIMATION_TOLERANCE)
         {
             // Cancel stale animations
             this.cancelPositionAnimations();
         }
 
         // Zoom animations
-        if(this.targetZoom && Math.abs(this.app.stage.scale.x - this.targetZoom) < 0.00001)
+        if(this.targetZoom && Math.abs(this.app.stage.scale.x - this.targetZoom) < TwitterGraphCamera.ANIMATION_TOLERANCE)
         {
             // Cancel stale animations
             this.cancelZoomAnimations();
@@ -147,5 +152,13 @@ export default class TwitterGraphCamera
 
         this.app.stage.scale.x = newZoom;
         this.app.stage.scale.y = newZoom;
+    }
+
+    public isAnimating(tolerance: number = TwitterGraphCamera.ANIMATION_TOLERANCE) : boolean
+    {
+        if(this.targetPosition !== undefined && (Math.abs(this.app.stage.position.x - this.targetPosition.x) > tolerance
+            || Math.abs(this.app.stage.position.y - this.targetPosition.y) > tolerance)) return true;
+
+        return this.targetZoom !== undefined && Math.abs(this.app.stage.scale.x - this.targetZoom) > tolerance;
     }
 }
