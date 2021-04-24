@@ -6,7 +6,7 @@
             <mat-label>Suchen</mat-label>
 
             <input matInput [formControl]="searchFormControl" [matAutocomplete]="searchAutocomplete">
-            <mat-autocomplete #searchAutocomplete="matAutocomplete" 
+            <mat-autocomplete class="searchbar-autocomplete" #searchAutocomplete="matAutocomplete"
                 [displayWith]="stringifyTwitterProfile"
                 (optionSelected)="onTwitterProfileSelected($event.option.value)">
                 <mat-option *ngFor="let twitterProfile of filteredTwitterProfiles | async" [value]="twitterProfile">

@@ -101,7 +101,8 @@ export class HomePage implements OnInit
         { 
             return profile.name.toLowerCase().includes(normalizedQuery) ||
                 profile.username.toLowerCase().includes(normalizedQuery);
-        });
+        })
+        .sort((a, b) => b.followerCount - a.followerCount);
     }
 
     public stringifyTwitterProfile(twitterProfile?: TwitterProfile) : string
