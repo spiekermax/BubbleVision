@@ -7,3 +7,24 @@ body {
     margin: 0; 
     font-family: "Roboto", "Helvetica Neue", sans-serif; 
 }
+
+::-webkit-scrollbar {
+    width: 14px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    height: 56px;
+    background: #969ea6;
+    border-radius: 8px;
+    border: 4px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #c8ccd0;
+    background-clip: content-box;
+}

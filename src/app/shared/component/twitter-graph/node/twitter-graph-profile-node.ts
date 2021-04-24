@@ -11,7 +11,7 @@ export default class TwitterGraphProfileNode extends PIXI.Container
     /* STATIC */
 
     // Constants
-    private static readonly NODE_SIZE: number = 300;
+    public static readonly NODE_SIZE: number = 300;
     private static readonly IMAGE_PADDING: number = 24;
 
     private static readonly COLOR_MAP: number[] =
