@@ -12,6 +12,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatIconModule } from "@angular/material/icon";
 import { MatInputModule } from "@angular/material/input";
+import { MatMenuModule } from "@angular/material/menu";
 import { MatToolbarModule } from "@angular/material/toolbar";
 
 // Internal dependencies
@@ -46,6 +47,7 @@ import { TwitterGraph } from "./shared/component/twitter-graph/twitter-graph";
         MatFormFieldModule,
         MatIconModule,
         MatInputModule,
+        MatMenuModule,
         MatToolbarModule
     ],
     providers: [],

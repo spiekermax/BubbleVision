@@ -41,7 +41,21 @@
 }
 
 .searchbar-autocomplete-icon {
-    color: #666666;
+    color: #666666 !important;
+}
+
+.menu-title {
+    margin-left: 16px;
+    margin-bottom: 12px;
+    margin-top: 8px; 
+
+    width: 168px;
+    
+    font-size: 12px; 
+    font-weight: 500;
+    line-height: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
 

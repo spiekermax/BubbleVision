@@ -2,6 +2,9 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { FormControl } from "@angular/forms";
 
+// Material Design
+import { MatDialog } from "@angular/material/dialog";
+
 // Reactive X
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
@@ -12,6 +15,8 @@ import TwitterProfile from "src/app/shared/model/twitter/twitter-profile";
 
 import { TwitterGraph } from "src/app/shared/component/twitter-graph/twitter-graph";
 import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-data.service";
+
+import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 
 
 @Component
@@ -40,7 +45,7 @@ export class HomePage implements OnInit
 
     /* LIFECYCLE */
 
-    public constructor(private twitterDataService: TwitterDataService)
+    public constructor(private dialog: MatDialog, private twitterDataService: TwitterDataService)
     {
         // Load twitter profiles
         this.twitterDataService.loadProfiles().subscribe(twitterProfiles => 
@@ -104,5 +109,10 @@ export class HomePage implements OnInit
         if(!twitterProfile) return "";
 
         return `${twitterProfile.name} (@${twitterProfile.username})`;
+    }
+
+    public openSettingsDialog() : void
+    {
+        this.dialog.open(SettingsDialog);
     }
 }

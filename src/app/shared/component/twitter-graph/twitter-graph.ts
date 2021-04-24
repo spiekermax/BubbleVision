@@ -218,8 +218,8 @@ export class TwitterGraph implements OnInit, OnDestroy
 
         this.camera.animatePosition
         ({
-            x: (-profile.position.x * newZoom) + (this.app.renderer.width - TwitterGraphProfileNode.NODE_SIZE) / 2,
-            y: (-profile.position.y * newZoom) + (this.app.renderer.height - TwitterGraphProfileNode.NODE_SIZE) / 2
+            x: (-profile.position.x * newZoom) + (this.app.renderer.width) / 2,
+            y: (-profile.position.y * newZoom) + (this.app.renderer.height - TwitterGraphProfileNode.NODE_SIZE / 2) / 2
         });
         this.camera.animateZoom(newZoom);
     }
