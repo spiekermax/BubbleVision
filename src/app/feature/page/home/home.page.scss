@@ -65,10 +65,18 @@
 }
 
 ::ng-deep .mat-form-field-outline {
-    border-radius: 4px;
+    border-radius: 32px;
     background-color: white;
 
     > div {
         border-width: 2px !important;
+    }
+
+    .mat-form-field-outline-start {
+        border-radius: 32px 0 0 32px !important;
+    }
+
+    .mat-form-field-outline-end {
+        border-radius: 0 32px 32px 0 !important;
     }
 }
