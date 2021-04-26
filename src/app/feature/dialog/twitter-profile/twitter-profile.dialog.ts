@@ -17,6 +17,17 @@ import { TwitterProfile } from "src/app/shared/model/twitter/twitter-profile";
 })
 export class TwitterProfileDialog implements AfterViewInit
 {
+    /* CONSTANTS */
+
+    private static readonly TWITTER_TIMELINE_TIMEOUT: number = 5000;
+
+
+    /* ATTRIBUTES */
+
+    public twitterTimelineState: "loading" | "loaded" = "loading";
+    public twitterTimelineTimeout: boolean = false;
+
+
     /* LIFECYCLE */
   
     public constructor(private dialogRef: MatDialogRef<TwitterProfileDialog>, @Inject(MAT_DIALOG_DATA) private profile: TwitterProfile) {}
@@ -24,7 +35,10 @@ export class TwitterProfileDialog implements AfterViewInit
     public ngAfterViewInit() : void 
     {
         // Load twitter widget
-        (<any> window).twttr.widgets.load();
+        (<any> window).twttr.widgets.load().then(() => this.twitterTimelineState = "loaded");
+
+        // Timeout
+        setTimeout(() => this.twitterTimelineTimeout = true, TwitterProfileDialog.TWITTER_TIMELINE_TIMEOUT);
     }
 
 

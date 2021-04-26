@@ -16,7 +16,17 @@
     <p class="profile-description" [innerHTML]="description"></p>
     
     <div class="profile-timeline-container">
-        <a class="twitter-timeline" [href]="'https://twitter.com/' + username + '?ref_src=twsrc%5Etfw'"></a>
+        <div class="twitter-timeline-loading">
+            <mat-spinner [diameter]="36"></mat-spinner>
+            <span>Lade Tweets...</span>
+        </div>
+        <div class="twitter-timeline-error" [ngClass]="{ 'visible': twitterTimelineTimeout }">
+            <mat-icon class="twitter-timeline-error-icon">error</mat-icon>
+            Tweets konnten nicht geladen werden.
+        </div>
+        <div class="twitter-timeline-wrapper loading" [ngClass]="twitterTimelineState">
+            <a class="twitter-timeline" data-chrome="noheader nofooter" [href]="'https://twitter.com/' + username + '?ref_src=twsrc%5Etfw'"></a>
+        </div>
     </div>
 </div>
 
