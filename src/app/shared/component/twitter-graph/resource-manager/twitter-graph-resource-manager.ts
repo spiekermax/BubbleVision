@@ -5,8 +5,10 @@ import { NEVER, Observable, of, Subject } from "rxjs";
 import * as PIXI from "pixi.js";
 
 
-// TODO: Refactoring
-export default class TwitterGraphResourceManager
+/**
+ * TODO: Refactoring
+ */
+export class TwitterGraphResourceManager
 {
     /* VARIABLES */
 

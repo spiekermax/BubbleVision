@@ -1,4 +1,4 @@
-export default interface TwitterCommunity
+export interface TwitterCommunity
 {
     id: number;
     

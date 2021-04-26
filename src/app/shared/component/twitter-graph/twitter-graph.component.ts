@@ -1,15 +1,15 @@
 // Angular
-import { OnInit, Component, ElementRef, NgZone, OnDestroy, Input } from "@angular/core";
+import { OnInit, Component, ElementRef, NgZone, OnDestroy, Input, EventEmitter, Output } from "@angular/core";
 
 // PIXI
 import * as PIXI from "pixi.js";
 
 // Internal dependencies
-import Position from "../../model/position/position";
-import TwitterProfile from "../../model/twitter/twitter-profile";
-import TwitterGraphCamera from "./camera/twitter-graph-camera";
-import TwitterGraphProfileNode from "./node/twitter-graph-profile-node";
-import TwitterGraphResourceManager from "./resource-manager/twitter-graph-resource-manager";
+import { Position } from "../../model/position/position";
+import { TwitterProfile } from "../../model/twitter/twitter-profile";
+import { TwitterGraphCamera } from "./camera/twitter-graph-camera";
+import { TwitterGraphProfileNode } from "./node/twitter-graph-profile-node";
+import { TwitterGraphResourceManager } from "./resource-manager/twitter-graph-resource-manager";
 
 
 @Component
@@ -17,24 +17,27 @@ import TwitterGraphResourceManager from "./resource-manager/twitter-graph-resour
     selector: "twitter-graph",
     template: ""
 })
-export class TwitterGraph implements OnInit, OnDestroy
+export class TwitterGraphComponent implements OnInit, OnDestroy
 {
     /* DIRECTIVES */
 
     // Inputs
     private _profiles: TwitterProfile[] = [];
 
+    @Output()
+    public profileClicked: EventEmitter<TwitterProfile> = new EventEmitter();
+
 
     /* ATTRIBUTES */
 
     // Application
-    private app!: PIXI.Application;
+    private app?: PIXI.Application;
 
     // Containers
-    private nodeContainer!: PIXI.Container;
+    private nodeContainer?: PIXI.Container;
 
     // Components
-    private camera!: TwitterGraphCamera;
+    private camera?: TwitterGraphCamera;
     
     // State
     private lastMouseDownPosition?: Position;
@@ -78,13 +81,13 @@ export class TwitterGraph implements OnInit, OnDestroy
         TwitterGraphResourceManager.init();
 
         // Initialize camera
-        this.camera = new TwitterGraphCamera(this.app);
+        this.camera = new TwitterGraphCamera(this.app!);
         this.camera.position = { x: 900, y: 400 };
         this.camera.zoom = 0.012;
 
         // Initialize containers
         this.nodeContainer = new PIXI.Container();
-        this.app.stage.addChild(this.nodeContainer);
+        this.app!.stage.addChild(this.nodeContainer);
 
         // Load profile images on demand
         this.autoLoadVisibleProfileImages();
@@ -93,7 +96,7 @@ export class TwitterGraph implements OnInit, OnDestroy
     public ngOnDestroy() : void 
     {
         // Destroy PIXI application
-        this.app.destroy();
+        this.app!.destroy();
     }
 
 
@@ -102,8 +105,8 @@ export class TwitterGraph implements OnInit, OnDestroy
     private onMouseDown(event: MouseEvent) : void
     {
         // Cancel camera animations
-        this.camera.cancelPositionAnimations();
-        this.camera.cancelZoomAnimations();
+        this.camera?.cancelPositionAnimations();
+        this.camera?.cancelZoomAnimations();
 
         // Update mouse position state
         this.lastMouseDownPosition =
@@ -121,7 +124,7 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     private onMouseMove(event: MouseEvent) : void
     {
-        if(!this.lastMouseDownPosition) return;
+        if(!this.lastMouseDownPosition || !this.camera) return;
 
         // Update camera position
         this.camera.position =
@@ -158,6 +161,11 @@ export class TwitterGraph implements OnInit, OnDestroy
         this.lastMouseDownPosition = undefined;
     }
 
+    private onProfileClicked(profile: TwitterProfile) : void
+    {
+        this.ngZone.run(() => this.profileClicked.emit(profile));
+    }
+
 
     /* CALLBACKS - STATE */
 
@@ -176,7 +184,13 @@ export class TwitterGraph implements OnInit, OnDestroy
         // Add new nodes
         for(const profile of this._profiles)
         {
-            const twitterProfileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app.renderer, profile);
+            // Create node
+            const twitterProfileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app!.renderer, profile);
+
+            // Bind callbacks
+            twitterProfileNode.clickedEvent.subscribe(() => this.onProfileClicked(profile));
+
+            // Add node
             this.nodeContainer.addChild(twitterProfileNode);
         }
     }
@@ -186,10 +200,13 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     private autoLoadVisibleProfileImages() : void
     {
-        this.app.ticker.add(() =>
+        this.app?.ticker.add(() =>
         {
             //
-            if(!this.profiles || this.lastMouseDownPosition || this.camera.zoom < 0.12 || this.camera.isAnimating(10)) return;
+            if(this.lastMouseDownPosition || !this.camera || this.camera.zoom < 0.12 || this.camera.isAnimating(10)) return;
+
+            //
+            if(!this.profiles) return;
 
             // Get visible bounds
             const visibleBounds: PIXI.Rectangle = this.camera.calculateVisibleBounds();
@@ -214,18 +231,21 @@ export class TwitterGraph implements OnInit, OnDestroy
 
     public zoomToProfile(profile: TwitterProfile) : void
     {
-        const newZoom: number = 0.33;
+        if(!this.camera) return;
 
+        const newZoom: number = 0.33;
         this.camera.animatePosition
         ({
-            x: (-profile.position.x * newZoom) + (this.app.renderer.width) / 2,
-            y: (-profile.position.y * newZoom) + (this.app.renderer.height - TwitterGraphProfileNode.NODE_SIZE / 2) / 2
+            x: (-profile.position.x * newZoom) + (this.app!.renderer.width - TwitterGraphProfileNode.NODE_SIZE / 2) / 2,
+            y: (-profile.position.y * newZoom) + (this.app!.renderer.height - TwitterGraphProfileNode.NODE_SIZE / 2) / 2
         });
         this.camera.animateZoom(newZoom);
     }
 
     private zoomToMousePosition(scalingFactor: number, mousePosition: Position) : void
     {
+        if(!this.camera) return;
+
         const normalizedMousePosition: Position =
         {
             x: (mousePosition.x - this.camera.position.x) / this.camera.zoom,

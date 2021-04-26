@@ -7,8 +7,8 @@ import { forkJoin, Observable } from "rxjs";
 import { map } from 'rxjs/operators';
 
 // Internal dependencies
-import TwitterCommunity from "../../model/twitter/twitter-community";
-import TwitterProfile from "../../model/twitter/twitter-profile";
+import { TwitterCommunity } from "../../model/twitter/twitter-community";
+import { TwitterProfile } from "../../model/twitter/twitter-profile";
 
 
 @Injectable
@@ -47,6 +47,7 @@ export class TwitterDataService
                     id: profileDTO.twitterId,
                     name: profileDTO.name,
                     username: profileDTO.username,
+                    description: profileDTO.description || "",
                     verified: profileDTO.verified,
                     imageUrl: profileDTO.profileImageUrl,
                     followerCount: profileDTO.followerCount,
