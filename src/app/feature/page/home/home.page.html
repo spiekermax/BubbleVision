@@ -1,34 +1,36 @@
-<twitter-graph class="twitter-graph" [profiles]="this.twitterProfiles"></twitter-graph>
+<!-- Twitter graph -->
+<twitter-graph class="twitter-graph"
+    [profiles]="this.twitterProfiles"
+    (profileClicked)="openTwitterProfileDialog($event)">
+</twitter-graph>
 
-<div class="overlay">
-    <div class="overlay-vertical-center">
-        <mat-form-field class="searchbar" appearance="outline">
-            <mat-label>Suchen</mat-label>
+<!-- Searchbar -->
+<mat-form-field class="searchbar" appearance="outline">
+    <mat-icon matPrefix>search</mat-icon>
+    
+    <mat-label>Suchen</mat-label>
+    <input matInput [formControl]="searchFormControl" [matAutocomplete]="searchAutocomplete">
+    <mat-autocomplete class="searchbar-autocomplete" #searchAutocomplete="matAutocomplete"
+        [displayWith]="stringifyTwitterProfile"
+        (optionSelected)="onSearchResultSelected($event.option.value)">
+        <mat-option *ngFor="let twitterProfile of filteredTwitterProfiles | async" [value]="twitterProfile">
+            <mat-icon class="searchbar-autocomplete-icon">person</mat-icon>
+            {{stringifyTwitterProfile(twitterProfile)}}
+        </mat-option>
+    </mat-autocomplete>
 
-            <input matInput [formControl]="searchFormControl" [matAutocomplete]="searchAutocomplete">
-            <mat-autocomplete class="searchbar-autocomplete" #searchAutocomplete="matAutocomplete"
-                [displayWith]="stringifyTwitterProfile"
-                (optionSelected)="onTwitterProfileSelected($event.option.value)">
-                <mat-option *ngFor="let twitterProfile of filteredTwitterProfiles | async" [value]="twitterProfile">
-                    <mat-icon class="searchbar-autocomplete-icon">person</mat-icon>
-                    {{stringifyTwitterProfile(twitterProfile)}}
-                </mat-option>
-            </mat-autocomplete>
+    <button mat-icon-button matSuffix>
+        <mat-icon>filter_list</mat-icon>
+    </button>
+    <button mat-icon-button matSuffix 
+        [matMenuTriggerFor]="moreMenu"
+        (click)="$event.stopPropagation()">
+        <mat-icon>more_vert</mat-icon>
+    </button>
+</mat-form-field>
 
-            <mat-icon matPrefix>search</mat-icon>
-            
-            <button mat-icon-button matSuffix>
-                <mat-icon>filter_list</mat-icon>
-            </button>
-            <button mat-icon-button matSuffix [matMenuTriggerFor]="moreMenu" (click)="$event.stopPropagation()">
-                <mat-icon>more_vert</mat-icon>
-            </button>
-        </mat-form-field>
-    </div>
-
-    <mat-menu #moreMenu="matMenu">
-        <div class="menu-title">Mehr</div>
-        <button mat-menu-item (click)="openSettingsDialog()">Einstellungen</button>
-        <button mat-menu-item>Hilfe</button>
-    </mat-menu>
-</div>
+<mat-menu #moreMenu="matMenu">
+    <div class="menu-title">Mehr</div>
+    <button mat-menu-item (click)="openSettingsDialog()">Einstellungen</button>
+    <button mat-menu-item>Hilfe</button>
+</mat-menu>

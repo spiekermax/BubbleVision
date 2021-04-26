@@ -1,36 +1,20 @@
 :host {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+
     width: 100%;
     height: 100%;
 }
 
 .twitter-graph {
-    position: absolute;
-
     width: 100%;
     height: 100%;
-}
-
-.overlay {
-    position: absolute;
-
-    width: 100%;
-    height: 100%;
-
-    pointer-events: none;
-
-    * {
-        pointer-events: initial;
-    }
-}
-
-.overlay-vertical-center {
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
 }
 
 .searchbar {
+    position: absolute;
     margin: 24px;
 
     width: 46%;
@@ -59,7 +43,7 @@
     font-size: 12px; 
     font-weight: 500;
     line-height: 8px;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     text-transform: uppercase;
 }
 

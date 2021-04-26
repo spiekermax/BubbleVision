@@ -10,13 +10,14 @@ import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 
 // Internal dependencies
-import TwitterCommunity from "src/app/shared/model/twitter/twitter-community";
-import TwitterProfile from "src/app/shared/model/twitter/twitter-profile";
+import { TwitterCommunity } from "src/app/shared/model/twitter/twitter-community";
+import { TwitterProfile } from "src/app/shared/model/twitter/twitter-profile";
 
-import { TwitterGraph } from "src/app/shared/component/twitter-graph/twitter-graph";
+import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
 import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-data.service";
 
 import { SettingsDialog } from "../../dialog/settings/settings.dialog";
+import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
 
 
 @Component
@@ -29,18 +30,18 @@ export class HomePage implements OnInit
 {
     /* COMPONENTS */
 
-    @ViewChild(TwitterGraph)
-    private twitterGraph?: TwitterGraph;
+    @ViewChild(TwitterGraphComponent)
+    private twitterGraph?: TwitterGraphComponent;
 
 
     /* ATTRIBUTES */
 
     public searchFormControl: FormControl = new FormControl();
 
-    public twitterProfiles!: TwitterProfile[];
-    public twitterCommunities!: TwitterCommunity[];
+    public twitterProfiles: TwitterProfile[] = [];
+    public twitterCommunities: TwitterCommunity[] = [];
 
-    public filteredTwitterProfiles!: Observable<TwitterProfile[]>;
+    public filteredTwitterProfiles?: Observable<TwitterProfile[]>;
 
 
     /* LIFECYCLE */
@@ -74,7 +75,7 @@ export class HomePage implements OnInit
 
     /* CALLBACKS */
 
-    public onTwitterProfileSelected(twitterProfile: TwitterProfile) : void
+    public onSearchResultSelected(twitterProfile: TwitterProfile) : void
     {
         // Zoom to selected profile
         this.twitterGraph?.zoomToProfile(twitterProfile);
@@ -90,8 +91,8 @@ export class HomePage implements OnInit
         // Sanitize query
         const sanitizedQuery: string = query.trim().replace(/\@/g, "");
 
-        // Check if query is empty
-        if(!sanitizedQuery.length) return [];
+        // Check if query is too short
+        if(sanitizedQuery.length < 3) return [];
 
         // Normalize query
         const normalizedQuery: string = sanitizedQuery.toLowerCase();
@@ -100,7 +101,8 @@ export class HomePage implements OnInit
         return this.twitterProfiles.filter(profile =>
         { 
             return profile.name.toLowerCase().includes(normalizedQuery) ||
-                profile.username.toLowerCase().includes(normalizedQuery);
+                profile.username.toLowerCase().includes(normalizedQuery) ||
+                profile.description.toLowerCase().includes(normalizedQuery);
         })
         .sort((a, b) => b.followerCount - a.followerCount);
     }
@@ -110,6 +112,18 @@ export class HomePage implements OnInit
         if(!twitterProfile) return "";
 
         return `${twitterProfile.name} (@${twitterProfile.username})`;
+    }
+
+
+    /* METHODS - DIALOGS */
+
+    public openTwitterProfileDialog(twitterProfile: TwitterProfile) : void
+    {
+        this.dialog.open(TwitterProfileDialog,
+        { 
+            data: twitterProfile,
+            width: "514px"
+        });
     }
 
     public openSettingsDialog() : void

@@ -1,12 +1,15 @@
+// Reactive X
+import { Observable, Subject } from "rxjs";
+
 // PIXI
 import * as PIXI from "pixi.js";
 
 // Internal dependencies
-import TwitterProfile from "src/app/shared/model/twitter/twitter-profile";
-import TwitterGraphResourceManager from "../resource-manager/twitter-graph-resource-manager";
+import { TwitterProfile } from "src/app/shared/model/twitter/twitter-profile";
+import { TwitterGraphResourceManager } from "../resource-manager/twitter-graph-resource-manager";
 
 
-export default class TwitterGraphProfileNode extends PIXI.Container
+export class TwitterGraphProfileNode extends PIXI.Container
 {
     /* STATIC */
 
@@ -44,7 +47,11 @@ export default class TwitterGraphProfileNode extends PIXI.Container
 
     /* ATTRIBUTES */
 
+    // State
     private placeholderImage?: PIXI.Sprite;
+
+    // Events
+    private clickSubject: Subject<void> = new Subject();
 
 
     /* LIFECYCLE */
@@ -189,6 +196,14 @@ export default class TwitterGraphProfileNode extends PIXI.Container
 
     private onClicked() : void
     {
-        console.log(this.profile);
+        this.clickSubject.next();
+    }
+
+
+    /* GETTER & SETTER */
+
+    public get clickedEvent() : Observable<void>
+    {
+        return this.clickSubject;
     }
 }

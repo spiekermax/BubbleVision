@@ -1,0 +1,25 @@
+<div class="header">
+    <img class="profile-image" [src]="imageUrl">
+    <div>
+        <h2 mat-dialog-title class="profile-name" [innerHTML]="name"></h2>
+        <div class="profile-username">
+            <a target="_blank" rel="noopener noreferrer" [href]="'https://twitter.com/' + username">@{{username}}</a>
+        </div>
+        <p class="profile-stats">{{followeeCount}} Folge ich | {{followerCount}} Follower</p>
+    </div>
+    <a mat-icon-button class="profile-launch-button" target="_blank" rel="noopener noreferrer" [href]="'https://twitter.com/' + username"> 
+        <mat-icon>launch</mat-icon>
+    </a>
+</div>
+
+<div mat-dialog-content class="body">
+    <p class="profile-description" [innerHTML]="description"></p>
+    
+    <div class="profile-timeline-container">
+        <a class="twitter-timeline" [href]="'https://twitter.com/' + username + '?ref_src=twsrc%5Etfw'"></a>
+    </div>
+</div>
+
+<div mat-dialog-actions class="footer">
+    <button mat-button color="primary" mat-dialog-close cdkFocusInitial>SCHLIESSEN</button>
+</div>

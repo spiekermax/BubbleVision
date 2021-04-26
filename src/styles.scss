@@ -28,3 +28,17 @@ body {
     background: #c8ccd0;
     background-clip: content-box;
 }
+
+a:link {
+    color: #3F51B5;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #3F51B5;
+    text-decoration: none;
+}

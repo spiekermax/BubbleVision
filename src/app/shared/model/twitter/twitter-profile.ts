@@ -1,14 +1,16 @@
 // Internal dependencies
-import Position from "../position/position";
-import TwitterCommunity from "./twitter-community";
+import { Position } from "../position/position";
+import { TwitterCommunity } from "./twitter-community";
 
 
-export default interface TwitterProfile
+export interface TwitterProfile
 {
     id: number;
 
     name: string;
     username: string;
+    description: string;
+
     verified: boolean;
     imageUrl: string;
 

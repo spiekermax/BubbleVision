@@ -2,10 +2,10 @@
 import * as PIXI from "pixi.js";
 
 // Internal dependencies
-import Position from "src/app/shared/model/position/position";
+import { Position } from "src/app/shared/model/position/position";
 
 
-export default class TwitterGraphCamera
+export class TwitterGraphCamera
 {
     /* CONSTANTS */
 
