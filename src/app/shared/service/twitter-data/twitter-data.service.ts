@@ -64,11 +64,7 @@ export class TwitterDataService
                 {
                     if(json.communities[communityId].includes(profileDTO.username))
                     {
-                        profile.community =
-                        {
-                            id: Number(communityId),
-                            size: json.communities[communityId].length
-                        }
+                        profile.communityId = Number(communityId);
                         break;
                     }
                 }
@@ -80,21 +76,6 @@ export class TwitterDataService
 
     public loadCommunities() : Observable<TwitterCommunity[]>
     {
-        return this.http.get<any>("assets/graph/de_1000_communities_weighted_louvain.json").pipe(map((json: any) =>
-        {
-            const communities: TwitterCommunity[] = [];
-            for(const communityId of Object.keys(json))
-            {
-                const community: TwitterCommunity =
-                {
-                    id: Number(communityId),
-                    size: json[communityId].length
-                };
-
-                communities.push(community);
-            }
-
-            return communities;
-        }));
+        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");
     }
 }

@@ -82,19 +82,19 @@ export class TwitterGraphProfileNode extends PIXI.Container
 
     private addBackground() : void
     {
-        if(!TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.community.id % 21])
+        if(!TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21])
         {
             // Create background graphics
             const circle: PIXI.Graphics = new PIXI.Graphics();
-            circle.beginFill(TwitterGraphProfileNode.COLOR_MAP[this.profile.community.id % 21]);
+            circle.beginFill(TwitterGraphProfileNode.COLOR_MAP[this.profile.communityId % 21]);
             circle.drawCircle(0, 0, TwitterGraphProfileNode.NODE_SIZE / 2);
             circle.endFill();
 
             // Generate texture
-            TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.community.id % 21] = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
+            TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21] = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
         }
 
-        const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.community.id % 21]);
+        const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileNode.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21]);
         background.hitArea = new PIXI.Circle(TwitterGraphProfileNode.NODE_SIZE / 2, TwitterGraphProfileNode.NODE_SIZE / 2, TwitterGraphProfileNode.NODE_SIZE / 2);
 
         this.addChild(background);
