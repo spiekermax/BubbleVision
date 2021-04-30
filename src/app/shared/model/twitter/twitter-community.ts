@@ -1,7 +1,3 @@
-// Internal dependencies
-import { Position } from "../position/position";
-
-
 export interface TwitterCommunity
 {
     id: number;
@@ -10,5 +6,5 @@ export interface TwitterCommunity
     size: number;
 
     members: string[];
-    centroid: Position;
+    clusters: any[];
 }

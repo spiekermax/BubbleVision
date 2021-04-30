@@ -39,7 +39,8 @@ export class HomePage implements OnInit
     public searchFormControl: FormControl = new FormControl();
 
     public twitterProfiles: TwitterProfile[] = [];
-    public twitterCommunities: TwitterCommunity[] = [];
+    public twitterCommunities0: TwitterCommunity[] = [];
+    public twitterCommunities1: TwitterCommunity[] = [];
 
     public filteredTwitterProfiles?: Observable<TwitterProfile[]>;
 
@@ -55,9 +56,13 @@ export class HomePage implements OnInit
         });
 
         // Load twitter communities
-        this.twitterDataService.loadCommunities().subscribe(twitterCommunities =>
+        this.twitterDataService.loadCommunities0().subscribe(twitterCommunities =>
         {
-            this.twitterCommunities = twitterCommunities;    
+            this.twitterCommunities0 = twitterCommunities;    
+        });
+        this.twitterDataService.loadCommunities1().subscribe(twitterCommunities =>
+        {
+            this.twitterCommunities1 = twitterCommunities;
         });
     }
 

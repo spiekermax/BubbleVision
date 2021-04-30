@@ -49,6 +49,9 @@ export class TwitterGraphProfileNode extends PIXI.Container
 
     // State
     private placeholderImage?: PIXI.Sprite;
+    private profileImage?: PIXI.Sprite;
+
+    private label?: PIXI.Text;
 
     // Events
     private clickSubject: Subject<void> = new Subject();
@@ -125,6 +128,8 @@ export class TwitterGraphProfileNode extends PIXI.Container
 
         label.cacheAsBitmap = true;
 
+        this.label = label;
+
         this.addChild(label);
     }
 
@@ -153,6 +158,8 @@ export class TwitterGraphProfileNode extends PIXI.Container
             this.placeholderImage = PIXI.Sprite.from(maskedImageTexture);
             this.placeholderImage.position.x = TwitterGraphProfileNode.IMAGE_PADDING / 2;
             this.placeholderImage.position.y = TwitterGraphProfileNode.IMAGE_PADDING / 2 - 30;
+
+            this.profileImage = this.placeholderImage;
 
             this.addChild(this.placeholderImage);
         }));
@@ -185,10 +192,38 @@ export class TwitterGraphProfileNode extends PIXI.Container
             maskedImage.position.y = TwitterGraphProfileNode.IMAGE_PADDING / 2;
 
             this.addChild(maskedImage);
+
+            this.profileImage = maskedImage;
             
             if(this.placeholderImage) 
                 this.removeChild(this.placeholderImage);
         });
+    }
+
+
+
+    public hideStuff()
+    {
+        if(this.profileImage) this.profileImage.visible = false;
+
+        if(this.label) this.label.visible = false;
+    }
+
+    public hidePlaceholder()
+    {
+        if(this.placeholderImage) this.placeholderImage.visible = false;
+    }
+
+    public showPlaceholder()
+    {
+        if(this.placeholderImage) this.placeholderImage.visible = true;
+    }
+
+    public showStuff()
+    {
+        if(this.profileImage) this.profileImage.visible = true;
+
+        if(this.label) this.label.visible = true;
     }
 
 

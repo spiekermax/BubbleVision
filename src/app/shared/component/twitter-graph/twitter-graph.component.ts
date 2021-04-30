@@ -6,8 +6,10 @@ import * as PIXI from "pixi.js";
 
 // Internal dependencies
 import { Position } from "../../model/position/position";
+import { TwitterCommunity } from "../../model/twitter/twitter-community";
 import { TwitterProfile } from "../../model/twitter/twitter-profile";
 import { TwitterGraphCamera } from "./camera/twitter-graph-camera";
+import { TwitterGraphCommunityNode } from "./node/twitter-graph-community-node";
 import { TwitterGraphProfileNode } from "./node/twitter-graph-profile-node";
 import { TwitterGraphResourceManager } from "./resource-manager/twitter-graph-resource-manager";
 
@@ -23,6 +25,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     // Inputs
     private _profiles: TwitterProfile[] = [];
+    private _communities0: TwitterCommunity[] = [];
+    private _communities1: TwitterCommunity[] = [];
 
     @Output()
     public profileClicked: EventEmitter<TwitterProfile> = new EventEmitter();
@@ -33,11 +37,10 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     // Application
     private app?: PIXI.Application;
 
-    // Containers
-    private nodeContainer?: PIXI.Container;
-
     // Components
     private camera?: TwitterGraphCamera;
+
+    private profileNodes: TwitterGraphProfileNode[] = [];
     
     // State
     private lastMouseDownPosition?: Position;
@@ -85,12 +88,26 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this.camera.position = { x: 900, y: 400 };
         this.camera.zoom = 0.012;
 
-        // Initialize containers
-        this.nodeContainer = new PIXI.Container();
-        this.app!.stage.addChild(this.nodeContainer);
-
         // Load profile images on demand
         this.autoLoadVisibleProfileImages();
+
+        this.app!.ticker.add(() =>
+        {
+            if(!this.camera) return;
+
+            if(this.camera.zoom < 0.04)
+            {
+                for(const pr of this.profileNodes)
+                    pr.hideStuff();
+            }
+            else
+            {
+                for(const pr of this.profileNodes)
+                    pr.showStuff();
+            }
+
+            
+        });
     }
 
     public ngOnDestroy() : void 
@@ -172,10 +189,10 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     private onProfilesChanged() : void
     {
         //
-        if(!this.nodeContainer) return;
+        if(!this.camera) return;
 
         // Remove old nodes
-        this.nodeContainer.removeChildren();
+        this.camera.baseLayer.removeChildren();
 
         // Load placeholder avatar
         TwitterGraphResourceManager.add("assets/avatar.jpg");
@@ -185,13 +202,51 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         for(const profile of this._profiles)
         {
             // Create node
-            const twitterProfileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app!.renderer, profile);
+            const profileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app!.renderer, profile);
 
             // Bind callbacks
-            twitterProfileNode.clickedEvent.subscribe(() => this.onProfileClicked(profile));
+            profileNode.clickedEvent.subscribe(() => this.onProfileClicked(profile));
+
+            this.profileNodes.push(profileNode);
 
             // Add node
-            this.nodeContainer.addChild(twitterProfileNode);
+            this.camera.baseLayer.addChild(profileNode);
+        }
+    }
+
+    private onCommunities0Changed() : void
+    {
+        if(!this.camera) return;
+
+        // Remove old nodes
+        this.camera.x10Layer.removeChildren();
+
+        // Add new nodes
+        for(const community of this.communities0)
+        {
+            // Create node
+            const communityNode: TwitterGraphCommunityNode = new TwitterGraphCommunityNode(this.app!.renderer, community, 10);
+
+            // Add node
+            this.camera.x10Layer.addChild(communityNode);
+        }
+    }
+
+    private onCommunities1Changed() : void
+    {
+        if(!this.camera) return;
+
+        // Remove old nodes
+        this.camera.x5Layer.removeChildren();
+
+        // Add new nodes
+        for(const community of this.communities1)
+        {
+            // Create node
+            const communityNode: TwitterGraphCommunityNode = new TwitterGraphCommunityNode(this.app!.renderer, community, 5);
+
+            // Add node
+            this.camera.x5Layer.addChild(communityNode);
         }
     }
 
@@ -203,7 +258,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this.app?.ticker.add(() =>
         {
             //
-            if(this.lastMouseDownPosition || !this.camera || this.camera.zoom < 0.12 || this.camera.isAnimating(10)) return;
+            if(this.lastMouseDownPosition || !this.camera || this.camera.zoom < 0.1 || this.camera.isAnimating(10)) return;
 
             //
             if(!this.profiles) return;
@@ -279,5 +334,35 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
         //
         this.onProfilesChanged();
+    }
+
+    public get communities0() : TwitterCommunity[]
+    {
+        return this._communities0;
+    }
+
+    @Input() 
+    public set communities0(newCommunities: TwitterCommunity[])
+    {
+        //
+        this._communities0 = newCommunities;
+
+        //
+        this.onCommunities0Changed();
+    }
+
+    public get communities1() : TwitterCommunity[]
+    {
+        return this._communities1;
+    }
+
+    @Input() 
+    public set communities1(newCommunities: TwitterCommunity[])
+    {
+        //
+        this._communities1 = newCommunities;
+
+        //
+        this.onCommunities1Changed();
     }
 }

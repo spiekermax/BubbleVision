@@ -4,7 +4,7 @@ import { Injectable } from "@angular/core";
 
 // Reactive X
 import { forkJoin, Observable } from "rxjs";
-import { map } from 'rxjs/operators';
+import { map } from "rxjs/operators";
 
 // Internal dependencies
 import { TwitterCommunity } from "../../model/twitter/twitter-community";
@@ -74,8 +74,13 @@ export class TwitterDataService
         }));
     }
 
-    public loadCommunities() : Observable<TwitterCommunity[]>
+    public loadCommunities0() : Observable<TwitterCommunity[]>
     {
-        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");
+        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info_0.json");
+    }
+
+    public loadCommunities1() : Observable<TwitterCommunity[]>
+    {
+        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info_1.json");
     }
 }
