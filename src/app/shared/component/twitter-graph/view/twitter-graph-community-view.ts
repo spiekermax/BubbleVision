@@ -105,12 +105,14 @@ export class TwitterGraphCommunityView extends PIXI.Container
         const labelStyle: PIXI.TextStyle = new PIXI.TextStyle
         ({ 
             fill: "white",
-            fontSize: (250 / this.scalingFactor) * hotspot.radius,
+            fontSize: (200 / this.scalingFactor) * hotspot.radius,
             fontFamily: "Roboto", 
             align: "center",
-            letterSpacing: 1.5
+            letterSpacing: 1.5,
+            wordWrap: true,
+            wordWrapWidth: (1200 / this.scalingFactor) * hotspot.radius
         });
-        const label: PIXI.Text = new PIXI.Text(this.community.name?.toUpperCase() || "ERROR", labelStyle);
+        const label: PIXI.Text = new PIXI.Text("#" + hotspot.name?.toUpperCase() || "ERROR", labelStyle);
         
         const labelBounds: PIXI.Rectangle = label.getBounds();
         const labelWidth: number = labelBounds.width;
