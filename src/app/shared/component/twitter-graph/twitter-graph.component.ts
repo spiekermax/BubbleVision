@@ -6,12 +6,15 @@ import * as PIXI from "pixi.js";
 
 // Internal dependencies
 import { Position } from "../../model/position/position";
-import { TwitterCommunity } from "../../model/twitter/twitter-community";
-import { TwitterProfile } from "../../model/twitter/twitter-profile";
+
+import { TwitterCommunity } from "../../model/twitter/community/twitter-community";
+import { TwitterProfile } from "../../model/twitter/profile/twitter-profile";
+
 import { TwitterGraphCamera } from "./camera/twitter-graph-camera";
-import { TwitterGraphCommunityNode } from "./node/twitter-graph-community-node";
-import { TwitterGraphProfileNode } from "./node/twitter-graph-profile-node";
-import { TwitterGraphResourceManager } from "./resource-manager/twitter-graph-resource-manager";
+import { TwitterGraphResourceManager } from "./resource/twitter-graph-resource-manager";
+
+import { TwitterGraphCommunityView } from "./view/twitter-graph-community-view";
+import { TwitterGraphProfileView } from "./view/twitter-graph-profile-view";
 
 
 @Component
@@ -25,8 +28,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     // Inputs
     private _profiles: TwitterProfile[] = [];
-    private _communities0: TwitterCommunity[] = [];
-    private _communities1: TwitterCommunity[] = [];
+    private _communities: TwitterCommunity[] = [];
 
     @Output()
     public profileClicked: EventEmitter<TwitterProfile> = new EventEmitter();
@@ -39,8 +41,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     // Components
     private camera?: TwitterGraphCamera;
-
-    private profileNodes: TwitterGraphProfileNode[] = [];
+    private profileViews: TwitterGraphProfileView[] = [];
     
     // State
     private lastMouseDownPosition?: Position;
@@ -88,32 +89,56 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this.camera.position = { x: 900, y: 400 };
         this.camera.zoom = 0.012;
 
-        // Load profile images on demand
-        this.autoLoadVisibleProfileImages();
-
-        this.app!.ticker.add(() =>
-        {
-            if(!this.camera) return;
-
-            if(this.camera.zoom < 0.04)
-            {
-                for(const pr of this.profileNodes)
-                    pr.hideStuff();
-            }
-            else
-            {
-                for(const pr of this.profileNodes)
-                    pr.showStuff();
-            }
-
-            
-        });
+        // Register update loop
+        this.app?.ticker.add(this.onUtilityUpdate.bind(this), undefined, PIXI.UPDATE_PRIORITY.UTILITY);
     }
 
     public ngOnDestroy() : void 
     {
         // Destroy PIXI application
         this.app!.destroy();
+    }
+
+
+    /* CALLBACKS - LIFECYCLE */
+
+    private onUtilityUpdate() : void
+    {
+        if(!this.camera) return;
+
+        // Hide profile details when zoomed out
+        if(this.camera.zoom < 0.04)
+        {
+            for(const profileView of this.profileViews)
+                profileView.hideDetails();
+
+            return;
+        }
+
+        // Show profile details when zoomed in
+        for(const profileView of this.profileViews)
+            profileView.showDetails();
+
+        //
+        if(this.lastMouseDownPosition || this.camera.zoom < 0.1 || this.camera.isAnimating(10)) return;
+
+        //
+        if(!this.profiles) return;
+
+        // Get visible bounds
+        const visibleBounds: PIXI.Rectangle = this.camera.calculateVisibleBounds();
+
+        // Request visible images
+        for(const profile of this.profiles)
+        {
+            if(profile.position.x < visibleBounds.left || profile.position.y < visibleBounds.top) continue;
+            if(profile.position.x > visibleBounds.right || profile.position.y > visibleBounds.bottom) continue;
+    
+            TwitterGraphResourceManager.add(profile.imageUrl);
+        }
+
+        // Load visible images
+        TwitterGraphResourceManager.load();
     }
 
 
@@ -191,98 +216,57 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         //
         if(!this.camera) return;
 
-        // Remove old nodes
+        // Remove old views
         this.camera.baseLayer.removeChildren();
 
         // Load placeholder avatar
         TwitterGraphResourceManager.add("assets/avatar.jpg");
         TwitterGraphResourceManager.load();
 
-        // Add new nodes
+        // Add new views
         for(const profile of this._profiles)
         {
-            // Create node
-            const profileNode: TwitterGraphProfileNode = new TwitterGraphProfileNode(this.app!.renderer, profile);
+            // Create view
+            const profileView: TwitterGraphProfileView = new TwitterGraphProfileView(this.app!.renderer, profile);
+
+            // Cache view reference
+            this.profileViews.push(profileView);
 
             // Bind callbacks
-            profileNode.clickedEvent.subscribe(() => this.onProfileClicked(profile));
+            profileView.clickedEvent.subscribe(() => this.onProfileClicked(profile));
 
-            this.profileNodes.push(profileNode);
-
-            // Add node
-            this.camera.baseLayer.addChild(profileNode);
+            // Add view
+            this.camera.baseLayer.addChild(profileView);
         }
     }
 
-    private onCommunities0Changed() : void
+    private onCommunitiesChanged() : void
     {
         if(!this.camera) return;
 
         // Remove old nodes
-        this.camera.x10Layer.removeChildren();
+        this.camera.lod0Layer.removeChildren();
+        this.camera.lod1Layer.removeChildren();
 
         // Add new nodes
-        for(const community of this.communities0)
+        for(const community of this.communities)
         {
             // Create node
-            const communityNode: TwitterGraphCommunityNode = new TwitterGraphCommunityNode(this.app!.renderer, community, 10);
+            const communityNodeLod0: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 0);
 
             // Add node
-            this.camera.x10Layer.addChild(communityNode);
-        }
-    }
+            this.camera.lod0Layer.addChild(communityNodeLod0);
 
-    private onCommunities1Changed() : void
-    {
-        if(!this.camera) return;
-
-        // Remove old nodes
-        this.camera.x5Layer.removeChildren();
-
-        // Add new nodes
-        for(const community of this.communities1)
-        {
             // Create node
-            const communityNode: TwitterGraphCommunityNode = new TwitterGraphCommunityNode(this.app!.renderer, community, 5);
+            const communityNodeLod1: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 1);
 
             // Add node
-            this.camera.x5Layer.addChild(communityNode);
+            this.camera.lod1Layer.addChild(communityNodeLod1);
         }
     }
 
 
-    /* METHODS */
-
-    private autoLoadVisibleProfileImages() : void
-    {
-        this.app?.ticker.add(() =>
-        {
-            //
-            if(this.lastMouseDownPosition || !this.camera || this.camera.zoom < 0.1 || this.camera.isAnimating(10)) return;
-
-            //
-            if(!this.profiles) return;
-
-            // Get visible bounds
-            const visibleBounds: PIXI.Rectangle = this.camera.calculateVisibleBounds();
-
-            // Request visible images
-            for(const profile of this.profiles)
-            {
-                if(profile.position.x < visibleBounds.left || profile.position.y < visibleBounds.top) continue;
-                if(profile.position.x > visibleBounds.right || profile.position.y > visibleBounds.bottom) continue;
-    
-                TwitterGraphResourceManager.add(profile.imageUrl);
-            }
-
-            // Load visible images
-            TwitterGraphResourceManager.load();
-
-        }, undefined, PIXI.UPDATE_PRIORITY.UTILITY);
-    }
-
-
-    /* METHODS - CAMERA */
+    /* METHODS  */
 
     public zoomToProfile(profile: TwitterProfile) : void
     {
@@ -291,8 +275,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         const newZoom: number = 0.33;
         this.camera.animatePosition
         ({
-            x: (-profile.position.x * newZoom) + (this.app!.renderer.width - TwitterGraphProfileNode.NODE_SIZE / 2) / 2,
-            y: (-profile.position.y * newZoom) + (this.app!.renderer.height - TwitterGraphProfileNode.NODE_SIZE / 2) / 2
+            x: (-profile.position.x * newZoom) + (this.app!.renderer.width - TwitterGraphProfileView.DIAMETER / 2) / 2,
+            y: (-profile.position.y * newZoom) + (this.app!.renderer.height - TwitterGraphProfileView.DIAMETER / 2) / 2
         });
         this.camera.animateZoom(newZoom);
     }
@@ -336,33 +320,18 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this.onProfilesChanged();
     }
 
-    public get communities0() : TwitterCommunity[]
+    public get communities() : TwitterCommunity[]
     {
-        return this._communities0;
+        return this._communities;
     }
 
     @Input() 
-    public set communities0(newCommunities: TwitterCommunity[])
+    public set communities(newCommunities: TwitterCommunity[])
     {
         //
-        this._communities0 = newCommunities;
+        this._communities = newCommunities;
 
         //
-        this.onCommunities0Changed();
-    }
-
-    public get communities1() : TwitterCommunity[]
-    {
-        return this._communities1;
-    }
-
-    @Input() 
-    public set communities1(newCommunities: TwitterCommunity[])
-    {
-        //
-        this._communities1 = newCommunities;
-
-        //
-        this.onCommunities1Changed();
+        this.onCommunitiesChanged();
     }
 }

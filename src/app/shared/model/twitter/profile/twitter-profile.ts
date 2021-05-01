@@ -1,5 +1,5 @@
 // Internal dependencies
-import { Position } from "../position/position";
+import { Position } from "../../position/position";
 
 
 export interface TwitterProfile

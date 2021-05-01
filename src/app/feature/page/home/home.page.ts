@@ -10,8 +10,8 @@ import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 
 // Internal dependencies
-import { TwitterCommunity } from "src/app/shared/model/twitter/twitter-community";
-import { TwitterProfile } from "src/app/shared/model/twitter/twitter-profile";
+import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
+import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 
 import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
 import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-data.service";
@@ -39,8 +39,7 @@ export class HomePage implements OnInit
     public searchFormControl: FormControl = new FormControl();
 
     public twitterProfiles: TwitterProfile[] = [];
-    public twitterCommunities0: TwitterCommunity[] = [];
-    public twitterCommunities1: TwitterCommunity[] = [];
+    public twitterCommunities: TwitterCommunity[] = [];
 
     public filteredTwitterProfiles?: Observable<TwitterProfile[]>;
 
@@ -56,13 +55,9 @@ export class HomePage implements OnInit
         });
 
         // Load twitter communities
-        this.twitterDataService.loadCommunities0().subscribe(twitterCommunities =>
+        this.twitterDataService.loadCommunities().subscribe(twitterCommunities =>
         {
-            this.twitterCommunities0 = twitterCommunities;    
-        });
-        this.twitterDataService.loadCommunities1().subscribe(twitterCommunities =>
-        {
-            this.twitterCommunities1 = twitterCommunities;
+            this.twitterCommunities = twitterCommunities;    
         });
     }
 

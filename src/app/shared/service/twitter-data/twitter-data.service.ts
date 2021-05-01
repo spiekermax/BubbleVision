@@ -7,8 +7,8 @@ import { forkJoin, Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
 // Internal dependencies
-import { TwitterCommunity } from "../../model/twitter/twitter-community";
-import { TwitterProfile } from "../../model/twitter/twitter-profile";
+import { TwitterCommunity } from "../../model/twitter/community/twitter-community";
+import { TwitterProfile } from "../../model/twitter/profile/twitter-profile";
 
 
 @Injectable
@@ -19,7 +19,7 @@ export class TwitterDataService
 {
     /* CONSTANTS */
 
-    private static readonly GRAPH_SCALING_FACTOR: number = 1000;
+    private static readonly POSITION_SCALING_FACTOR: number = 1000;
 
 
     /* LIFECYCLE */
@@ -54,8 +54,8 @@ export class TwitterDataService
                     followeeCount: profileDTO.followeeCount,
                     position:
                     {
-                        x: profileDTO.position[0] * TwitterDataService.GRAPH_SCALING_FACTOR,
-                        y: profileDTO.position[1] * TwitterDataService.GRAPH_SCALING_FACTOR
+                        x: profileDTO.position[0] * TwitterDataService.POSITION_SCALING_FACTOR,
+                        y: profileDTO.position[1] * TwitterDataService.POSITION_SCALING_FACTOR
                     }
                 };
 
@@ -74,13 +74,8 @@ export class TwitterDataService
         }));
     }
 
-    public loadCommunities0() : Observable<TwitterCommunity[]>
+    public loadCommunities() : Observable<TwitterCommunity[]>
     {
-        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info_0.json");
-    }
-
-    public loadCommunities1() : Observable<TwitterCommunity[]>
-    {
-        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info_1.json");
+        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");
     }
 }
