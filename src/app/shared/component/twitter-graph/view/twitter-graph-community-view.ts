@@ -3,6 +3,8 @@ import * as PIXI from "pixi.js";
 
 // Internal dependencies
 import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
+import { TwitterCommunityHotspot } from "src/app/shared/model/twitter/community/twitter-community-hotspot";
+
 import { TwitterGraphCamera } from "../camera/twitter-graph-camera";
 
 
@@ -69,7 +71,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     /* INITIALIZATION */
 
-    private addHotspotBackground(hotspot: any) : void
+    private addHotspotBackground(hotspot: TwitterCommunityHotspot) : void
     {
         //
         const circle: PIXI.Graphics = new PIXI.Graphics();
@@ -87,12 +89,18 @@ export class TwitterGraphCommunityView extends PIXI.Container
         //
         circleSprite.position.x = (1000 / this.scalingFactor) * (hotspot.centroid[0] - hotspot.radius);
         circleSprite.position.y = (1000 / this.scalingFactor) * (hotspot.centroid[1] - hotspot.radius);
+        
+        circleSprite.interactive = true;
+        circleSprite.cursor = "pointer";
+        circleSprite.hitArea = new PIXI.Circle((1000 / this.scalingFactor) * hotspot.radius, (1000 / this.scalingFactor) * hotspot.radius, (1000 / this.scalingFactor) * hotspot.radius);
+
+        circleSprite.on("click", () => this.onHotspotClicked(hotspot));
 
         //
         this.addChild(circleSprite);
     }
 
-    private addHotspotLabel(hotspot: any) : void
+    private addHotspotLabel(hotspot: TwitterCommunityHotspot) : void
     {
         const labelStyle: PIXI.TextStyle = new PIXI.TextStyle
         ({ 
@@ -113,5 +121,13 @@ export class TwitterGraphCommunityView extends PIXI.Container
         label.cacheAsBitmap = true;
 
         this.addChild(label);
+    }
+
+
+    /* CALLBACKS */
+
+    private onHotspotClicked(hotspot: TwitterCommunityHotspot) : void
+    {
+        console.log(this.community, hotspot);
     }
 }

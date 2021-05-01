@@ -166,7 +166,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     private onMouseMove(event: MouseEvent) : void
     {
-        if(!this.lastMouseDownPosition || !this.camera) return;
+        if(!this.camera || !this.lastMouseDownPosition) return;
 
         // Update camera position
         this.camera.position =

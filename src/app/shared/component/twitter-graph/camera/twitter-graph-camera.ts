@@ -42,9 +42,9 @@ export class TwitterGraphCamera
     private _lod1Layer: PIXI.Container = new PIXI.Container();
     private _lod2Layer: PIXI.Container = new PIXI.Container();
     
-    private lod0LayerTargetVisibility: boolean = false;
-    private lod1LayerTargetVisibility: boolean = false;
-    private lod2LayerTargetVisibility: boolean = true;
+    private lod0LayerVisible: boolean = false;
+    private lod1LayerVisible: boolean = false;
+    private lod2LayerVisible: boolean = true;
 
     private targetPosition?: Position;
     private targetZoom?: number;
@@ -63,9 +63,9 @@ export class TwitterGraphCamera
         this.lod2Layer.sortableChildren = true;
 
         //
-        this.lod0Layer.alpha = +this.lod0LayerTargetVisibility;
-        this.lod1Layer.alpha = +this.lod1LayerTargetVisibility;
-        this.lod2Layer.alpha = +this.lod2LayerTargetVisibility;
+        this.lod0Layer.alpha = +this.lod0LayerVisible;
+        this.lod1Layer.alpha = +this.lod1LayerVisible;
+        this.lod2Layer.alpha = +this.lod2LayerVisible;
 
         // Add layers
         this.app.stage.addChild(this.lod2Layer);
@@ -96,9 +96,14 @@ export class TwitterGraphCamera
         }
 
         // Update layer visibility
-        this.lod0LayerTargetVisibility = this.zoom < 0.02;
-        this.lod1LayerTargetVisibility = this.zoom >= 0.02 && this.zoom <= 0.1;
-        // this.lod2LayerTargetVisibility = this.zoom > 0.1;
+        this.lod0LayerVisible = this.zoom < 0.02;
+        this.lod1LayerVisible = this.zoom >= 0.02 && this.zoom <= 0.1;
+        // this.lod2LayerVisible = this.zoom > 0.1;
+
+        // Update layer interactivity
+        this.lod0Layer.interactiveChildren = this.zoom < 0.02;
+        this.lod1Layer.interactiveChildren = this.zoom >= 0.02 && this.zoom <= 0.1;
+        this.lod2Layer.interactiveChildren = this.zoom >= 0.02;
 
         // Interpolate visibility
         this.interpolateVisibility()
@@ -133,11 +138,11 @@ export class TwitterGraphCamera
 
     private interpolateVisibility() : void
     {
-        this.lod0Layer.alpha = this.lerp(this.lod0Layer.alpha, +this.lod0LayerTargetVisibility, 0.1);
+        this.lod0Layer.alpha = this.lerp(this.lod0Layer.alpha, +this.lod0LayerVisible, 0.1);
 
-        this.lod1Layer.alpha = this.lerp(this.lod1Layer.alpha, +this.lod1LayerTargetVisibility, 0.1);
+        this.lod1Layer.alpha = this.lerp(this.lod1Layer.alpha, +this.lod1LayerVisible, 0.1);
         
-        this.lod2Layer.alpha = this.lerp(this.lod2Layer.alpha, +this.lod2LayerTargetVisibility, 0.1);
+        this.lod2Layer.alpha = this.lerp(this.lod2Layer.alpha, +this.lod2LayerVisible, 0.1);
     }
 
     public animatePosition(newPosition: Position) : void
