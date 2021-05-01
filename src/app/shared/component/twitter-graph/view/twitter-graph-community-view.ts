@@ -63,7 +63,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
                 if(hotspot.radius < 0.1) continue;
 
                 this.addHotspotBackground(hotspot);
-                this.addHotspotLabel(hotspot);
+                this.addHotspotLabels(hotspot);
             }
         }
     }
@@ -100,9 +100,9 @@ export class TwitterGraphCommunityView extends PIXI.Container
         this.addChild(circleSprite);
     }
 
-    private addHotspotLabel(hotspot: TwitterCommunityHotspot) : void
+    private addHotspotLabels(hotspot: TwitterCommunityHotspot) : void
     {
-        const labelStyle: PIXI.TextStyle = new PIXI.TextStyle
+        const nameLabelStyle: PIXI.TextStyle = new PIXI.TextStyle
         ({ 
             fill: "white",
             fontSize: (200 / this.scalingFactor) * hotspot.radius,
@@ -112,17 +112,41 @@ export class TwitterGraphCommunityView extends PIXI.Container
             wordWrap: true,
             wordWrapWidth: (1200 / this.scalingFactor) * hotspot.radius
         });
-        const label: PIXI.Text = new PIXI.Text("#" + hotspot.name?.toUpperCase() || "ERROR", labelStyle);
+        const nameLabel: PIXI.Text = new PIXI.Text("#" + hotspot.name?.toUpperCase() || "ERROR", nameLabelStyle);
         
-        const labelBounds: PIXI.Rectangle = label.getBounds();
-        const labelWidth: number = labelBounds.width;
-        const labelHeight: number = labelBounds.height;
+        const nameLabelBounds: PIXI.Rectangle = nameLabel.getBounds();
+        const nameLabelWidth: number = nameLabelBounds.width;
+        const nameLabelHeight: number = nameLabelBounds.height;
 
-        label.position.x = hotspot.centroid[0] * (1000 / this.scalingFactor) - labelWidth / 2;
-        label.position.y = hotspot.centroid[1] * (1000 / this.scalingFactor) - labelHeight / 2;
-        label.cacheAsBitmap = true;
+        nameLabel.position.x = (1000 / this.scalingFactor) * (hotspot.centroid[0] - hotspot.radius) + ((1000 / this.scalingFactor) * hotspot.radius) - nameLabelWidth / 2;
+        nameLabel.position.y = (1000 / this.scalingFactor) * (hotspot.centroid[1] - hotspot.radius) + ((1000 / this.scalingFactor) * hotspot.radius) - nameLabelHeight / 2;
+        nameLabel.cacheAsBitmap = true;
 
-        this.addChild(label);
+        this.addChild(nameLabel);
+
+        const size: number = this.lod == 0 ? this.community.size : hotspot.size;
+
+        const sizeLabelStyle: PIXI.TextStyle = new PIXI.TextStyle
+        ({ 
+            fill: "white",
+            fontSize: (150 / this.scalingFactor) * hotspot.radius,
+            fontFamily: "Roboto", 
+            align: "center",
+            letterSpacing: 1.5,
+            wordWrap: true,
+            wordWrapWidth: (1200 / this.scalingFactor) * hotspot.radius
+        });
+        const sizeLabel: PIXI.Text = new PIXI.Text(size.toString() || "ERROR", sizeLabelStyle);
+        
+        const sizeLabelBounds: PIXI.Rectangle = sizeLabel.getBounds();
+        const sizeLabelWidth: number = sizeLabelBounds.width;
+        const sizeLabelHeight: number = nameLabelBounds.height;
+
+        sizeLabel.position.x = (1000 / this.scalingFactor) * (hotspot.centroid[0] - hotspot.radius) + ((1000 / this.scalingFactor) * hotspot.radius) - sizeLabelWidth / 2;
+        sizeLabel.position.y = (1000 / this.scalingFactor) * (hotspot.centroid[1] - hotspot.radius) + ((1100 / this.scalingFactor) * hotspot.radius) - sizeLabelHeight / 2 + nameLabelHeight;
+        sizeLabel.cacheAsBitmap = true;
+
+        this.addChild(sizeLabel);
     }
 
 

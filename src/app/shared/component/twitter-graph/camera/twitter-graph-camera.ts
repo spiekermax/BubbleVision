@@ -42,7 +42,7 @@ export class TwitterGraphCamera
     private _lod1Layer: PIXI.Container = new PIXI.Container();
     private _lod2Layer: PIXI.Container = new PIXI.Container();
     
-    private lod0LayerVisible: boolean = false;
+    private lod0LayerVisible: boolean = true;
     private lod1LayerVisible: boolean = false;
     private lod2LayerVisible: boolean = true;
 
