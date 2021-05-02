@@ -118,7 +118,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
             wordWrap: true,
             wordWrapWidth: (1200 / this.scalingFactor) * hotspot.radius
         });
-        const nameLabel: PIXI.Text = new PIXI.Text("#" + hotspot.name?.toUpperCase() || "ERROR", nameLabelStyle);
+        const nameLabel: PIXI.Text = new PIXI.Text("#" + hotspot.name?.toLowerCase() || "error", nameLabelStyle);
         
         const nameLabelBounds: PIXI.Rectangle = nameLabel.getBounds();
         const nameLabelWidth: number = nameLabelBounds.width;
@@ -142,7 +142,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
             wordWrap: true,
             wordWrapWidth: (1200 / this.scalingFactor) * hotspot.radius
         });
-        const sizeLabel: PIXI.Text = new PIXI.Text(size.toString() || "ERROR", sizeLabelStyle);
+        const sizeLabel: PIXI.Text = new PIXI.Text(size.toString() || "???", sizeLabelStyle);
         
         const sizeLabelBounds: PIXI.Rectangle = sizeLabel.getBounds();
         const sizeLabelWidth: number = sizeLabelBounds.width;
