@@ -32,6 +32,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     @Output()
     public profileClicked: EventEmitter<TwitterProfile> = new EventEmitter();
+    
+    @Output()
+    public communityClicked: EventEmitter<TwitterCommunity> = new EventEmitter();
 
 
     /* ATTRIBUTES */
@@ -45,6 +48,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     
     // State
     private lastMouseDownPosition?: Position;
+    private isDragGestureActive: boolean = false;
 
 
     /* LIFECYCLE */
@@ -162,11 +166,17 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     {
         // Clear mouse position state
         this.lastMouseDownPosition = undefined;
+
+        //
+        this.isDragGestureActive = false;
     }
 
     private onMouseMove(event: MouseEvent) : void
     {
         if(!this.camera || !this.lastMouseDownPosition) return;
+
+        //
+        this.isDragGestureActive = true;
 
         // Update camera position
         this.camera.position =
@@ -205,7 +215,16 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     private onProfileClicked(profile: TwitterProfile) : void
     {
+        if(this.isDragGestureActive) return;
+
         this.ngZone.run(() => this.profileClicked.emit(profile));
+    }
+
+    private onCommunityClicked(community: TwitterCommunity) : void
+    {
+        if(this.isDragGestureActive) return;
+        
+        this.ngZone.run(() => this.communityClicked.emit(community));
     }
 
 
@@ -254,11 +273,17 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             // Create node
             const communityNodeLod0: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 0);
 
+            // Bind callbacks
+            communityNodeLod0.clickedEvent.subscribe(() => this.onCommunityClicked(community));
+
             // Add node
             this.camera.lod0Layer.addChild(communityNodeLod0);
 
             // Create node
             const communityNodeLod1: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 1);
+
+            // Bind callbacks
+            communityNodeLod1.clickedEvent.subscribe(() => this.onCommunityClicked(community));
 
             // Add node
             this.camera.lod1Layer.addChild(communityNodeLod1);

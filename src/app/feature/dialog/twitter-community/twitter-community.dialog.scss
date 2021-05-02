@@ -1,0 +1,77 @@
+.header {
+    display: flex; 
+    flex-direction: row; 
+    
+    .community-name {
+        overflow: hidden;
+        max-width: 304px;
+    
+        font-weight: 500;
+        text-overflow: ellipsis;
+        white-space: nowrap
+    }
+    
+    .community-type {
+        margin-top: -18px;
+        margin-bottom: 4px;
+        
+        color: gray;
+        font-size: 14px;
+    }
+    
+    .community-stats {
+        font-size: 13px; 
+        font-weight: 500;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    
+        margin-top: 8px;
+    }
+    
+    .community-help-button {
+        margin-left: auto;
+        color: black;
+    }
+}
+
+.body {
+    display: flex;
+    flex-direction: column;
+
+    .profile-image {
+        width: 32px;
+        height: 32px; 
+        border-radius: 50%; 
+    }
+
+    .profile-item {
+        border-radius: 12px;
+
+        ::ng-deep .mat-ripple {
+            border-radius: 12px;
+        }
+    }
+
+    .profile-stats {
+        font-size: 13px; 
+        font-weight: 500;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+}
+
+.footer {
+    justify-content: flex-end;
+}
+
+::ng-deep .twitter-emoji {
+    margin-left: 1px;
+    margin-right: 1px;
+    height: 17px;
+    
+    vertical-align: middle;
+}
+
+::ng-deep .mat-list-item-content {
+    padding-left: 8px !important;
+}

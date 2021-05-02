@@ -18,6 +18,7 @@ import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-
 
 import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
+import { TwitterCommunityDialog } from "../../dialog/twitter-community/twitter-community.dialog";
 
 
 @Component
@@ -122,6 +123,17 @@ export class HomePage implements OnInit
         this.dialog.open(TwitterProfileDialog,
         { 
             data: twitterProfile,
+            width: "514px"
+        });
+    }
+
+    public openTwitterCommunityDialog(twitterCommunity: TwitterCommunity) : void
+    {
+        const twitterCommunityMembers: TwitterProfile[] = this.twitterProfiles.filter(profile => twitterCommunity.members.includes(profile.username));
+
+        this.dialog.open(TwitterCommunityDialog,
+        { 
+            data: [twitterCommunity, twitterCommunityMembers],
             width: "514px"
         });
     }

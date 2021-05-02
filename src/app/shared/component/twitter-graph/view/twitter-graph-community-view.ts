@@ -1,3 +1,6 @@
+// Reactive X
+import { Observable, Subject } from "rxjs";
+
 // PIXI
 import * as PIXI from "pixi.js";
 
@@ -41,6 +44,9 @@ export class TwitterGraphCommunityView extends PIXI.Container
     /* ATTRIBUTES */
 
     private scalingFactor: number = TwitterGraphCamera.getLodScalingFactor(this.lod);
+
+    // Events
+    private clickSubject: Subject<void> = new Subject();
 
 
     /* LIFECYCLE */
@@ -154,6 +160,14 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     private onHotspotClicked(hotspot: TwitterCommunityHotspot) : void
     {
-        console.log(this.community, hotspot);
+        this.clickSubject.next();
+    }
+
+
+    /* GETTER & SETTER */
+
+    public get clickedEvent() : Observable<void>
+    {
+        return this.clickSubject;
     }
 }

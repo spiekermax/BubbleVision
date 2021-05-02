@@ -2,7 +2,8 @@
 <twitter-graph class="twitter-graph"
     [profiles]="this.twitterProfiles"
     [communities]="this.twitterCommunities"
-    (profileClicked)="openTwitterProfileDialog($event)">
+    (profileClicked)="openTwitterProfileDialog($event)"
+    (communityClicked)="openTwitterCommunityDialog($event)">
 </twitter-graph>
 
 <!-- Searchbar -->
