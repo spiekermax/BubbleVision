@@ -20,7 +20,9 @@
         </mat-option>
     </mat-autocomplete>
 
-    <button mat-icon-button matSuffix>
+    <button mat-icon-button matSuffix
+        [matMenuTriggerFor]="filterMenu"
+        (click)="$event.stopPropagation()">
         <mat-icon>filter_list</mat-icon>
     </button>
     <button mat-icon-button matSuffix 
@@ -29,6 +31,32 @@
         <mat-icon>more_vert</mat-icon>
     </button>
 </mat-form-field>
+
+<mat-menu #filterMenu="matMenu">
+    <div class="menu-title">Filter</div>
+    <div style="padding-left: 16px; margin-top: 24px; padding-right: 16px; width: 220px; overflow: hidden;" (click)="$event.stopPropagation()" (mouseleave)="a.blur();b.blur();" (mouseup)="a.blur();b.blur();">
+        <div>Follower (Minimal)</div>
+        <mat-slider style="width: 100%" #a
+            thumbLabel
+            tickInterval="1000"
+            color="primary"
+            step="1000"
+            min="0"
+            max="100000">
+        </mat-slider>
+
+        <div>Follower (Maximal)</div>
+        <mat-slider style="width: 100%" #b
+            thumbLabel
+            tickInterval="1000"
+            step="1000"
+            color="primary"
+            value="100000"
+            min="0"
+            max="100000">
+        </mat-slider>
+    </div>
+</mat-menu>
 
 <mat-menu #moreMenu="matMenu">
     <div class="menu-title">Mehr</div>

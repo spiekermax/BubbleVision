@@ -69,3 +69,7 @@
         border-radius: 0 32px 32px 0 !important;
     }
 }
+
+::ng-deep .mat-slider-thumb, ::ng-deep .mat-slider-thumb-label {
+    background-color: #1e88e5 !important;
+}
