@@ -70,6 +70,10 @@
     }
 }
 
+::ng-deep .mat-slider:not(.mat-slider-disabled).cdk-focused.mat-slider-thumb-label-showing .mat-slider-thumb {
+    transform: scale(0.5) !important;
+}
+
 ::ng-deep .mat-slider-thumb, ::ng-deep .mat-slider-thumb-label {
     background-color: #1e88e5 !important;
 }
