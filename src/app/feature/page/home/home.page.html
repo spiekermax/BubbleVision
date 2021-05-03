@@ -33,32 +33,48 @@
     </button>
 </mat-form-field>
 
+<!-- Filter menu -->
 <mat-menu #filterMenu="matMenu">
     <div class="menu-title">Filter</div>
-    <div style="padding-left: 16px; margin-top: 24px; padding-right: 16px; width: 220px; overflow: hidden;" (click)="$event.stopPropagation()" (mouseleave)="a.blur();b.blur();" (mouseup)="a.blur();b.blur();">
-        <div>Follower (Minimal)</div>
-        <mat-slider style="width: 100%" #a
-            thumbLabel
-            tickInterval="1000"
+    <div class="filter-menu-body" 
+        (click)="$event.stopPropagation()" 
+        (mouseleave)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();" 
+        (mouseup)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();">
+
+        <div class="filter-slider-label">
+            <span>Follower (Mindestens):</span>
+            <span style="color: #696969;">{{Utils.shortenNumber(minTwitterFollowersLimit)}}</span>
+        </div>
+        <mat-slider #minTwitterFollowersLimitSlider 
+            class="filter-slider" 
             color="primary"
-            step="1000"
             min="0"
-            max="100000">
+            max="1000"
+            step="1"
+            value="0"
+            (change)="onTwitterFollowersLimitSliderChanged()"
+            (input)="onTwitterMinFollowersLimitSliderMoved($event)">
         </mat-slider>
 
-        <div>Follower (Maximal)</div>
-        <mat-slider style="width: 100%" #b
-            thumbLabel
-            tickInterval="1000"
-            step="1000"
+        <div class="filter-slider-label">
+            <span>Follower (Höchstens):</span>
+            <span style="color: #696969;">{{Utils.shortenNumber(maxTwitterFollowersLimit)}}</span>
+        </div>
+        <mat-slider #maxTwitterFollowersLimitSlider
+            class="filter-slider"
             color="primary"
-            value="100000"
             min="0"
-            max="100000">
+            max="1000"
+            step="1"
+            value="1000"
+            (change)="onTwitterFollowersLimitSliderChanged()"
+            (input)="onTwitterMaxFollowersLimitSliderMoved($event)">
         </mat-slider>
+
     </div>
 </mat-menu>
 
+<!-- More menu -->
 <mat-menu #moreMenu="matMenu">
     <div class="menu-title">Mehr</div>
     <button mat-menu-item (click)="openSettingsDialog()">Einstellungen</button>

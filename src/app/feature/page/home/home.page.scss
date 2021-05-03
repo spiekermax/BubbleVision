@@ -47,6 +47,24 @@
     text-transform: uppercase;
 }
 
+.filter-menu-body {
+    padding-left: 16px;
+    padding-top: 16px;
+    padding-right: 16px; 
+    
+    width: 220px; 
+    overflow: hidden;
+
+    .filter-slider-label {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .filter-slider {
+        width: 100%;
+    }
+}
+
 
 ::ng-deep .mat-form-field-prefix {
     margin-left: 6px;
@@ -70,10 +88,7 @@
     }
 }
 
-::ng-deep .mat-slider:not(.mat-slider-disabled).cdk-focused.mat-slider-thumb-label-showing .mat-slider-thumb {
-    transform: scale(0.5) !important;
-}
-
 ::ng-deep .mat-slider-thumb, ::ng-deep .mat-slider-thumb-label {
+    border: none !important;
     background-color: #1e88e5 !important;
 }

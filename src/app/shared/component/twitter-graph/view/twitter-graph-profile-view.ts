@@ -197,6 +197,16 @@ export class TwitterGraphProfileView extends PIXI.Container
 
     /* METHODS */
 
+    public blur() : void
+    {
+        this.alpha = 0.2;
+    }
+
+    public sharpen() : void
+    {
+        this.alpha = 1;
+    }
+
     public hideDetails() : void
     {
         if(this.image)
@@ -225,6 +235,11 @@ export class TwitterGraphProfileView extends PIXI.Container
 
 
     /* GETTER & SETTER */
+
+    public get data() : TwitterProfile
+    {
+        return this.profile;
+    }
 
     public get clickedEvent() : Observable<void>
     {

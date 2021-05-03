@@ -4,21 +4,24 @@ import { FormControl } from "@angular/forms";
 
 // Material Design
 import { MatDialog } from "@angular/material/dialog";
+import { MatSliderChange } from "@angular/material/slider";
 
 // Reactive X
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 
 // Internal dependencies
+import { Utils } from "src/app/core/utils";
+
 import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
 import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 
 import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
 import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-data.service";
 
-import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
 import { TwitterCommunityDialog } from "../../dialog/twitter-community/twitter-community.dialog";
+import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 
 
 @Component
@@ -29,6 +32,11 @@ import { TwitterCommunityDialog } from "../../dialog/twitter-community/twitter-c
 })
 export class HomePage implements OnInit
 {
+    /* NAMESPACES */
+
+    public Utils = Utils;
+
+
     /* COMPONENTS */
 
     @ViewChild(TwitterGraphComponent)
@@ -43,6 +51,9 @@ export class HomePage implements OnInit
     public twitterCommunities: TwitterCommunity[] = [];
 
     public filteredTwitterProfiles?: Observable<TwitterProfile[]>;
+
+    public minTwitterFollowersLimit: number = 0;
+    public maxTwitterFollowersLimit: number = 10e6;
 
 
     /* LIFECYCLE */
@@ -75,6 +86,28 @@ export class HomePage implements OnInit
 
 
     /* CALLBACKS */
+
+    public onTwitterFollowersLimitSliderChanged() : void
+    {
+        this.twitterGraph?.highlightProfiles((profile: TwitterProfile) =>
+        {
+            return profile.followerCount >= this.minTwitterFollowersLimit && profile.followerCount <= this.maxTwitterFollowersLimit;
+        });
+    }
+
+    public onTwitterMinFollowersLimitSliderMoved(event: MatSliderChange) : void
+    {
+        if(event.value === null) return;
+
+        this.minTwitterFollowersLimit = 10 * event.value * event.value;
+    }
+
+    public onTwitterMaxFollowersLimitSliderMoved(event: MatSliderChange) : void
+    {
+        if(event.value === null) return;
+
+        this.maxTwitterFollowersLimit = 10 * event.value * event.value;
+    }
 
     public onSearchResultSelected(twitterProfile: TwitterProfile) : void
     {

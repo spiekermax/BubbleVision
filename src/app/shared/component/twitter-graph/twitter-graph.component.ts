@@ -293,6 +293,21 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     /* METHODS  */
 
+    public highlightProfiles(condition: (profile: TwitterProfile) => boolean) : void
+    {
+        for(const profileView of this.profileViews)
+        {
+            if(condition(profileView.data))
+            {
+                profileView.sharpen();
+            }
+            else
+            {
+                profileView.blur();
+            }
+        }
+    }
+
     public zoomToProfile(profile: TwitterProfile) : void
     {
         if(!this.camera) return;

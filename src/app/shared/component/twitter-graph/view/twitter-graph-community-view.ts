@@ -116,7 +116,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
             align: "center",
             letterSpacing: 1.5,
             wordWrap: true,
-            wordWrapWidth: (1200 / this.scalingFactor) * hotspot.radius
+            wordWrapWidth: (1500 / this.scalingFactor) * hotspot.radius
         });
         const nameLabel: PIXI.Text = new PIXI.Text("#" + hotspot.name?.toLowerCase() || "error", nameLabelStyle);
         
