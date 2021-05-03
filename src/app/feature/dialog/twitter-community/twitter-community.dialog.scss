@@ -46,18 +46,26 @@
             height: 250px;
         }
 
-        .profile-image {
-            width: 32px;
-            height: 32px; 
-            border-radius: 50%; 
-        }
-    
         .profile-item {
             border-radius: 16px;
     
             ::ng-deep .mat-ripple {
                 border-radius: 16px;
             }
+        }
+
+        .profile-image {
+            width: 32px;
+            height: 32px; 
+            border-radius: 50%; 
+        }
+
+        .profile-name {
+            overflow: hidden;
+            max-width: 304px;
+        
+            text-overflow: ellipsis;
+            white-space: nowrap
         }
     
         .profile-stats {

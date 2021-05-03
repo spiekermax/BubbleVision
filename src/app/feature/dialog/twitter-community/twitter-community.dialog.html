@@ -18,7 +18,7 @@
             <ng-container *cdkVirtualFor="let member of membersSortedByFollowers">
                 <mat-list-item class="profile-item" (click)="onMemberClicked(member)">
                     <img mat-list-icon class="profile-image" [src]="member.imageUrl">
-                    <div mat-line [innerHTML]="Utils.twemojify(member.name)"></div>
+                    <div mat-line class="profile-name" [innerHTML]="Utils.twemojify(member.name)"></div>
                     <div mat-line>@{{member.username}}</div>
                     <span class="profile-stats">{{Utils.shortenNumber(member.followerCount)}}</span>
                 </mat-list-item>
