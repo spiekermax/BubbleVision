@@ -130,9 +130,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
         this.addChild(nameLabel);
 
-        if(this.lod == 1) return;
-
-        const size: number = this.lod == 0 ? this.community.size : hotspot.size;
+        if(this.lod == 1 && this.community.hotspots["1"].length > 1) return;
 
         const sizeLabelStyle: PIXI.TextStyle = new PIXI.TextStyle
         ({ 
@@ -144,7 +142,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
             wordWrap: true,
             wordWrapWidth: (1200 / this.scalingFactor) * hotspot.radius
         });
-        const sizeLabel: PIXI.Text = new PIXI.Text(size.toString() || "???", sizeLabelStyle);
+        const sizeLabel: PIXI.Text = new PIXI.Text(this.community.size.toString() || "???", sizeLabelStyle);
         
         const sizeLabelBounds: PIXI.Rectangle = sizeLabel.getBounds();
         const sizeLabelWidth: number = sizeLabelBounds.width;
