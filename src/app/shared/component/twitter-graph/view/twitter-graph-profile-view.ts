@@ -199,7 +199,7 @@ export class TwitterGraphProfileView extends PIXI.Container
 
     public blur() : void
     {
-        this.alpha = 0.2;
+        this.alpha = 0.18;
     }
 
     public sharpen() : void
