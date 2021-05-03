@@ -168,6 +168,13 @@ export class HomePage implements OnInit
         { 
             data: [twitterCommunity, twitterCommunityMembers],
             width: "514px"
+        })
+        .afterClosed().subscribe((clickedMember?: TwitterProfile) =>
+        {
+            if(!clickedMember) return;
+
+            // Zoom to selected profile
+            this.twitterGraph?.zoomToProfile(clickedMember);
         });
     }
 

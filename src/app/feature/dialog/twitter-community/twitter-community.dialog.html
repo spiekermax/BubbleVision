@@ -15,8 +15,8 @@
     <mat-action-list class="community-member-list">
         <div mat-subheader>Mitglieder:</div>
         <cdk-virtual-scroll-viewport class="virtual-scroll" itemSize="56">
-            <ng-container *cdkVirtualFor="let member of biggestMembers">
-                <mat-list-item class="profile-item" (click)="openTwitterProfileDialog(member)">
+            <ng-container *cdkVirtualFor="let member of membersSortedByFollowers">
+                <mat-list-item class="profile-item" (click)="onMemberClicked(member)">
                     <img mat-list-icon class="profile-image" [src]="member.imageUrl">
                     <div mat-line [innerHTML]="Utils.twemojify(member.name)"></div>
                     <div mat-line>@{{member.username}}</div>

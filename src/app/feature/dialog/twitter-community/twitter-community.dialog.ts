@@ -3,12 +3,12 @@ import { Component, Inject } from "@angular/core";
 
 // Material Design
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { Utils } from "src/app/core/utils";
 
 // Internal dependencies
+import { Utils } from "src/app/core/utils";
+
 import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
 import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
-import { TwitterProfileDialog } from "../twitter-profile/twitter-profile.dialog";
 
 
 @Component
@@ -26,18 +26,14 @@ export class TwitterCommunityDialog
 
     /* LIFECYCLE */
   
-    public constructor(private dialog: MatDialog, private dialogRef: MatDialogRef<TwitterCommunityDialog>, @Inject(MAT_DIALOG_DATA) private twitterData: [TwitterCommunity, TwitterProfile[]]) {}
+    public constructor(private dialog: MatDialog, private dialogRef: MatDialogRef<TwitterCommunityDialog>, @Inject(MAT_DIALOG_DATA) private data: [TwitterCommunity, TwitterProfile[]]) {}
 
 
-    /* METHODS */
+    /* CALLBACKS */
 
-    public openTwitterProfileDialog(twitterProfile: TwitterProfile) : void
+    public onMemberClicked(member: TwitterProfile) : void
     {
-        this.dialog.open(TwitterProfileDialog,
-        { 
-            data: twitterProfile,
-            width: "514px"
-        });
+        this.dialogRef.close(member);
     }
 
 
@@ -48,23 +44,23 @@ export class TwitterCommunityDialog
         return this.community.hotspots["0"][0].name;
     }
 
-    public get biggestMembers() : TwitterProfile[]
-    {
-        return this.profiles.sort((a, b) => b.followerCount - a.followerCount);
-    }
-
     public get minFollowers() : string
     {
-        const minFollowers: number = Math.min(...this.profiles.map(profile => profile.followerCount));
+        const minFollowers: number = Math.min(...this.members.map(profile => profile.followerCount));
 
         return Utils.shortenNumber(minFollowers);
     }
 
     public get maxFollowers() : string
     {
-        const maxFollowers: number = Math.max(...this.profiles.map(profile => profile.followerCount));
+        const maxFollowers: number = Math.max(...this.members.map(profile => profile.followerCount));
 
         return Utils.shortenNumber(maxFollowers);
+    }
+
+    public get membersSortedByFollowers() : TwitterProfile[]
+    {
+        return this.members.sort((a, b) => b.followerCount - a.followerCount);
     }
 
 
@@ -72,11 +68,11 @@ export class TwitterCommunityDialog
 
     private get community() : TwitterCommunity
     {
-        return this.twitterData[0];
+        return this.data[0];
     }
 
-    private get profiles() : TwitterProfile[]
+    private get members() : TwitterProfile[]
     {
-        return this.twitterData[1];
+        return this.data[1];
     }
 }
