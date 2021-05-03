@@ -89,10 +89,20 @@ export class HomePage implements OnInit
 
     public onTwitterFollowersLimitSliderChanged() : void
     {
-        this.twitterGraph?.highlightProfiles((profile: TwitterProfile) =>
+        this.twitterGraph?.highlightProfiles((twitterProfile: TwitterProfile) =>
         {
-            return profile.followerCount >= this.minTwitterFollowersLimit && profile.followerCount <= this.maxTwitterFollowersLimit;
+            return twitterProfile.followerCount >= this.minTwitterFollowersLimit && twitterProfile.followerCount <= this.maxTwitterFollowersLimit;
         });
+
+        this.twitterGraph?.highlightCommunities((twitterCommunity: TwitterCommunity) =>
+        {
+            return this.twitterProfiles.some(twitterProfile =>
+            {
+                return twitterProfile.followerCount >= this.minTwitterFollowersLimit 
+                    && twitterProfile.followerCount <= this.maxTwitterFollowersLimit 
+                    && twitterCommunity.members.includes(twitterProfile.username); 
+            });
+        })
     }
 
     public onTwitterMinFollowersLimitSliderMoved(value: number | null) : void

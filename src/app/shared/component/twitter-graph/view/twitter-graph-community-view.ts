@@ -156,6 +156,19 @@ export class TwitterGraphCommunityView extends PIXI.Container
     }
 
 
+    /* METHODS */
+
+    public blur() : void
+    {
+        this.alpha = 0.18;
+    }
+
+    public sharpen() : void
+    {
+        this.alpha = 1;
+    }
+
+
     /* CALLBACKS */
 
     private onHotspotClicked(hotspot: TwitterCommunityHotspot) : void
@@ -165,6 +178,11 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
 
     /* GETTER & SETTER */
+
+    public get data() : TwitterCommunity
+    {
+        return this.community;
+    }
 
     public get clickedEvent() : Observable<void>
     {

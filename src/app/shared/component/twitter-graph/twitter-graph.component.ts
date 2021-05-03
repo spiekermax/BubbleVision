@@ -44,7 +44,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     // Components
     private camera?: TwitterGraphCamera;
+
     private profileViews: TwitterGraphProfileView[] = [];
+    private communityViews: TwitterGraphCommunityView[] = [];
     
     // State
     private lastMouseDownPosition?: Position;
@@ -263,35 +265,57 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     {
         if(!this.camera) return;
 
-        // Remove old nodes
+        // Remove old views
         this.camera.lod0Layer.removeChildren();
         this.camera.lod1Layer.removeChildren();
 
-        // Add new nodes
+        // Add new views
         for(const community of this.communities)
         {
-            // Create node
-            const communityNodeLod0: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 0);
+            // Create view
+            const communityViewLOD0: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 0);
+
+            // Cache view reference
+            this.communityViews.push(communityViewLOD0);
 
             // Bind callbacks
-            communityNodeLod0.clickedEvent.subscribe(() => this.onCommunityClicked(community));
+            communityViewLOD0.clickedEvent.subscribe(() => this.onCommunityClicked(community));
 
-            // Add node
-            this.camera.lod0Layer.addChild(communityNodeLod0);
+            // Add view
+            this.camera.lod0Layer.addChild(communityViewLOD0);
 
-            // Create node
-            const communityNodeLod1: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 1);
+
+            // Create view
+            const communityViewLOD1: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 1);
+
+            // Cache view reference
+            this.communityViews.push(communityViewLOD1);
 
             // Bind callbacks
-            communityNodeLod1.clickedEvent.subscribe(() => this.onCommunityClicked(community));
+            communityViewLOD1.clickedEvent.subscribe(() => this.onCommunityClicked(community));
 
-            // Add node
-            this.camera.lod1Layer.addChild(communityNodeLod1);
+            // Add view
+            this.camera.lod1Layer.addChild(communityViewLOD1);
         }
     }
 
 
     /* METHODS  */
+
+    public highlightCommunities(condition: (community: TwitterCommunity) => boolean) : void
+    {
+        for(const communityView of this.communityViews)
+        {
+            if(condition(communityView.data))
+            {
+                communityView.sharpen();
+            }
+            else
+            {
+                communityView.blur();
+            }
+        }
+    }
 
     public highlightProfiles(condition: (profile: TwitterProfile) => boolean) : void
     {
