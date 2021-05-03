@@ -40,37 +40,53 @@
         (click)="$event.stopPropagation()" 
         (mouseleave)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();" 
         (mouseup)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();">
-
-        <div class="filter-slider-label">
-            <span>Follower (Mindestens):</span>
-            <span style="color: #696969;">{{Utils.shortenNumber(minTwitterFollowersLimit)}}</span>
+       
+        <div style="display: flex;">
+            <div style="width: 220px;">
+                <div class="filter-slider-label">
+                    <span>Follower (Mindestens):</span>
+                    <span style="color: #696969;">{{Utils.shortenNumber(minTwitterFollowersLimit)}}</span>
+                </div>
+                <mat-slider #minTwitterFollowersLimitSlider 
+                    class="filter-slider" 
+                    color="primary"
+                    min="0"
+                    max="1000"
+                    step="1"
+                    value="0"
+                    (change)="onTwitterFollowersLimitSliderChanged()"
+                    (input)="onTwitterMinFollowersLimitSliderMoved($event.value)">
+                </mat-slider>
+            </div>
+            <button class="filter-slider-reset-button" mat-icon-button
+                (click)="minTwitterFollowersLimitSlider.value = 0; onTwitterMinFollowersLimitSliderMoved(0); onTwitterFollowersLimitSliderChanged();">
+                <mat-icon>refresh</mat-icon>
+            </button>
         </div>
-        <mat-slider #minTwitterFollowersLimitSlider 
-            class="filter-slider" 
-            color="primary"
-            min="0"
-            max="1000"
-            step="1"
-            value="0"
-            (change)="onTwitterFollowersLimitSliderChanged()"
-            (input)="onTwitterMinFollowersLimitSliderMoved($event)">
-        </mat-slider>
 
-        <div class="filter-slider-label">
-            <span>Follower (Höchstens):</span>
-            <span style="color: #696969;">{{Utils.shortenNumber(maxTwitterFollowersLimit)}}</span>
+        <div style="display: flex;">
+            <div style="width: 220px;">
+                <div class="filter-slider-label">
+                    <span>Follower (Höchstens):</span>
+                    <span style="color: #696969;">{{Utils.shortenNumber(maxTwitterFollowersLimit)}}</span>
+                </div>
+                <mat-slider #maxTwitterFollowersLimitSlider
+                    class="filter-slider"
+                    color="primary"
+                    min="0"
+                    max="1000"
+                    step="1"
+                    value="1000"
+                    (change)="onTwitterFollowersLimitSliderChanged()"
+                    (input)="onTwitterMaxFollowersLimitSliderMoved($event.value)">
+                </mat-slider>
+            </div>
+            <button class="filter-slider-reset-button" mat-icon-button 
+                (click)="maxTwitterFollowersLimitSlider.value = 1000; onTwitterMaxFollowersLimitSliderMoved(1000); onTwitterFollowersLimitSliderChanged();">
+                <mat-icon>refresh</mat-icon>
+            </button>
         </div>
-        <mat-slider #maxTwitterFollowersLimitSlider
-            class="filter-slider"
-            color="primary"
-            min="0"
-            max="1000"
-            step="1"
-            value="1000"
-            (change)="onTwitterFollowersLimitSliderChanged()"
-            (input)="onTwitterMaxFollowersLimitSliderMoved($event)">
-        </mat-slider>
-
+        
     </div>
 </mat-menu>
 

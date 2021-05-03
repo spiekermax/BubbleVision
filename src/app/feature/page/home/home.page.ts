@@ -95,18 +95,18 @@ export class HomePage implements OnInit
         });
     }
 
-    public onTwitterMinFollowersLimitSliderMoved(event: MatSliderChange) : void
+    public onTwitterMinFollowersLimitSliderMoved(value: number | null) : void
     {
-        if(event.value === null) return;
+        if(value === null) return;
 
-        this.minTwitterFollowersLimit = 10 * event.value * event.value;
+        this.minTwitterFollowersLimit = 10 * value * value;
     }
 
-    public onTwitterMaxFollowersLimitSliderMoved(event: MatSliderChange) : void
+    public onTwitterMaxFollowersLimitSliderMoved(value: number | null) : void
     {
-        if(event.value === null) return;
+        if(value === null) return;
 
-        this.maxTwitterFollowersLimit = 10 * event.value * event.value;
+        this.maxTwitterFollowersLimit = 10 * value * value;
     }
 
     public onSearchResultSelected(twitterProfile: TwitterProfile) : void
