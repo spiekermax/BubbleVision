@@ -4,11 +4,11 @@ import { Injectable } from "@angular/core";
 
 // Reactive X
 import { forkJoin, Observable } from "rxjs";
-import { map } from 'rxjs/operators';
+import { map } from "rxjs/operators";
 
 // Internal dependencies
-import { TwitterCommunity } from "../../model/twitter/twitter-community";
-import { TwitterProfile } from "../../model/twitter/twitter-profile";
+import { TwitterCommunity } from "../../model/twitter/community/twitter-community";
+import { TwitterProfile } from "../../model/twitter/profile/twitter-profile";
 
 
 @Injectable
@@ -19,7 +19,7 @@ export class TwitterDataService
 {
     /* CONSTANTS */
 
-    private static readonly GRAPH_SCALING_FACTOR: number = 1000;
+    private static readonly POSITION_SCALING_FACTOR: number = 1000;
 
 
     /* LIFECYCLE */
@@ -54,8 +54,8 @@ export class TwitterDataService
                     followeeCount: profileDTO.followeeCount,
                     position:
                     {
-                        x: profileDTO.position[0] * TwitterDataService.GRAPH_SCALING_FACTOR,
-                        y: profileDTO.position[1] * TwitterDataService.GRAPH_SCALING_FACTOR
+                        x: profileDTO.position[0] * TwitterDataService.POSITION_SCALING_FACTOR,
+                        y: profileDTO.position[1] * TwitterDataService.POSITION_SCALING_FACTOR
                     }
                 };
 
@@ -64,11 +64,7 @@ export class TwitterDataService
                 {
                     if(json.communities[communityId].includes(profileDTO.username))
                     {
-                        profile.community =
-                        {
-                            id: Number(communityId),
-                            size: json.communities[communityId].length
-                        }
+                        profile.communityId = Number(communityId);
                         break;
                     }
                 }
@@ -80,21 +76,6 @@ export class TwitterDataService
 
     public loadCommunities() : Observable<TwitterCommunity[]>
     {
-        return this.http.get<any>("assets/graph/de_1000_communities_weighted_louvain.json").pipe(map((json: any) =>
-        {
-            const communities: TwitterCommunity[] = [];
-            for(const communityId of Object.keys(json))
-            {
-                const community: TwitterCommunity =
-                {
-                    id: Number(communityId),
-                    size: json[communityId].length
-                };
-
-                communities.push(community);
-            }
-
-            return communities;
-        }));
+        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");
     }
 }

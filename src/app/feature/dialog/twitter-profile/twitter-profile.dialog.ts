@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 // Internal dependencies
 import { Utils } from "src/app/core/utils";
-import { TwitterProfile } from "src/app/shared/model/twitter/twitter-profile";
+import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 
 
 @Component

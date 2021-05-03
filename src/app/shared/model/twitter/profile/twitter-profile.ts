@@ -1,11 +1,11 @@
 // Internal dependencies
-import { Position } from "../position/position";
-import { TwitterCommunity } from "./twitter-community";
+import { Position } from "../../position/position";
 
 
 export interface TwitterProfile
 {
     id: number;
+    communityId: number;
 
     name: string;
     username: string;
@@ -18,5 +18,4 @@ export interface TwitterProfile
     followeeCount: number;
 
     position: Position;
-    community: TwitterCommunity;
 }

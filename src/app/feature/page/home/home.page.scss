@@ -47,6 +47,30 @@
     text-transform: uppercase;
 }
 
+.filter-menu-body {
+    padding-left: 16px;
+    padding-top: 16px;
+    padding-right: 16px; 
+    
+    overflow: hidden;
+
+    .filter-slider-label {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .filter-slider {
+        width: 100%;
+    }
+
+    .filter-slider-reset-button {
+        margin-top: 23px;
+        margin-left: 8px;
+        
+        transform: scale(-1, 1);
+    }
+}
+
 
 ::ng-deep .mat-form-field-prefix {
     margin-left: 6px;
@@ -68,4 +92,9 @@
     .mat-form-field-outline-end {
         border-radius: 0 32px 32px 0 !important;
     }
+}
+
+::ng-deep .mat-slider-thumb, ::ng-deep .mat-slider-thumb-label {
+    border: none !important;
+    background-color: #1e88e5 !important;
 }

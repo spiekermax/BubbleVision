@@ -1,3 +1,23 @@
+@import '~@angular/material/theming';
+@include mat-core();
+
+/* THEME */
+
+$theme-primary: mat-palette($mat-blue, 600);
+$theme-accent:  mat-palette($mat-pink, A200, A100, A400);
+
+$theme: mat-light-theme((
+  color: (
+    primary: $theme-primary,
+    accent: $theme-accent
+  )
+));
+
+@include angular-material-theme($theme);
+
+
+/* GLOBALS */
+
 html, body { 
     width: 100%;
     height: 100%; 
@@ -30,7 +50,7 @@ body {
 }
 
 a:link {
-    color: #3F51B5;
+    color: #1e88e5;
     text-decoration: none;
 }
 
@@ -39,6 +59,6 @@ a:hover {
 }
 
 a:visited {
-    color: #3F51B5;
+    color: #1e88e5;
     text-decoration: none;
 }

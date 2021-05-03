@@ -1,0 +1,32 @@
+<div class="header">
+    <div>
+        <h1 mat-dialog-title class="community-name">{{name}}</h1>
+        <div class="community-type">Twitter-Gemeinschaft</div>
+        <p class="community-stats">{{minFollowers}} - {{maxFollowers}} Follower</p>
+    </div>
+    <button mat-icon-button class="community-help-button"> 
+        <mat-icon>help_outline</mat-icon>
+    </button>
+</div>
+
+<mat-divider></mat-divider>
+
+<div mat-dialog-content class="body">
+    <mat-action-list class="community-member-list">
+        <div mat-subheader>Mitglieder:</div>
+        <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
+            <ng-container *cdkVirtualFor="let member of membersSortedByFollowers">
+                <mat-list-item class="profile-item" (click)="onMemberClicked(member)">
+                    <img mat-list-icon class="profile-image" [src]="member.imageUrl">
+                    <div mat-line class="profile-name" [innerHTML]="Utils.twemojify(member.name)"></div>
+                    <div mat-line>@{{member.username}}</div>
+                    <span class="profile-stats">{{Utils.shortenNumber(member.followerCount)}}</span>
+                </mat-list-item>
+            </ng-container>
+        </cdk-virtual-scroll-viewport>
+    </mat-action-list>
+</div>
+
+<div mat-dialog-actions class="footer">
+    <button mat-button color="primary" mat-dialog-close cdkFocusInitial>SCHLIESSEN</button>
+</div>

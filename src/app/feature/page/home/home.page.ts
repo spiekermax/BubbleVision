@@ -4,20 +4,24 @@ import { FormControl } from "@angular/forms";
 
 // Material Design
 import { MatDialog } from "@angular/material/dialog";
+import { MatSliderChange } from "@angular/material/slider";
 
 // Reactive X
 import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 
 // Internal dependencies
-import { TwitterCommunity } from "src/app/shared/model/twitter/twitter-community";
-import { TwitterProfile } from "src/app/shared/model/twitter/twitter-profile";
+import { Utils } from "src/app/core/utils";
+
+import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
+import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 
 import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
 import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-data.service";
 
-import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
+import { TwitterCommunityDialog } from "../../dialog/twitter-community/twitter-community.dialog";
+import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 
 
 @Component
@@ -28,6 +32,11 @@ import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profi
 })
 export class HomePage implements OnInit
 {
+    /* NAMESPACES */
+
+    public Utils = Utils;
+
+
     /* COMPONENTS */
 
     @ViewChild(TwitterGraphComponent)
@@ -42,6 +51,9 @@ export class HomePage implements OnInit
     public twitterCommunities: TwitterCommunity[] = [];
 
     public filteredTwitterProfiles?: Observable<TwitterProfile[]>;
+
+    public minTwitterFollowersLimit: number = 0;
+    public maxTwitterFollowersLimit: number = 10e6;
 
 
     /* LIFECYCLE */
@@ -74,6 +86,38 @@ export class HomePage implements OnInit
 
 
     /* CALLBACKS */
+
+    public onTwitterFollowersLimitSliderChanged() : void
+    {
+        this.twitterGraph?.highlightProfiles((twitterProfile: TwitterProfile) =>
+        {
+            return twitterProfile.followerCount >= this.minTwitterFollowersLimit && twitterProfile.followerCount <= this.maxTwitterFollowersLimit;
+        });
+
+        this.twitterGraph?.highlightCommunities((twitterCommunity: TwitterCommunity) =>
+        {
+            return this.twitterProfiles.some(twitterProfile =>
+            {
+                return twitterProfile.followerCount >= this.minTwitterFollowersLimit 
+                    && twitterProfile.followerCount <= this.maxTwitterFollowersLimit 
+                    && twitterCommunity.members.includes(twitterProfile.username); 
+            });
+        })
+    }
+
+    public onTwitterMinFollowersLimitSliderMoved(value: number | null) : void
+    {
+        if(value === null) return;
+
+        this.minTwitterFollowersLimit = 10 * value * value;
+    }
+
+    public onTwitterMaxFollowersLimitSliderMoved(value: number | null) : void
+    {
+        if(value === null) return;
+
+        this.maxTwitterFollowersLimit = 10 * value * value;
+    }
 
     public onSearchResultSelected(twitterProfile: TwitterProfile) : void
     {
@@ -123,6 +167,24 @@ export class HomePage implements OnInit
         { 
             data: twitterProfile,
             width: "514px"
+        });
+    }
+
+    public openTwitterCommunityDialog(twitterCommunity: TwitterCommunity) : void
+    {
+        const twitterCommunityMembers: TwitterProfile[] = this.twitterProfiles.filter(profile => twitterCommunity.members.includes(profile.username));
+
+        this.dialog.open(TwitterCommunityDialog,
+        { 
+            data: [twitterCommunity, twitterCommunityMembers],
+            width: "514px"
+        })
+        .afterClosed().subscribe((clickedMember?: TwitterProfile) =>
+        {
+            if(!clickedMember) return;
+
+            // Zoom to selected profile
+            this.twitterGraph?.zoomToProfile(clickedMember);
         });
     }
 

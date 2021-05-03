@@ -11,8 +11,40 @@ export class TwitterGraphCamera
 
     private static readonly ANIMATION_TOLERANCE: number = 0.00001;
 
+    public static readonly LOD0_SCALING_FACTOR: number = 10;
+    public static readonly LOD1_SCALING_FACTOR: number = 5;
+    public static readonly LOD2_SCALING_FACTOR: number = 1;
+    public static readonly BASE_SCALING_FACTOR: number = 1;
+
+
+    /* FUNCTIONS */
+
+    public static getLodScalingFactor(lod?: number) : number
+    {
+        switch(lod)
+        {
+            case 0: 
+                return TwitterGraphCamera.LOD0_SCALING_FACTOR;
+            case 1: 
+                return TwitterGraphCamera.LOD1_SCALING_FACTOR;
+            case 2: 
+                return TwitterGraphCamera.LOD2_SCALING_FACTOR;
+            default: 
+                return TwitterGraphCamera.BASE_SCALING_FACTOR;
+        }
+    }
+
 
     /* ATTRIBUTES */
+
+    // Layers
+    private _lod0Layer: PIXI.Container = new PIXI.Container();
+    private _lod1Layer: PIXI.Container = new PIXI.Container();
+    private _lod2Layer: PIXI.Container = new PIXI.Container();
+    
+    private lod0LayerVisible: boolean = true;
+    private lod1LayerVisible: boolean = false;
+    private lod2LayerVisible: boolean = true;
 
     private targetPosition?: Position;
     private targetZoom?: number;
@@ -25,6 +57,22 @@ export class TwitterGraphCamera
 
     public constructor(private app: PIXI.Application)
     {
+        // 
+        this.lod0Layer.sortableChildren = true;
+        this.lod1Layer.sortableChildren = true;
+        this.lod2Layer.sortableChildren = true;
+
+        //
+        this.lod0Layer.alpha = +this.lod0LayerVisible;
+        this.lod1Layer.alpha = +this.lod1LayerVisible;
+        this.lod2Layer.alpha = +this.lod2LayerVisible;
+
+        // Add layers
+        this.app.stage.addChild(this.lod2Layer);
+        this.app.stage.addChild(this.lod1Layer);
+        this.app.stage.addChild(this.lod0Layer);
+
+        //
         this.app.ticker.add(this.onUtilityUpdate.bind(this), undefined, PIXI.UPDATE_PRIORITY.UTILITY);
     }
 
@@ -34,18 +82,31 @@ export class TwitterGraphCamera
     private onUtilityUpdate() : void
     {
         // Position animations
-        if(this.targetPosition && Math.abs(this.app.stage.position.x - this.targetPosition.x) < TwitterGraphCamera.ANIMATION_TOLERANCE && Math.abs(this.app.stage.position.y - this.targetPosition.y) < TwitterGraphCamera.ANIMATION_TOLERANCE)
+        if(this.targetPosition && Math.abs(this.position.x - this.targetPosition.x) < TwitterGraphCamera.ANIMATION_TOLERANCE && Math.abs(this.position.y - this.targetPosition.y) < TwitterGraphCamera.ANIMATION_TOLERANCE)
         {
             // Cancel stale animations
             this.cancelPositionAnimations();
         }
 
         // Zoom animations
-        if(this.targetZoom && Math.abs(this.app.stage.scale.x - this.targetZoom) < TwitterGraphCamera.ANIMATION_TOLERANCE)
+        if(this.targetZoom && Math.abs(this.zoom - this.targetZoom) < TwitterGraphCamera.ANIMATION_TOLERANCE)
         {
             // Cancel stale animations
             this.cancelZoomAnimations();
         }
+
+        // Update layer visibility
+        this.lod0LayerVisible = this.zoom < 0.02;
+        this.lod1LayerVisible = this.zoom >= 0.02 && this.zoom <= 0.1;
+        // this.lod2LayerVisible = this.zoom > 0.1;
+
+        // Update layer interactivity
+        this.lod0Layer.interactiveChildren = this.zoom < 0.02;
+        this.lod1Layer.interactiveChildren = this.zoom >= 0.02 && this.zoom <= 0.1;
+        this.lod2Layer.interactiveChildren = this.zoom >= 0.02;
+
+        // Interpolate visibility
+        this.interpolateVisibility()
     }
 
 
@@ -53,19 +114,40 @@ export class TwitterGraphCamera
 
     private interpolatePosition() : void
     {
-        this.app.stage.position.x = this.lerp(this.app.stage.x, this.targetPosition!.x, 0.1);
-        this.app.stage.position.y = this.lerp(this.app.stage.y, this.targetPosition!.y, 0.1);
+        this.lod0Layer.position.x = this.lerp(this.lod0Layer.position.x, this.targetPosition!.x, 0.1);
+        this.lod0Layer.position.y = this.lerp(this.lod0Layer.position.y, this.targetPosition!.y, 0.1);
+
+        this.lod1Layer.position.x = this.lerp(this.lod1Layer.position.x, this.targetPosition!.x, 0.1);
+        this.lod1Layer.position.y = this.lerp(this.lod1Layer.position.y, this.targetPosition!.y, 0.1);
+
+        this.lod2Layer.position.x = this.lerp(this.lod2Layer.position.x, this.targetPosition!.x, 0.1);
+        this.lod2Layer.position.y = this.lerp(this.lod2Layer.position.y, this.targetPosition!.y, 0.1);
     }
 
     private interpolateZoom() : void
     {
-        this.app.stage.scale.x = this.lerp(this.app.stage.scale.x, this.targetZoom!, 0.1);
-        this.app.stage.scale.y = this.lerp(this.app.stage.scale.y, this.targetZoom!, 0.1);
+        this.lod0Layer.scale.x = this.lerp(this.lod0Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD0_SCALING_FACTOR, 0.1);
+        this.lod0Layer.scale.y = this.lerp(this.lod0Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD0_SCALING_FACTOR, 0.1);
+
+        this.lod1Layer.scale.x = this.lerp(this.lod1Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD1_SCALING_FACTOR, 0.1);
+        this.lod1Layer.scale.y = this.lerp(this.lod1Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD1_SCALING_FACTOR, 0.1);
+        
+        this.lod2Layer.scale.x = this.lerp(this.lod2Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD2_SCALING_FACTOR, 0.1);
+        this.lod2Layer.scale.y = this.lerp(this.lod2Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD2_SCALING_FACTOR, 0.1);
+    }
+
+    private interpolateVisibility() : void
+    {
+        this.lod0Layer.alpha = this.lerp(this.lod0Layer.alpha, +this.lod0LayerVisible, 0.1);
+
+        this.lod1Layer.alpha = this.lerp(this.lod1Layer.alpha, +this.lod1LayerVisible, 0.1);
+        
+        this.lod2Layer.alpha = this.lerp(this.lod2Layer.alpha, +this.lod2LayerVisible, 0.1);
     }
 
     public animatePosition(newPosition: Position) : void
     {
-        // Update app.stage position
+        // Update containerA position
         this.targetPosition = newPosition;
 
         // Bind position updater
@@ -76,9 +158,9 @@ export class TwitterGraphCamera
         }
     }
 
-    public animateZoom(newZoom: any) : void
+    public animateZoom(newZoom: number) : void
     {
-        // Update app.stage zoom
+        // Update containerA zoom
         this.targetZoom = newZoom;
 
         // Bind zoom updater
@@ -111,8 +193,8 @@ export class TwitterGraphCamera
 
     public calculateVisibleBounds() : PIXI.Rectangle
     {
-        const x: number = -this.app.stage.position.x / this.app.stage.scale.x;
-        const y: number = -this.app.stage.position.y / this.app.stage.scale.y;
+        const x: number = -this.position.x / this.zoom;
+        const y: number = -this.position.y / this.zoom;
             
         const width: number = this.app.renderer.width / this.zoom;
         const height: number = this.app.renderer.height / this.zoom;
@@ -128,37 +210,69 @@ export class TwitterGraphCamera
     
     /* GETTER & SETTER */
 
+    public get baseLayer() : PIXI.Container
+    {
+        return this._lod2Layer;
+    }
+
+    public get lod2Layer() : PIXI.Container
+    {
+        return this._lod2Layer;
+    }
+
+    public get lod1Layer() : PIXI.Container
+    {
+        return this._lod1Layer;
+    }
+
+    public get lod0Layer() : PIXI.Container
+    {
+        return this._lod0Layer;
+    }
+
     public get position() : Position
     {
-        return { x: this.app.stage.position.x, y: this.app.stage.position.y };
+        return { x: this.baseLayer.position.x, y: this.baseLayer.position.y };
     }
 
     public set position(newPosition: Position)
     {
         this.cancelPositionAnimations();
 
-        this.app.stage.position.x = newPosition.x;
-        this.app.stage.position.y = newPosition.y;
+        this.lod0Layer.position.x = newPosition.x;
+        this.lod0Layer.position.y = newPosition.y;
+
+        this.lod1Layer.position.x = newPosition.x;
+        this.lod1Layer.position.y = newPosition.y;
+
+        this.lod2Layer.position.x = newPosition.x;
+        this.lod2Layer.position.y = newPosition.y;
     }
 
     public get zoom() : number
     {
-        return this.app.stage.scale.x;
+        return this.baseLayer.scale.x;
     }
 
     public set zoom(newZoom: number)
     {
         this.cancelZoomAnimations();
 
-        this.app.stage.scale.x = newZoom;
-        this.app.stage.scale.y = newZoom;
+        this.lod0Layer.scale.x = newZoom * TwitterGraphCamera.LOD0_SCALING_FACTOR;
+        this.lod0Layer.scale.y = newZoom * TwitterGraphCamera.LOD0_SCALING_FACTOR;
+
+        this.lod1Layer.scale.x = newZoom * TwitterGraphCamera.LOD1_SCALING_FACTOR;
+        this.lod1Layer.scale.y = newZoom * TwitterGraphCamera.LOD1_SCALING_FACTOR;
+
+        this.lod2Layer.scale.x = newZoom * TwitterGraphCamera.LOD2_SCALING_FACTOR;
+        this.lod2Layer.scale.y = newZoom * TwitterGraphCamera.LOD2_SCALING_FACTOR;
     }
 
     public isAnimating(tolerance: number = TwitterGraphCamera.ANIMATION_TOLERANCE) : boolean
     {
-        if(this.targetPosition !== undefined && (Math.abs(this.app.stage.position.x - this.targetPosition.x) > tolerance
-            || Math.abs(this.app.stage.position.y - this.targetPosition.y) > tolerance)) return true;
+        if(this.targetPosition !== undefined && (Math.abs(this.position.x - this.targetPosition.x) > tolerance
+            || Math.abs(this.position.y - this.targetPosition.y) > tolerance)) return true;
 
-        return this.targetZoom !== undefined && Math.abs(this.app.stage.scale.x - this.targetZoom) > tolerance;
+        return this.targetZoom !== undefined && Math.abs(this.zoom - this.targetZoom) > tolerance;
     }
 }
