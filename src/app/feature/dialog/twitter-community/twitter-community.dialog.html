@@ -12,9 +12,9 @@
 <mat-divider></mat-divider>
 
 <div mat-dialog-content class="body">
-    <mat-action-list style="margin-left: -16px;">
+    <mat-action-list class="community-member-list">
         <div mat-subheader>Mitglieder:</div>
-        <cdk-virtual-scroll-viewport itemSize="56" style="margin-left: 8px; height: 250px;">
+        <cdk-virtual-scroll-viewport class="virtual-scroll" itemSize="56">
             <ng-container *cdkVirtualFor="let member of biggestMembers">
                 <mat-list-item class="profile-item" (click)="openTwitterProfileDialog(member)">
                     <img mat-list-icon class="profile-image" [src]="member.imageUrl">

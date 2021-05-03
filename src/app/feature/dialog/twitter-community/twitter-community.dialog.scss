@@ -38,25 +38,34 @@
     display: flex;
     flex-direction: column;
 
-    .profile-image {
-        width: 32px;
-        height: 32px; 
-        border-radius: 50%; 
-    }
+    .community-member-list {
+        margin-left: -16px;
 
-    .profile-item {
-        border-radius: 12px;
-
-        ::ng-deep .mat-ripple {
-            border-radius: 12px;
+        .virtual-scroll {
+            margin-left: 8px;
+            height: 250px;
         }
-    }
 
-    .profile-stats {
-        font-size: 13px; 
-        font-weight: 500;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        .profile-image {
+            width: 32px;
+            height: 32px; 
+            border-radius: 50%; 
+        }
+    
+        .profile-item {
+            border-radius: 12px;
+    
+            ::ng-deep .mat-ripple {
+                border-radius: 12px;
+            }
+        }
+    
+        .profile-stats {
+            font-size: 13px; 
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
     }
 }
 
