@@ -130,6 +130,8 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
         this.addChild(nameLabel);
 
+        if(this.lod == 1) return;
+
         const size: number = this.lod == 0 ? this.community.size : hotspot.size;
 
         const sizeLabelStyle: PIXI.TextStyle = new PIXI.TextStyle
