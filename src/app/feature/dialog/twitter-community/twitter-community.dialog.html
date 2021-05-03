@@ -14,7 +14,7 @@
 <div mat-dialog-content class="body">
     <mat-action-list class="community-member-list">
         <div mat-subheader>Mitglieder:</div>
-        <cdk-virtual-scroll-viewport class="virtual-scroll" itemSize="56">
+        <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
             <ng-container *cdkVirtualFor="let member of membersSortedByFollowers">
                 <mat-list-item class="profile-item" (click)="onMemberClicked(member)">
                     <img mat-list-icon class="profile-image" [src]="member.imageUrl">
