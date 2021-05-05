@@ -2,7 +2,7 @@
 - Show aggregated community tweets
 
 - Add custom user to 2d plane
-- Highlight accounts someone is following
+(- Highlight accounts someone is following)
 
 - Community borders
 
