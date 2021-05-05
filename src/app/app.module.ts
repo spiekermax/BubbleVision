@@ -17,6 +17,7 @@ import { MatListModule } from "@angular/material/list";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSliderModule } from "@angular/material/slider";
+import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 
 // Internal dependencies
@@ -62,6 +63,7 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         MatMenuModule,
         MatProgressSpinnerModule,
         MatSliderModule,
+        MatTabsModule,
         MatToolbarModule
     ],
     providers: [],

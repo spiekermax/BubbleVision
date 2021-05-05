@@ -9,22 +9,48 @@
     </button>
 </div>
 
-<mat-divider></mat-divider>
+<!-- <mat-divider></mat-divider> -->
 
 <div mat-dialog-content class="body">
-    <mat-action-list class="community-member-list">
-        <div mat-subheader>Mitglieder:</div>
-        <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
-            <ng-container *cdkVirtualFor="let member of membersSortedByFollowers">
-                <mat-list-item class="profile-item" (click)="onMemberClicked(member)">
-                    <img mat-list-icon class="profile-image" [src]="member.imageUrl">
-                    <div mat-line class="profile-name" [innerHTML]="Utils.twemojify(member.name)"></div>
-                    <div mat-line>@{{member.username}}</div>
-                    <span class="profile-stats">{{Utils.shortenNumber(member.followerCount)}}</span>
-                </mat-list-item>
-            </ng-container>
-        </cdk-virtual-scroll-viewport>
-    </mat-action-list>
+    <mat-tab-group mat-stretch-tabs>
+
+        <!-- Members -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 8px;">groups</mat-icon>
+                Mitglieder
+            </ng-template>
+
+            <ng-template matTabContent>
+                <mat-action-list class="community-member-list">
+                    <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
+                        <ng-container *cdkVirtualFor="let member of membersSortedByFollowers">
+                            <mat-list-item class="profile-item" (click)="onMemberClicked(member)">
+                                <img mat-list-icon class="profile-image" [src]="member.imageUrl">
+                                <div mat-line class="profile-name" [innerHTML]="Utils.twemojify(member.name)"></div>
+                                <div mat-line>@{{member.username}}</div>
+                                <span class="profile-stats">{{Utils.shortenNumber(member.followerCount)}}</span>
+                            </mat-list-item>
+                        </ng-container>
+                    </cdk-virtual-scroll-viewport>
+                </mat-action-list>
+            </ng-template>
+        </mat-tab>
+      
+        <!-- Tweets -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon style="margin-right: 8px;">tag</mat-icon>
+                Tweets
+            </ng-template>
+
+            <ng-template matTabContent>
+                <div style="height: 250px; padding-top: 8px;">
+                </div>
+            </ng-template>
+        </mat-tab>
+
+    </mat-tab-group>
 </div>
 
 <div mat-dialog-actions class="footer">
