@@ -56,7 +56,8 @@ export class TwitterDataService
                     {
                         x: profileDTO.position[0] * TwitterDataService.POSITION_SCALING_FACTOR,
                         y: profileDTO.position[1] * TwitterDataService.POSITION_SCALING_FACTOR
-                    }
+                    },
+                    isLandmark: profileDTO.isLandmark
                 };
 
                 // Find associated community
@@ -73,7 +74,7 @@ export class TwitterDataService
             });
         }));
     }
-
+    
     public loadCommunities() : Observable<TwitterCommunity[]>
     {
         return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");

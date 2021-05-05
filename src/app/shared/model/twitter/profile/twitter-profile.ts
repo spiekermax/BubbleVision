@@ -18,4 +18,5 @@ export interface TwitterProfile
     followeeCount: number;
 
     position: Position;
+    isLandmark: boolean;
 }
