@@ -12,12 +12,23 @@
     
     <mat-label>Suchen</mat-label>
     <input matInput [formControl]="searchFormControl" [matAutocomplete]="searchAutocomplete">
-    <mat-autocomplete class="searchbar-autocomplete" #searchAutocomplete="matAutocomplete"
-        [displayWith]="stringifyTwitterProfile"
+    <mat-autocomplete autoActiveFirstOption class="searchbar-autocomplete" #searchAutocomplete="matAutocomplete"
+        [displayWith]="stringifySearchResult"
         (optionSelected)="onSearchResultSelected($event.option.value)">
-        <mat-option *ngFor="let twitterProfile of filteredTwitterProfiles | async" [value]="twitterProfile">
-            <mat-icon class="searchbar-autocomplete-icon">person</mat-icon>
-            {{stringifyTwitterProfile(twitterProfile)}}
+        <mat-option *ngFor="let searchResult of searchResults | async" [value]="searchResult">
+            <ng-container [ngSwitch]="searchResult.type">
+
+                <ng-container *ngSwitchCase="'existing-twitter-profile'">
+                    <mat-icon class="searchbar-autocomplete-icon">person</mat-icon>
+                    {{searchResult.data.name}} (@{{searchResult.data.username}})
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'custom-twitter-profile'">
+                    <mat-icon class="searchbar-autocomplete-icon">add</mat-icon>
+                    @{{searchResult.data}} hinzufügen...
+                </ng-container>
+
+            </ng-container>
         </mat-option>
     </mat-autocomplete>
 

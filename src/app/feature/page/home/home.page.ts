@@ -4,7 +4,6 @@ import { FormControl } from "@angular/forms";
 
 // Material Design
 import { MatDialog } from "@angular/material/dialog";
-import { MatSliderChange } from "@angular/material/slider";
 
 // Reactive X
 import { Observable } from "rxjs";
@@ -22,6 +21,8 @@ import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-
 import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
 import { TwitterCommunityDialog } from "../../dialog/twitter-community/twitter-community.dialog";
 import { SettingsDialog } from "../../dialog/settings/settings.dialog";
+
+import { SearchResult } from "./model/search-result";
 
 
 @Component
@@ -46,11 +47,10 @@ export class HomePage implements OnInit
     /* ATTRIBUTES */
 
     public searchFormControl: FormControl = new FormControl();
+    public searchResults?: Observable<SearchResult[]>;
 
     public twitterProfiles: TwitterProfile[] = [];
     public twitterCommunities: TwitterCommunity[] = [];
-
-    public filteredTwitterProfiles?: Observable<TwitterProfile[]>;
 
     public minTwitterFollowersLimit: number = 0;
     public maxTwitterFollowersLimit: number = 10e6;
@@ -76,11 +76,11 @@ export class HomePage implements OnInit
     public ngOnInit() : void
     {
         // Initialize search autocomplete
-        this.filteredTwitterProfiles = this.searchFormControl.valueChanges.pipe
+        this.searchResults = this.searchFormControl.valueChanges.pipe
         (
             startWith(""),
-            map((query?: string | TwitterProfile) => typeof query === "string" ? query : undefined),
-            map((query?: string) => this.searchTwitterProfiles(query))
+            map((query?: string | SearchResult) => typeof query === "string" ? query : undefined),
+            map((query?: string) => this.search(query))
         );
     }
 
@@ -119,16 +119,28 @@ export class HomePage implements OnInit
         this.maxTwitterFollowersLimit = 10 * value * value;
     }
 
-    public onSearchResultSelected(twitterProfile: TwitterProfile) : void
+    public onSearchResultSelected(searchResult: SearchResult) : void
     {
-        // Zoom to selected profile
-        this.twitterGraph?.zoomToProfile(twitterProfile);
+        switch(searchResult.type)
+        {
+            case "existing-twitter-profile":
+            {
+                // Zoom to selected profile
+                this.twitterGraph?.zoomToProfile(searchResult.data);
+                break;
+            }
+            case "custom-twitter-profile":
+            {
+                // TODO: Add profile, show loading indicator, zoom to added profile
+                break;
+            }
+        }
     }
 
 
     /* METHODS */
 
-    private searchTwitterProfiles(query?: string) : TwitterProfile[]
+    private search(query?: string) : SearchResult[]
     {
         if(!query || !this.twitterProfiles) return [];
 
@@ -141,21 +153,39 @@ export class HomePage implements OnInit
         // Normalize query
         const normalizedQuery: string = sanitizedQuery.toLowerCase();
 
-        // Filter twitter profiles
-        return this.twitterProfiles.filter(profile =>
+        // Search twitter profiles
+        const twitterProfileSearchResults: SearchResult[] = this.twitterProfiles.filter(profile =>
         { 
-            return profile.name.toLowerCase().includes(normalizedQuery) ||
-                profile.username.toLowerCase().includes(normalizedQuery) ||
-                profile.description.toLowerCase().includes(normalizedQuery);
+            return profile.name.toLowerCase().includes(normalizedQuery) 
+                || profile.username.toLowerCase().includes(normalizedQuery)
+                || profile.description.toLowerCase().includes(normalizedQuery);
         })
-        .sort((a, b) => b.followerCount - a.followerCount);
+        .sort((a, b) => b.followerCount - a.followerCount)
+        .map(profile => ({ type: "existing-twitter-profile", data: profile }));
+
+        // Aggregate search results
+        const searchResults: SearchResult[] = [];
+        searchResults.push(...twitterProfileSearchResults);
+        searchResults.push({ type: "custom-twitter-profile", data: query });
+
+        return searchResults;
     }
 
-    public stringifyTwitterProfile(twitterProfile?: TwitterProfile) : string
+    public stringifySearchResult(searchResult?: SearchResult) : string
     {
-        if(!twitterProfile) return "";
+        if(!searchResult) return "";
 
-        return `${twitterProfile.name} (@${twitterProfile.username})`;
+        switch(searchResult.type)
+        {
+            case "existing-twitter-profile":
+            {
+                return `${searchResult.data.name} (@${searchResult.data.username})`;
+            }
+            case "custom-twitter-profile":
+            {
+                return "";
+            }
+        }
     }
 
 
