@@ -1,4 +1,3 @@
-- Fix profile overlap
 - Show aggregated community tweets
 
 - Add custom user to 2d plane
