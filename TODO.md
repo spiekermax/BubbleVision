@@ -1,5 +1,3 @@
-- Most used hashtags
-
 - Show aggregated community tweets
     - Waiting for lists API access
 
