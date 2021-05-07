@@ -12,7 +12,7 @@
 <!-- <mat-divider></mat-divider> -->
 
 <div mat-dialog-content class="body">
-    <mat-tab-group mat-stretch-tabs>
+    <mat-tab-group mat-stretch-tabs [disablePagination]="true" (selectedTabChange)="onSelectedTabChanged($event.index)">
 
         <!-- Members -->
         <mat-tab>
@@ -45,7 +45,18 @@
             </ng-template>
 
             <ng-template matTabContent>
-                <div style="height: 250px; padding-top: 8px;">
+                <div class="community-timeline-container">
+                    <div class="twitter-timeline-loading">
+                        <mat-spinner [diameter]="36"></mat-spinner>
+                        <span>Lade Tweets...</span>
+                    </div>
+                    <div class="twitter-timeline-error" [ngClass]="{ 'visible': twitterTimelineTimeout }">
+                        <mat-icon class="twitter-timeline-error-icon">error</mat-icon>
+                        Tweets konnten nicht geladen werden.
+                    </div>
+                    <div class="twitter-timeline-wrapper loading" [ngClass]="twitterTimelineState">
+                        <a class="twitter-timeline" data-lang="de" data-chrome="noheader nofooter" href="https://twitter.com/spiekermax/lists/bachelor-arbeit-example-13753?ref_src=twsrc%5Etfw"></a>
+                    </div>
                 </div>
             </ng-template>
         </mat-tab>

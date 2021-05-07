@@ -24,6 +24,17 @@ export class TwitterCommunityDialog
     public Utils = Utils;
 
 
+    /* CONSTANTS */
+    
+    private static readonly TWITTER_TIMELINE_TIMEOUT: number = 5000;
+    
+    
+    /* ATTRIBUTES */
+    
+    public twitterTimelineState: "loading" | "loaded" = "loading";
+    public twitterTimelineTimeout: boolean = false;
+
+
     /* LIFECYCLE */
   
     public constructor(private dialog: MatDialog, private dialogRef: MatDialogRef<TwitterCommunityDialog>, @Inject(MAT_DIALOG_DATA) private data: [TwitterCommunity, TwitterProfile[]]) {}
@@ -34,6 +45,21 @@ export class TwitterCommunityDialog
     public onMemberClicked(member: TwitterProfile) : void
     {
         this.dialogRef.close(member);
+    }
+
+    public onSelectedTabChanged(tabIndex: number) : void
+    {
+        if(tabIndex != 1) return;
+
+        // Reset state
+        this.twitterTimelineState = "loading";
+        this.twitterTimelineTimeout = false;
+
+        // Load twitter widget
+        (<any> window).twttr.widgets.load().then(() => this.twitterTimelineState = "loaded");
+
+        // Timeout
+        setTimeout(() => this.twitterTimelineTimeout = true, TwitterCommunityDialog.TWITTER_TIMELINE_TIMEOUT);
     }
 
 
