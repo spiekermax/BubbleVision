@@ -84,6 +84,11 @@ export class TwitterCommunityDialog
         return Utils.shortenNumber(maxFollowers);
     }
 
+    public get twitterListUrl() : string
+    {
+        return `https://twitter.com/${this.community.twitterList.user}/lists/${this.community.twitterList.slug}`;
+    }
+
     public get membersSortedByFollowers() : TwitterProfile[]
     {
         return this.members.sort((a, b) => b.followerCount - a.followerCount);

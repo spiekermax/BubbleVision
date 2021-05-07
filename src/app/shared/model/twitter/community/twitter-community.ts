@@ -11,4 +11,6 @@ export interface TwitterCommunity
 
     members: string[];
     hotspots: Record<string, TwitterCommunityHotspot[]>;
+
+    twitterList: { id: string, slug: string, user: string };
 }

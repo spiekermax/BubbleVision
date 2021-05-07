@@ -38,16 +38,25 @@
     display: flex;
     flex-direction: column;
 
+    height: 50vh;
+
+    .tabs {
+        flex-grow: 1;
+    }
+
     .tab-icon {
         margin-right: 8px;
     }
 
     .community-member-list {
+        display: flex;
+        flex-grow: 1;
+
         margin-left: -8px;
 
         .virtual-scroll {
             margin-left: 8px;
-            height: 250px;
+            flex-grow: 1;
         }
 
         .profile-item {
@@ -87,7 +96,7 @@
         align-items: center;
         justify-content: center;
 
-        height: 259px;
+        flex-grow: 1;
     
         .twitter-timeline-loading {
             display: flex;
@@ -134,9 +143,9 @@
     
         .twitter-timeline-wrapper {
             position: absolute;
-            top: 0; bottom: 0;
+            top: -1px; bottom: 0;
             left: 0; right: 0; 
-    
+
             overflow: auto; 
     
             transition: opacity 1s;
@@ -164,6 +173,15 @@
     height: 17px;
     
     vertical-align: middle;
+}
+
+
+::ng-deep .mat-tab-body-content {
+    display: flex;
+}
+
+::ng-deep .mat-tab-body-wrapper {
+    flex-grow: 1;
 }
 
 ::ng-deep .mat-list-item-content {
