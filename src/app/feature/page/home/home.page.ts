@@ -64,6 +64,10 @@ export class HomePage implements OnInit
         this.twitterDataService.loadProfiles().subscribe(twitterProfiles => 
         {
             this.twitterProfiles = twitterProfiles;
+
+            // Test new service endpoint
+            // const landmarks = [...this.twitterProfiles].sort((a, b) => b.followerCount - a.followerCount).slice(0, 64);
+            // this.twitterDataService.loadProfile("elonmusk", landmarks).subscribe(data => console.log(data));
         });
 
         // Load twitter communities
