@@ -64,10 +64,6 @@ export class HomePage implements OnInit
         this.twitterDataService.loadProfiles().subscribe(twitterProfiles => 
         {
             this.twitterProfiles = twitterProfiles;
-
-            // Test new service endpoint
-            // const landmarks = [...this.twitterProfiles].sort((a, b) => b.followerCount - a.followerCount).slice(0, 64);
-            // this.twitterDataService.loadProfile("elonmusk", landmarks).subscribe(data => console.log(data));
         });
 
         // Load twitter communities
@@ -135,7 +131,14 @@ export class HomePage implements OnInit
             }
             case "custom-twitter-profile":
             {
-                // TODO: Add profile, show loading indicator, zoom to added profile
+                // Load specified profile
+                const landmarks = this.twitterProfiles.filter(profile => profile.isLandmark);
+                this.twitterDataService.loadProfile(searchResult.data, landmarks).subscribe(profile => 
+                {
+                    this.twitterProfiles = [...this.twitterProfiles, profile];
+                    
+                    setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 500);
+                });
                 break;
             }
         }
@@ -170,7 +173,7 @@ export class HomePage implements OnInit
         // Aggregate search results
         const searchResults: SearchResult[] = [];
         searchResults.push(...twitterProfileSearchResults);
-        searchResults.push({ type: "custom-twitter-profile", data: query });
+        searchResults.push({ type: "custom-twitter-profile", data: sanitizedQuery });
 
         return searchResults;
     }

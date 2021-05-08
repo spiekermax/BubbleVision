@@ -21,8 +21,8 @@ export class TwitterDataService
 {
     /* CONSTANTS */
 
-    private static readonly TWITTER_MINER_API_URL: string = "https://192.168.2.147:1234/api/";
-    private static readonly TWITTER_MINER_API_KEY: string = "bWF4OjNKNTVKMWN6UFdFeHNjdDQ";
+    private static readonly TWITTER_MINER_API_URL: string = "http://localhost:3000/api/";
+    private static readonly TWITTER_MINER_API_KEY: string = "bWF4OjNKNTVKMWN6UFdFeHNjdDQ=";
 
     private static readonly POSITION_SCALING_FACTOR: number = 1000;
 
@@ -82,9 +82,9 @@ export class TwitterDataService
 
     public loadProfile(username: string, landmarks: TwitterProfile[]) : Observable<TwitterProfile>
     {
-        return this.postToTwitterMinerAPI<void>(`miner/scan?username=${username}`, null).pipe(switchMap(() =>
+        return this.postToTwitterMinerAPI(`miner/scan?username=${username}`, null).pipe(switchMap(() =>
         {
-            return this.postToTwitterMinerAPI<void>(`export/distances`,
+            return this.postToTwitterMinerAPI(`export/distances`,
             {
                 "langs": {
                     "de": {
@@ -112,25 +112,26 @@ export class TwitterDataService
             }))
             .pipe(map((data: { info: any, distances: number[] }) =>
             {
-                const normalizationFactor: number = data.distances.reduce((a, b) => a + b);
-                const normalizedDistances: number[] = data.distances.map(distance => distance / normalizationFactor);
-
                 const profilePosition: Position = { x: 0, y: 0 };
-                for(let i = 0; i < landmarks.length; ++i)
+                
+                const weights: number[] = [0.5, 0.2, 0.11, 0.05, 0.03, 0.025, 0.025, 0.02, 0.02, 0.02];
+                const highestDistances: number[] = [...data.distances].sort((a, b) => b - a).splice(0, 10);
+                for(let i = 0; i < highestDistances.length; ++i)
                 {
-                    profilePosition.x += landmarks[i].position.x * normalizedDistances[i];
-                    profilePosition.y += landmarks[i].position.y * normalizedDistances[i];
+                    const index: number = data.distances.indexOf(highestDistances[i]);
+                    profilePosition.x += weights[i] * landmarks[index].position.x;
+                    profilePosition.y += weights[i] * landmarks[index].position.y;
                 }
 
                 const profile: TwitterProfile =
                 {
                     id: data.info.twitterId,
-                    communityId: 21 * 21,
+                    communityId: 101 * 21 - 1,
                     name: data.info.name,
                     username: data.info.username,
                     description: data.info.description || "",
                     verified: data.info.verified,
-                    imageUrl: data.info.profile_image_url,
+                    imageUrl: data.info.profile_image_url.replace("_normal", "_200x200"),
                     followerCount: data.info.followers_count,
                     followeeCount: data.info.followees_count,
                     position: profilePosition,
@@ -157,18 +158,21 @@ export class TwitterDataService
             headers: 
             { 
                 "Authorization": `Basic ${TwitterDataService.TWITTER_MINER_API_KEY}`,
+                "Content-Type":  "application/json"
             }
         });
     }
 
-    private postToTwitterMinerAPI<T>(url: string, body: any) : Observable<T>
+    private postToTwitterMinerAPI(url: string, body: any) : Observable<string>
     {
-        return this.http.post<T>(TwitterDataService.TWITTER_MINER_API_URL + url, body, 
+        return this.http.post(TwitterDataService.TWITTER_MINER_API_URL + url, body, 
         { 
             headers: 
             { 
                 "Authorization": `Basic ${TwitterDataService.TWITTER_MINER_API_KEY}`,
-            }
+                "Content-Type":  "text/plain"
+            },
+            responseType: "text"
         });
     }
 }
