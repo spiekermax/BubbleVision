@@ -185,7 +185,7 @@ export class HomePage implements OnInit
         const searchResults: SearchResult[] = [];
         searchResults.push(...twitterProfileSearchResults);
 
-        if(!this.twitterProfiles.some(profile => profile.username.toLowerCase() == sanitizedQuery))
+        if(!this.twitterProfiles.some(profile => profile.username.toLowerCase() == normalizedQuery))
             searchResults.push({ type: "custom-twitter-profile", data: sanitizedQuery });
 
         return searchResults;
