@@ -1,0 +1,17 @@
+.body {
+    display: flex;
+    flex-direction: column;
+
+    width: 128px;
+
+    align-items: center;
+    justify-content: center;
+
+    .loading-spinner {
+        margin-top: 12px;
+    }
+
+    .loading-message {
+        margin-top: 24px;
+    }
+}

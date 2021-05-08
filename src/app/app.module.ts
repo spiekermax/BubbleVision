@@ -26,7 +26,9 @@ import { AppRoutingModule } from "./app-routing.module";
 
 import { HomePage } from "./feature/page/home/home.page";
 
+import { LoadingDialog } from "./feature/dialog/loading/loading.dialog";
 import { SettingsDialog } from "./feature/dialog/settings/settings.dialog";
+
 import { TwitterCommunityDialog } from "./feature/dialog/twitter-community/twitter-community.dialog";
 import { TwitterProfileDialog } from "./feature/dialog/twitter-profile/twitter-profile.dialog";
 
@@ -38,7 +40,9 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         AppRoot,
         HomePage,
 
+        LoadingDialog,
         SettingsDialog,
+
         TwitterCommunityDialog,
         TwitterProfileDialog,
 

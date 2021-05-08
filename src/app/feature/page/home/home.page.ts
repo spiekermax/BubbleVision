@@ -18,9 +18,11 @@ import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-pro
 import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
 import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-data.service";
 
+import { LoadingDialog } from "../../dialog/loading/loading.dialog";
+import { SettingsDialog } from "../../dialog/settings/settings.dialog";
+
 import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
 import { TwitterCommunityDialog } from "../../dialog/twitter-community/twitter-community.dialog";
-import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 
 import { SearchResult } from "./model/search-result";
 
@@ -131,13 +133,22 @@ export class HomePage implements OnInit
             }
             case "custom-twitter-profile":
             {
+                // Aggregate landmarks
+                const landmarks: TwitterProfile[] = this.twitterProfiles.filter(profile => profile.isLandmark);
+                
                 // Load specified profile
-                const landmarks = this.twitterProfiles.filter(profile => profile.isLandmark);
+                const loadingDialog = this.dialog.open(LoadingDialog, { disableClose: true, data: { loadingMessage: "Analysiere Profil..." } });
                 this.twitterDataService.loadProfile(searchResult.data, landmarks).subscribe(profile => 
                 {
                     this.twitterProfiles = [...this.twitterProfiles, profile];
                     
-                    setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 500);
+                    setTimeout(() =>
+                    {
+                        loadingDialog.close();
+
+                        setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 250);
+
+                    }, 250);
                 });
                 break;
             }
@@ -173,7 +184,9 @@ export class HomePage implements OnInit
         // Aggregate search results
         const searchResults: SearchResult[] = [];
         searchResults.push(...twitterProfileSearchResults);
-        searchResults.push({ type: "custom-twitter-profile", data: sanitizedQuery });
+
+        if(!this.twitterProfiles.some(profile => profile.username.toLowerCase() == sanitizedQuery))
+            searchResults.push({ type: "custom-twitter-profile", data: sanitizedQuery });
 
         return searchResults;
     }
