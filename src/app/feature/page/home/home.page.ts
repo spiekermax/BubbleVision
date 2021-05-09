@@ -18,6 +18,7 @@ import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-pro
 import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
 import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-data.service";
 
+import { HelpDialog } from "../../dialog/help/help.dialog";
 import { LoadingDialog } from "../../dialog/loading/loading.dialog";
 import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 
@@ -211,6 +212,16 @@ export class HomePage implements OnInit
 
     /* METHODS - DIALOGS */
 
+    public openHelpDialog() : void
+    {
+        this.dialog.open(HelpDialog);
+    }
+
+    public openSettingsDialog() : void
+    {
+        this.dialog.open(SettingsDialog);
+    }
+
     public openTwitterProfileDialog(twitterProfile: TwitterProfile) : void
     {
         this.dialog.open(TwitterProfileDialog,
@@ -236,10 +247,5 @@ export class HomePage implements OnInit
             // Zoom to selected profile
             this.twitterGraph?.zoomToProfile(clickedMember);
         });
-    }
-
-    public openSettingsDialog() : void
-    {
-        this.dialog.open(SettingsDialog);
     }
 }
