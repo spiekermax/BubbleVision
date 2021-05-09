@@ -138,11 +138,11 @@ export class TwitterGraphCamera
 
     private interpolateVisibility() : void
     {
-        this.lod0Layer.alpha = this.lerp(this.lod0Layer.alpha, +this.lod0LayerVisible, 0.1);
+        this.lod0Layer.alpha = this.lerp(this.lod0Layer.alpha, +this.lod0LayerVisible, 0.05);
 
-        this.lod1Layer.alpha = this.lerp(this.lod1Layer.alpha, +this.lod1LayerVisible, 0.1);
+        this.lod1Layer.alpha = this.lerp(this.lod1Layer.alpha, +this.lod1LayerVisible, 0.05);
         
-        this.lod2Layer.alpha = this.lerp(this.lod2Layer.alpha, +this.lod2LayerVisible, 0.1);
+        this.lod2Layer.alpha = this.lerp(this.lod2Layer.alpha, +this.lod2LayerVisible, 0.05);
     }
 
     public animatePosition(newPosition: Position) : void

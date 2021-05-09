@@ -82,28 +82,38 @@ export class TwitterGraphCommunityView extends PIXI.Container
         //
         const circle: PIXI.Graphics = new PIXI.Graphics();
         circle.beginFill(TwitterGraphCommunityView.COLOR_MAP[this.community.id % 21]);
-        circle.drawCircle(0, 0, (1000 / this.scalingFactor) * hotspot.radius);
+        circle.drawCircle(0, 0, (1000 / this.scalingFactor) * 2 * hotspot.radius);
         circle.endFill();
 
         //
-        circle.alpha = 0.82;
+        // circle.alpha = 0.82;
 
         //
         const circleTexture: PIXI.Texture = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
         const circleSprite: PIXI.Sprite = PIXI.Sprite.from(circleTexture);
 
+        const circleMask = PIXI.Sprite.from("assets/radial-gradient.png");
+        // const circleMask = PIXI.Sprite.from(PIXI.Texture.WHITE);
+        circleMask.width = circle.width;
+        circleMask.height = circle.height;
+
+        const maskedContainer: PIXI.Container = new PIXI.Container();
+        maskedContainer.addChild(circleSprite);
+        maskedContainer.addChild(circleMask);
+        circleSprite.mask = circleMask;
+
         //
-        circleSprite.position.x = (1000 / this.scalingFactor) * (hotspot.centroid[0] - hotspot.radius);
-        circleSprite.position.y = (1000 / this.scalingFactor) * (hotspot.centroid[1] - hotspot.radius);
+        maskedContainer.position.x = (1000 / this.scalingFactor) * (hotspot.centroid[0] - 2 * hotspot.radius);
+        maskedContainer.position.y = (1000 / this.scalingFactor) * (hotspot.centroid[1] - 2 * hotspot.radius);
         
-        circleSprite.interactive = true;
-        circleSprite.cursor = "pointer";
-        circleSprite.hitArea = new PIXI.Circle((1000 / this.scalingFactor) * hotspot.radius, (1000 / this.scalingFactor) * hotspot.radius, (1000 / this.scalingFactor) * hotspot.radius);
+        maskedContainer.interactive = true;
+        maskedContainer.cursor = "pointer";
+        maskedContainer.hitArea = new PIXI.Circle((1000 / this.scalingFactor) * 2 * hotspot.radius, (1000 / this.scalingFactor) * 2 * hotspot.radius, (1000 / this.scalingFactor) * 1.2 * hotspot.radius);
 
-        circleSprite.on("click", () => this.onHotspotClicked(hotspot));
+        maskedContainer.on("click", () => this.onHotspotClicked(hotspot));
 
         //
-        this.addChild(circleSprite);
+        this.addChild(maskedContainer);
     }
 
     private addHotspotLabels(hotspot: TwitterCommunityHotspot) : void
