@@ -138,8 +138,8 @@ export class HomePage implements OnInit
                 const landmarks: TwitterProfile[] = this.twitterProfiles.filter(profile => profile.isLandmark);
                 
                 // Load specified profile
-                const loadingDialog = this.dialog.open(LoadingDialog, { disableClose: true, data: { loadingMessage: "Analysiere Profil..." } });
-                this.twitterDataService.loadProfile(searchResult.data, landmarks).subscribe(profile => 
+                const loadingDialog = this.dialog.open(LoadingDialog, { autoFocus: false, disableClose: true, data: { loadingMessage: "Analysiere Profil..." } });
+                const loadingObservable = this.twitterDataService.loadProfile(searchResult.data, landmarks).subscribe(profile => 
                 {
                     this.twitterProfiles = [...this.twitterProfiles, profile];
                     
@@ -151,6 +151,10 @@ export class HomePage implements OnInit
 
                     }, 250);
                 });
+
+                // Cancel loading if dialog closed
+                loadingDialog.afterClosed().subscribe(() => loadingObservable.unsubscribe());
+
                 break;
             }
         }

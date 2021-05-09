@@ -2,16 +2,22 @@
     display: flex;
     flex-direction: column;
 
-    width: 128px;
+    padding: 0;
+
+    width: 220px;
 
     align-items: center;
     justify-content: center;
 
     .loading-spinner {
-        margin-top: 12px;
+        margin-top: 24px;
     }
 
     .loading-message {
         margin-top: 24px;
+    }
+
+    .cancel-button {
+        margin-top: 36px;
     }
 }
