@@ -4,7 +4,7 @@
         <div class="community-type">Twitter-Gemeinschaft</div>
         <p class="community-stats">{{minFollowers}} - {{maxFollowers}} Follower</p>
     </div>
-    <button mat-icon-button class="community-help-button"> 
+    <button class="community-help-button" mat-icon-button [matMenuTriggerFor]="helpMenu"> 
         <mat-icon>help_outline</mat-icon>
     </button>
 </div>
@@ -65,3 +65,9 @@
 <div mat-dialog-actions class="footer">
     <button mat-button color="primary" mat-dialog-close cdkFocusInitial>SCHLIESSEN</button>
 </div>
+
+<!-- Help menu -->
+<mat-menu #helpMenu="matMenu">
+    <div class="menu-title">Info</div>
+    <p style="margin-left: 16px;">Eine Twitter-Gemeinschaft ist eine Ansammlung von Profilen, die viele Follower gemeinsam haben.</p>
+</mat-menu>
