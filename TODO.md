@@ -1,4 +1,3 @@
-- Help options
 - ! Community borders 
 
 - Highlight accounts someone is following
