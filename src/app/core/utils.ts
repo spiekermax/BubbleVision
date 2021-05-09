@@ -1,4 +1,4 @@
-// @ts-ignore
+// Twemoji
 import twemoji from "twemoji";
 
 
