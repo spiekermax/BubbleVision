@@ -1,0 +1,73 @@
+<div class="header">
+    <div>
+        <h1 mat-dialog-title class="community-name">{{name}}</h1>
+        <div class="community-type">Twitter-Gemeinschaft</div>
+        <p class="community-stats">{{minFollowers}} - {{maxFollowers}} Follower</p>
+    </div>
+    <button class="community-help-button" mat-icon-button [matMenuTriggerFor]="helpMenu"> 
+        <mat-icon>help_outline</mat-icon>
+    </button>
+</div>
+
+<div mat-dialog-content class="body">
+    <mat-tab-group class="tabs" mat-stretch-tabs [disablePagination]="true" (selectedTabChange)="onSelectedTabChanged($event.index)">
+
+        <!-- Members -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">groups</mat-icon>
+                Mitglieder
+            </ng-template>
+
+            <ng-template matTabContent>
+                <mat-action-list class="community-member-list">
+                    <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
+                        <ng-container *cdkVirtualFor="let member of membersSortedByFollowers">
+                            <mat-list-item class="profile-item" (click)="onMemberClicked(member)">
+                                <img mat-list-icon class="profile-image" [src]="member.imageUrl">
+                                <div mat-line class="profile-name" [innerHTML]="Utils.twemojify(member.name)"></div>
+                                <div mat-line>@{{member.username}}</div>
+                                <span class="profile-stats">{{Utils.shortenNumber(member.followerCount)}}</span>
+                            </mat-list-item>
+                        </ng-container>
+                    </cdk-virtual-scroll-viewport>
+                </mat-action-list>
+            </ng-template>
+        </mat-tab>
+      
+        <!-- Tweets -->
+        <mat-tab>
+            <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">tag</mat-icon>
+                Tweets
+            </ng-template>
+
+            <ng-template matTabContent>
+                <div class="community-timeline-container">
+                    <div class="twitter-timeline-loading">
+                        <mat-spinner [diameter]="36"></mat-spinner>
+                        <span>Lade Tweets...</span>
+                    </div>
+                    <div class="twitter-timeline-error" [ngClass]="{ 'visible': twitterTimelineTimeout }">
+                        <mat-icon class="twitter-timeline-error-icon">error</mat-icon>
+                        Tweets konnten nicht geladen werden.
+                    </div>
+                    <div class="twitter-timeline-wrapper loading" [ngClass]="twitterTimelineState">
+                        <a class="twitter-timeline" data-lang="de" data-chrome="noheader nofooter" [href]="twitterListUrl + '?ref_src=twsrc%5Etfw'"></a>
+                    </div>
+                </div>
+            </ng-template>
+        </mat-tab>
+
+    </mat-tab-group>
+</div>
+
+<div mat-dialog-actions class="footer">
+    <button mat-button color="primary" mat-dialog-close cdkFocusInitial>SCHLIESSEN</button>
+</div>
+
+<!-- Help menu -->
+<mat-menu #helpMenu="matMenu">
+    <div class="menu-title">Info</div>
+    <p style="margin-left: 16px;">Eine Twitter-Gemeinschaft ist eine Ansammlung von Profilen, die viele Follower gemeinsam haben.</p>
+</mat-menu>

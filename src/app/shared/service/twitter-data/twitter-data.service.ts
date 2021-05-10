@@ -3,12 +3,14 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
 // Reactive X
-import { forkJoin, Observable } from "rxjs";
-import { map } from 'rxjs/operators';
+import { forkJoin, Observable, of, timer } from "rxjs";
+import { concatMap, filter, map, switchMap, take } from "rxjs/operators";
 
 // Internal dependencies
-import { TwitterCommunity } from "../../model/twitter/twitter-community";
-import { TwitterProfile } from "../../model/twitter/twitter-profile";
+import { Position } from "../../model/position/position";
+
+import { TwitterCommunity } from "../../model/twitter/community/twitter-community";
+import { TwitterProfile } from "../../model/twitter/profile/twitter-profile";
 
 
 @Injectable
@@ -19,7 +21,10 @@ export class TwitterDataService
 {
     /* CONSTANTS */
 
-    private static readonly GRAPH_SCALING_FACTOR: number = 1000;
+    private static readonly TWITTER_MINER_API_URL: string = "http://localhost:3000/api/";
+    private static readonly TWITTER_MINER_API_KEY: string = "bWF4OjNKNTVKMWN6UFdFeHNjdDQ=";
+
+    private static readonly POSITION_SCALING_FACTOR: number = 1000;
 
 
     /* LIFECYCLE */
@@ -54,9 +59,10 @@ export class TwitterDataService
                     followeeCount: profileDTO.followeeCount,
                     position:
                     {
-                        x: profileDTO.position[0] * TwitterDataService.GRAPH_SCALING_FACTOR,
-                        y: profileDTO.position[1] * TwitterDataService.GRAPH_SCALING_FACTOR
-                    }
+                        x: profileDTO.position[0] * TwitterDataService.POSITION_SCALING_FACTOR,
+                        y: profileDTO.position[1] * TwitterDataService.POSITION_SCALING_FACTOR
+                    },
+                    isLandmark: profileDTO.isLandmark
                 };
 
                 // Find associated community
@@ -64,11 +70,7 @@ export class TwitterDataService
                 {
                     if(json.communities[communityId].includes(profileDTO.username))
                     {
-                        profile.community =
-                        {
-                            id: Number(communityId),
-                            size: json.communities[communityId].length
-                        }
+                        profile.communityId = Number(communityId);
                         break;
                     }
                 }
@@ -78,23 +80,99 @@ export class TwitterDataService
         }));
     }
 
-    public loadCommunities() : Observable<TwitterCommunity[]>
+    public loadProfile(username: string, landmarks: TwitterProfile[]) : Observable<TwitterProfile>
     {
-        return this.http.get<any>("assets/graph/de_1000_communities_weighted_louvain.json").pipe(map((json: any) =>
+        return this.postToTwitterMinerAPI(`miner/scan?username=${username}`, null).pipe(switchMap(() =>
         {
-            const communities: TwitterCommunity[] = [];
-            for(const communityId of Object.keys(json))
+            return this.postToTwitterMinerAPI(`export/distances`,
             {
-                const community: TwitterCommunity =
+                "langs": {
+                    "de": {
+                        "num_profiles": 0
+                    }
+                },
+                "include_usernames": [username],
+                "landmarks": landmarks.map(landmark => landmark.username)
+            })
+            .pipe(switchMap(() =>
+            {
+                return timer(0, 500)
+                    .pipe(concatMap(() => this.getFromTwitterMinerAPI<any>("export/distances")))
+                    .pipe(filter(response => response.done))
+                    .pipe(map(response => response.data.profiles[0].position))
+                    .pipe(take(1));
+            }))
+            .pipe(switchMap((distances: number[]) =>
+            {
+                return forkJoin
+                ({
+                    info: this.getFromTwitterMinerAPI<any>(`profile/info?username=${username}`),
+                    distances: of(distances)
+                });
+            }))
+            .pipe(map((data: { info: any, distances: number[] }) =>
+            {
+                const profilePosition: Position = { x: 0, y: 0 };
+                
+                const weights: number[] = [0.5, 0.2, 0.11, 0.05, 0.03, 0.025, 0.025, 0.02, 0.02, 0.02];
+                const highestDistances: number[] = [...data.distances].sort((a, b) => b - a).splice(0, 10);
+                for(let i = 0; i < highestDistances.length; ++i)
                 {
-                    id: Number(communityId),
-                    size: json[communityId].length
+                    const index: number = data.distances.indexOf(highestDistances[i]);
+                    profilePosition.x += weights[i] * landmarks[index].position.x;
+                    profilePosition.y += weights[i] * landmarks[index].position.y;
+                }
+
+                const profile: TwitterProfile =
+                {
+                    id: data.info.twitterId,
+                    communityId: 101 * 21 - 1,
+                    name: data.info.name,
+                    username: data.info.username,
+                    description: data.info.description || "",
+                    verified: data.info.verified,
+                    imageUrl: data.info.profile_image_url.replace("_normal", "_200x200"),
+                    followerCount: data.info.followers_count,
+                    followeeCount: data.info.followees_count,
+                    position: profilePosition,
+                    isLandmark: true
                 };
 
-                communities.push(community);
-            }
-
-            return communities;
+                return profile;
+            }));
         }));
+    }
+
+    public loadCommunities() : Observable<TwitterCommunity[]>
+    {
+        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");
+    }
+
+
+    /* UTILITY */
+
+    private getFromTwitterMinerAPI<T>(url: string) : Observable<T>
+    {
+        return this.http.get<T>(TwitterDataService.TWITTER_MINER_API_URL + url, 
+        { 
+            headers: 
+            { 
+                "Authorization": `Basic ${TwitterDataService.TWITTER_MINER_API_KEY}`,
+                "Content-Type":  "application/json"
+            }
+        });
+    }
+
+    private postToTwitterMinerAPI(url: string, body: any) : Observable<string>
+    {
+        return this.http.post(TwitterDataService.TWITTER_MINER_API_URL + url, body, 
+        { 
+            headers: 
+            { 
+                "Authorization": `Basic ${TwitterDataService.TWITTER_MINER_API_KEY}`,
+                "Content-Type":  "text/plain"
+            },
+            responseType: "text"
+        });
     }
 }

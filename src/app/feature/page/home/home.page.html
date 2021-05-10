@@ -1,7 +1,9 @@
 <!-- Twitter graph -->
 <twitter-graph class="twitter-graph"
     [profiles]="this.twitterProfiles"
-    (profileClicked)="openTwitterProfileDialog($event)">
+    [communities]="this.twitterCommunities"
+    (profileClicked)="openTwitterProfileDialog($event)"
+    (communityClicked)="openTwitterCommunityDialog($event)">
 </twitter-graph>
 
 <!-- Searchbar -->
@@ -10,16 +12,29 @@
     
     <mat-label>Suchen</mat-label>
     <input matInput [formControl]="searchFormControl" [matAutocomplete]="searchAutocomplete">
-    <mat-autocomplete class="searchbar-autocomplete" #searchAutocomplete="matAutocomplete"
-        [displayWith]="stringifyTwitterProfile"
+    <mat-autocomplete autoActiveFirstOption class="searchbar-autocomplete" #searchAutocomplete="matAutocomplete"
+        [displayWith]="stringifySearchResult"
         (optionSelected)="onSearchResultSelected($event.option.value)">
-        <mat-option *ngFor="let twitterProfile of filteredTwitterProfiles | async" [value]="twitterProfile">
-            <mat-icon class="searchbar-autocomplete-icon">person</mat-icon>
-            {{stringifyTwitterProfile(twitterProfile)}}
+        <mat-option *ngFor="let searchResult of searchResults | async" [value]="searchResult">
+            <ng-container [ngSwitch]="searchResult.type">
+
+                <ng-container *ngSwitchCase="'existing-twitter-profile'">
+                    <mat-icon class="searchbar-autocomplete-icon">person</mat-icon>
+                    {{searchResult.data.name}} (@{{searchResult.data.username}})
+                </ng-container>
+
+                <ng-container *ngSwitchCase="'custom-twitter-profile'">
+                    <mat-icon class="searchbar-autocomplete-icon">add</mat-icon>
+                    @{{searchResult.data}} hinzufügen...
+                </ng-container>
+
+            </ng-container>
         </mat-option>
     </mat-autocomplete>
 
-    <button mat-icon-button matSuffix>
+    <button mat-icon-button matSuffix
+        [matMenuTriggerFor]="filterMenu"
+        (click)="$event.stopPropagation()">
         <mat-icon>filter_list</mat-icon>
     </button>
     <button mat-icon-button matSuffix 
@@ -29,8 +44,66 @@
     </button>
 </mat-form-field>
 
+<!-- Filter menu -->
+<mat-menu #filterMenu="matMenu">
+    <div class="menu-title">Filter</div>
+    <div class="filter-menu-body" 
+        (click)="$event.stopPropagation()" 
+        (mouseleave)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();" 
+        (mouseup)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();">
+       
+        <div style="display: flex;">
+            <div style="width: 220px;">
+                <div class="filter-slider-label">
+                    <span>Follower (Mindestens):</span>
+                    <span style="color: #696969;">{{Utils.shortenNumber(minTwitterFollowersLimit)}}</span>
+                </div>
+                <mat-slider #minTwitterFollowersLimitSlider 
+                    class="filter-slider" 
+                    color="primary"
+                    min="0"
+                    max="1000"
+                    step="1"
+                    value="0"
+                    (change)="onTwitterFollowersLimitSliderChanged()"
+                    (input)="onTwitterMinFollowersLimitSliderMoved($event.value)">
+                </mat-slider>
+            </div>
+            <button class="filter-slider-reset-button" mat-icon-button
+                (click)="minTwitterFollowersLimitSlider.value = 0; onTwitterMinFollowersLimitSliderMoved(0); onTwitterFollowersLimitSliderChanged();">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
+
+        <div style="display: flex;">
+            <div style="width: 220px;">
+                <div class="filter-slider-label">
+                    <span>Follower (Höchstens):</span>
+                    <span style="color: #696969;">{{Utils.shortenNumber(maxTwitterFollowersLimit)}}</span>
+                </div>
+                <mat-slider #maxTwitterFollowersLimitSlider
+                    class="filter-slider"
+                    color="primary"
+                    min="0"
+                    max="1000"
+                    step="1"
+                    value="1000"
+                    (change)="onTwitterFollowersLimitSliderChanged()"
+                    (input)="onTwitterMaxFollowersLimitSliderMoved($event.value)">
+                </mat-slider>
+            </div>
+            <button class="filter-slider-reset-button" mat-icon-button 
+                (click)="maxTwitterFollowersLimitSlider.value = 1000; onTwitterMaxFollowersLimitSliderMoved(1000); onTwitterFollowersLimitSliderChanged();">
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
+        
+    </div>
+</mat-menu>
+
+<!-- More menu -->
 <mat-menu #moreMenu="matMenu">
     <div class="menu-title">Mehr</div>
     <button mat-menu-item (click)="openSettingsDialog()">Einstellungen</button>
-    <button mat-menu-item>Hilfe</button>
+    <button mat-menu-item (click)="openHelpDialog()">Hilfe</button>
 </mat-menu>

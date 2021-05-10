@@ -24,6 +24,7 @@
     "pixi.js": "^5.3.9",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
+    "twemoji": "^13.0.2",
     "zone.js": "~0.11.3"
   },
   "devDependencies": {
@@ -37,6 +38,7 @@
     "@angular/compiler-cli": "^11.2.10",
     "@types/jasmine": "~3.6.0",
     "@types/node": "^12.20.10",
+    "@types/twemoji": "^12.1.1",
     "@typescript-eslint/eslint-plugin": "4.16.1",
     "@typescript-eslint/parser": "4.16.1",
     "eslint": "^7.24.0",
