@@ -49,6 +49,9 @@ export class TwitterGraphCamera
     private targetPosition?: Position;
     private targetZoom?: number;
 
+    private positionAnimationSpeed: number = 0.1;
+    private zoomAnimationSpeed: number = 0.1;
+
     private positionUpdater?: () => void = undefined;
     private zoomUpdater?: () => void = undefined;
 
@@ -114,26 +117,26 @@ export class TwitterGraphCamera
 
     private interpolatePosition() : void
     {
-        this.lod0Layer.position.x = this.lerp(this.lod0Layer.position.x, this.targetPosition!.x, 0.1);
-        this.lod0Layer.position.y = this.lerp(this.lod0Layer.position.y, this.targetPosition!.y, 0.1);
+        this.lod0Layer.position.x = this.lerp(this.lod0Layer.position.x, this.targetPosition!.x, this.positionAnimationSpeed);
+        this.lod0Layer.position.y = this.lerp(this.lod0Layer.position.y, this.targetPosition!.y, this.positionAnimationSpeed);
 
-        this.lod1Layer.position.x = this.lerp(this.lod1Layer.position.x, this.targetPosition!.x, 0.1);
-        this.lod1Layer.position.y = this.lerp(this.lod1Layer.position.y, this.targetPosition!.y, 0.1);
+        this.lod1Layer.position.x = this.lerp(this.lod1Layer.position.x, this.targetPosition!.x, this.positionAnimationSpeed);
+        this.lod1Layer.position.y = this.lerp(this.lod1Layer.position.y, this.targetPosition!.y, this.positionAnimationSpeed);
 
-        this.lod2Layer.position.x = this.lerp(this.lod2Layer.position.x, this.targetPosition!.x, 0.1);
-        this.lod2Layer.position.y = this.lerp(this.lod2Layer.position.y, this.targetPosition!.y, 0.1);
+        this.lod2Layer.position.x = this.lerp(this.lod2Layer.position.x, this.targetPosition!.x, this.positionAnimationSpeed);
+        this.lod2Layer.position.y = this.lerp(this.lod2Layer.position.y, this.targetPosition!.y, this.positionAnimationSpeed);
     }
 
     private interpolateZoom() : void
     {
-        this.lod0Layer.scale.x = this.lerp(this.lod0Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD0_SCALING_FACTOR, 0.1);
-        this.lod0Layer.scale.y = this.lerp(this.lod0Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD0_SCALING_FACTOR, 0.1);
+        this.lod0Layer.scale.x = this.lerp(this.lod0Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD0_SCALING_FACTOR, this.zoomAnimationSpeed);
+        this.lod0Layer.scale.y = this.lerp(this.lod0Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD0_SCALING_FACTOR, this.zoomAnimationSpeed);
 
-        this.lod1Layer.scale.x = this.lerp(this.lod1Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD1_SCALING_FACTOR, 0.1);
-        this.lod1Layer.scale.y = this.lerp(this.lod1Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD1_SCALING_FACTOR, 0.1);
+        this.lod1Layer.scale.x = this.lerp(this.lod1Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD1_SCALING_FACTOR, this.zoomAnimationSpeed);
+        this.lod1Layer.scale.y = this.lerp(this.lod1Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD1_SCALING_FACTOR, this.zoomAnimationSpeed);
         
-        this.lod2Layer.scale.x = this.lerp(this.lod2Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD2_SCALING_FACTOR, 0.1);
-        this.lod2Layer.scale.y = this.lerp(this.lod2Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD2_SCALING_FACTOR, 0.1);
+        this.lod2Layer.scale.x = this.lerp(this.lod2Layer.scale.x, this.targetZoom! * TwitterGraphCamera.LOD2_SCALING_FACTOR, this.zoomAnimationSpeed);
+        this.lod2Layer.scale.y = this.lerp(this.lod2Layer.scale.y, this.targetZoom! * TwitterGraphCamera.LOD2_SCALING_FACTOR, this.zoomAnimationSpeed);
     }
 
     private interpolateVisibility() : void
@@ -145,10 +148,13 @@ export class TwitterGraphCamera
         this.lod2Layer.alpha = this.lerp(this.lod2Layer.alpha, +this.lod2LayerVisible, 0.05);
     }
 
-    public animatePosition(newPosition: Position) : void
+    public animatePosition(newPosition: Position, animationSpeed: number = 0.1) : void
     {
-        // Update containerA position
+        // Update target position
         this.targetPosition = newPosition;
+
+        // Update animation speed
+        this.positionAnimationSpeed = animationSpeed;
 
         // Bind position updater
         if(!this.positionUpdater)
@@ -158,10 +164,13 @@ export class TwitterGraphCamera
         }
     }
 
-    public animateZoom(newZoom: number) : void
+    public animateZoom(newZoom: number, animationSpeed: number = 0.1) : void
     {
-        // Update containerA zoom
+        // Update target zoom
         this.targetZoom = newZoom;
+
+        // Update animation speed
+        this.zoomAnimationSpeed = animationSpeed;
 
         // Bind zoom updater
         if(!this.zoomUpdater)

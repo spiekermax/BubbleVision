@@ -341,8 +341,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         ({
             x: (-profile.position.x * newZoom) + (this.app!.renderer.width - TwitterGraphProfileView.DIAMETER / 2) / 2,
             y: (-profile.position.y * newZoom) + (this.app!.renderer.height - TwitterGraphProfileView.DIAMETER / 2) / 2
-        });
-        this.camera.animateZoom(newZoom);
+        }, 
+        0.06);
+        this.camera.animateZoom(newZoom, 0.06);
     }
 
     private zoomToMousePosition(scalingFactor: number, mousePosition: Position) : void
