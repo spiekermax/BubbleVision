@@ -302,6 +302,32 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     /* METHODS  */
 
+    public addProfile(profile: TwitterProfile) : void
+    {
+        //
+        this.profiles.push(profile);
+
+        //
+        if(!this.camera) return;
+
+        // Create view
+        const profileView: TwitterGraphProfileView = new TwitterGraphProfileView(this.app!.renderer, profile);
+    
+        // Cache view reference
+        this.profileViews.push(profileView);
+    
+        // Bind callbacks
+        profileView.clickedEvent.subscribe(() => this.onProfileClicked(profile));
+    
+        // Add view
+        this.camera.baseLayer.addChild(profileView);
+    }
+
+    public removeProfile(profile: TwitterProfile) : void
+    {
+        throw new Error("Unimplemented");
+    }
+
     public highlightCommunities(condition: (community: TwitterCommunity) => boolean) : void
     {
         for(const communityView of this.communityViews)

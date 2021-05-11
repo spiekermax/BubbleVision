@@ -141,15 +141,20 @@ export class HomePage implements OnInit
                 const loadingDialog = this.dialog.open(LoadingDialog, { autoFocus: false, disableClose: true, data: { loadingMessage: "Analysiere Profil..." } });
                 const loadingObservable = this.twitterDataService.loadProfile(searchResult.data, landmarks).subscribe(profile => 
                 {
-                    this.twitterProfiles = [...this.twitterProfiles, profile];
+                    // Update data
+                    this.twitterProfiles.push(profile);
+
+                    // Update view
+                    this.twitterGraph?.addProfile(profile);
                     
+                    // Delay
                     setTimeout(() =>
                     {
                         // Close loading dialog
                         loadingDialog.close();
 
                         // Zoom to added profile
-                        setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 250);
+                        setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 500);
 
                     }, 250);
                 });
