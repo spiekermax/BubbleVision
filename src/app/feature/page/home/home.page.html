@@ -34,8 +34,9 @@
 
     <button mat-icon-button matSuffix
         [matMenuTriggerFor]="filterMenu"
+        
         (click)="$event.stopPropagation()">
-        <mat-icon>filter_list</mat-icon>
+        <mat-icon [matBadge]="activeFilterCount" [matBadgeHidden]="!activeFilterCount">filter_list</mat-icon>
     </button>
     <button mat-icon-button matSuffix 
         [matMenuTriggerFor]="moreMenu"
@@ -66,11 +67,11 @@
                     step="1"
                     value="0"
                     (change)="onTwitterFollowersLimitSliderChanged()"
-                    (input)="onTwitterMinFollowersLimitSliderMoved($event.value)">
+                    (input)="onMinTwitterFollowersLimitSliderMoved($event.value)">
                 </mat-slider>
             </div>
             <button class="filter-slider-reset-button" mat-icon-button
-                (click)="minTwitterFollowersLimitSlider.value = 0; onTwitterMinFollowersLimitSliderMoved(0); onTwitterFollowersLimitSliderChanged();">
+                (click)="minTwitterFollowersLimitSlider.value = 0; onMinTwitterFollowersLimitSliderMoved(0); onTwitterFollowersLimitSliderChanged();">
                 <mat-icon>refresh</mat-icon>
             </button>
         </div>
@@ -89,11 +90,11 @@
                     step="1"
                     value="1000"
                     (change)="onTwitterFollowersLimitSliderChanged()"
-                    (input)="onTwitterMaxFollowersLimitSliderMoved($event.value)">
+                    (input)="onMaxTwitterFollowersLimitSliderMoved($event.value)">
                 </mat-slider>
             </div>
             <button class="filter-slider-reset-button" mat-icon-button 
-                (click)="maxTwitterFollowersLimitSlider.value = 1000; onTwitterMaxFollowersLimitSliderMoved(1000); onTwitterFollowersLimitSliderChanged();">
+                (click)="maxTwitterFollowersLimitSlider.value = 1000; onMaxTwitterFollowersLimitSliderMoved(1000); onTwitterFollowersLimitSliderChanged();">
                 <mat-icon>refresh</mat-icon>
             </button>
         </div>

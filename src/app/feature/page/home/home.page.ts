@@ -41,6 +41,12 @@ export class HomePage implements OnInit
     public Utils = Utils;
 
 
+    /* CONSTANTS */
+
+    private static readonly MIN_TWITTER_FOLLOWERS_DEFAULT: number = 0;
+    private static readonly MAX_TWITTER_FOLLOWERS_DEFAULT: number = 10e6;
+
+
     /* COMPONENTS */
 
     @ViewChild(TwitterGraphComponent)
@@ -55,8 +61,11 @@ export class HomePage implements OnInit
     public twitterProfiles: TwitterProfile[] = [];
     public twitterCommunities: TwitterCommunity[] = [];
 
-    public minTwitterFollowersLimit: number = 0;
-    public maxTwitterFollowersLimit: number = 10e6;
+    private isMinTwitterFollowersFilterActive: boolean = false;
+    private isMaxTwitterFollowersFilterActive: boolean = false;
+
+    public minTwitterFollowersLimit: number = HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
+    public maxTwitterFollowersLimit: number = HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
 
 
     /* LIFECYCLE */
@@ -92,6 +101,9 @@ export class HomePage implements OnInit
 
     public onTwitterFollowersLimitSliderChanged() : void
     {
+        this.isMinTwitterFollowersFilterActive = this.minTwitterFollowersLimit != HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
+        this.isMaxTwitterFollowersFilterActive = this.maxTwitterFollowersLimit != HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
+
         this.twitterGraph?.highlightProfiles((twitterProfile: TwitterProfile) =>
         {
             return twitterProfile.followerCount >= this.minTwitterFollowersLimit && twitterProfile.followerCount <= this.maxTwitterFollowersLimit;
@@ -108,14 +120,14 @@ export class HomePage implements OnInit
         })
     }
 
-    public onTwitterMinFollowersLimitSliderMoved(value: number | null) : void
+    public onMinTwitterFollowersLimitSliderMoved(value: number | null) : void
     {
         if(value === null) return;
 
         this.minTwitterFollowersLimit = 10 * value * value;
     }
 
-    public onTwitterMaxFollowersLimitSliderMoved(value: number | null) : void
+    public onMaxTwitterFollowersLimitSliderMoved(value: number | null) : void
     {
         if(value === null) return;
 
@@ -258,5 +270,13 @@ export class HomePage implements OnInit
             // Zoom to selected profile
             setTimeout(() => this.twitterGraph?.zoomToProfile(clickedMember), 100);
         });
+    }
+
+
+    /* GETTER & SETTER */
+
+    public get activeFilterCount() : number
+    {
+        return (+this.isMinTwitterFollowersFilterActive) + (+this.isMaxTwitterFollowersFilterActive);
     }
 }
