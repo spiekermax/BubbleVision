@@ -143,6 +143,26 @@ export class TwitterDataService
         }));
     }
 
+    public loadProfileFollowees(username: string) : Observable<Partial<TwitterProfile>[]>
+    {
+        return this.getFromTwitterMinerAPI(`profile/relations?username=${username}`).pipe(map((data: any) =>
+        {
+            if(!data.followees) return [];
+
+            return data.followees.map((followee: any) =>
+            ({
+                id: followee.twitter_id,
+                name: followee.name,
+                username: followee.username,
+                description: followee.description,
+                verified: followee.verified,
+                imageUrl: followee.profile_image_url.replace("_normal", "_200x200"),
+                followerCount: followee.followers_count,
+                followeeCount: followee.followees_count
+            }));
+        }));
+    }
+
     public loadCommunities() : Observable<TwitterCommunity[]>
     {
         return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");

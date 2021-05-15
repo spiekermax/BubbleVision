@@ -34,9 +34,12 @@
 
     <button mat-icon-button matSuffix
         [matMenuTriggerFor]="filterMenu"
-        
         (click)="$event.stopPropagation()">
-        <mat-icon [matBadge]="activeFilterCount" [matBadgeHidden]="!activeFilterCount">filter_list</mat-icon>
+        <mat-icon
+            [matBadge]="activeFilterCount"
+            [matBadgeHidden]="!activeFilterCount">
+            filter_list
+        </mat-icon>
     </button>
     <button mat-icon-button matSuffix 
         [matMenuTriggerFor]="moreMenu"
@@ -53,9 +56,53 @@
         (mouseleave)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();" 
         (mouseup)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();">
        
-        <div style="display: flex;">
-            <div style="width: 220px;">
-                <div class="filter-slider-label">
+        <div class="filter-container">
+            <div class="followee-filter">
+                <div class="filter-label">
+                    <span>Gefolgt von:</span>
+                    <button
+                        *ngIf="!isLoadingFolloweeFilterData"
+                        class="followee-filter-help-button"
+                        mat-icon-button
+                        [matMenuTriggerFor]="followeeFilterHelpMenu">
+                        <mat-icon [inline]="true">help_outline</mat-icon>
+                    </button>
+                    <mat-spinner
+                        *ngIf="isLoadingFolloweeFilterData"
+                        class="followee-filter-loading-indicator"
+                        [diameter]="16">
+                    </mat-spinner>
+                </div>
+                <mat-form-field class="followee-filter-form" appearance="fill">
+                    <mat-label>Benutzername</mat-label>
+                    <mat-icon matPrefix>alternate_email</mat-icon>
+
+                    <input matInput placeholder="z.B. tagesschau" 
+                        [formControl]="followeeFilterFormControl"
+                        [matAutocomplete]="filterAutocomplete">
+
+                    <mat-autocomplete autoActiveFirstOption #filterAutocomplete="matAutocomplete"
+                        [displayWith]="stringifyTwitterProfile"
+                        (optionSelected)="onFolloweeFilterOptionSelected($event.option.value)">
+                        <mat-option *ngFor="let filterOption of followeeFilterOptions | async" [value]="filterOption">
+                            <mat-icon class="followee-filter-option-icon">person</mat-icon>
+                            @{{filterOption.username}}
+                        </mat-option>
+                    </mat-autocomplete>
+
+                    <button mat-icon-button matSuffix 
+                        (click)="onFolloweeFilterReset(); $event.stopPropagation()">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <mat-divider class="filter-container-seperator"></mat-divider>
+
+        <div class="filter-container">
+            <div class="filter-slider-container">
+                <div class="filter-label">
                     <span>Follower (Mindestens):</span>
                     <span style="color: #696969;">{{Utils.shortenNumber(minTwitterFollowersLimit)}}</span>
                 </div>
@@ -76,9 +123,9 @@
             </button>
         </div>
 
-        <div style="display: flex;">
-            <div style="width: 220px;">
-                <div class="filter-slider-label">
+        <div class="filter-container">
+            <div class="filter-slider-container">
+                <div class="filter-label">
                     <span>Follower (Höchstens):</span>
                     <span style="color: #696969;">{{Utils.shortenNumber(maxTwitterFollowersLimit)}}</span>
                 </div>
@@ -100,6 +147,17 @@
         </div>
         
     </div>
+</mat-menu>
+
+<!-- Followee filter help menu -->
+<mat-menu #followeeFilterHelpMenu="matMenu" class="followee-filter-help-menu">
+    <div class="menu-title">Info</div>
+    <p class="menu-text">
+        Es kann nur nach Benutzern gefiltert werden, die bereits hinzugefügt wurden.
+    </p>
+    <p class="menu-text">
+        Um einen Benutzer hinzuzufügen, suchen Sie nach dem zugehörigen Benutzernamen in der Haupt-Suchleiste.
+    </p>
 </mat-menu>
 
 <!-- More menu -->
