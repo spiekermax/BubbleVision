@@ -1,5 +1,5 @@
 // Angular
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { FormControl } from "@angular/forms";
 
 // Material Design
@@ -34,11 +34,17 @@ import { SearchResult } from "./model/search-result";
     templateUrl: "./home.page.html",
     styleUrls: ["./home.page.scss"]
 })
-export class HomePage implements OnInit
+export class HomePage implements OnInit, AfterViewInit
 {
     /* NAMESPACES */
 
     public Utils = Utils;
+
+
+    /* CONSTANTS */
+
+    private static readonly MIN_TWITTER_FOLLOWERS_DEFAULT: number = 0;
+    private static readonly MAX_TWITTER_FOLLOWERS_DEFAULT: number = 10e6;
 
 
     /* COMPONENTS */
@@ -52,11 +58,20 @@ export class HomePage implements OnInit
     public searchFormControl: FormControl = new FormControl();
     public searchResults?: Observable<SearchResult[]>;
 
+    public followeeFilterFormControl: FormControl = new FormControl();
+    public followeeFilterOptions?: Observable<TwitterProfile[]>;
+
     public twitterProfiles: TwitterProfile[] = [];
     public twitterCommunities: TwitterCommunity[] = [];
 
-    public minTwitterFollowersLimit: number = 0;
-    public maxTwitterFollowersLimit: number = 10e6;
+    private isFolloweeFilterActive: boolean = false;
+    private isMinTwitterFollowersFilterActive: boolean = false;
+    private isMaxTwitterFollowersFilterActive: boolean = false;
+
+    public isLoadingFolloweeFilterData: boolean = false;
+
+    public minTwitterFollowersLimit: number = HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
+    public maxTwitterFollowersLimit: number = HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
 
 
     /* LIFECYCLE */
@@ -85,6 +100,24 @@ export class HomePage implements OnInit
             map((query?: string | SearchResult) => typeof query === "string" ? query : undefined),
             map((query?: string) => this.search(query))
         );
+
+        // Initialize followee filter autocomplete
+        this.followeeFilterOptions = this.followeeFilterFormControl.valueChanges.pipe
+        (
+            startWith(""),
+            map((query?: string | TwitterProfile) => typeof query === "string" ? query : undefined),
+            map((query?: string) => this.searchTwitterProfile(query))
+        );
+    }
+
+    public ngAfterViewInit() : void
+    {
+        //
+        this.twitterGraph?.putHighlightCondition("reach", (twitterProfile: TwitterProfile) =>
+        {
+            return twitterProfile.followerCount >= this.minTwitterFollowersLimit 
+                && twitterProfile.followerCount <= this.maxTwitterFollowersLimit;
+        });
     }
 
 
@@ -92,30 +125,20 @@ export class HomePage implements OnInit
 
     public onTwitterFollowersLimitSliderChanged() : void
     {
-        this.twitterGraph?.highlightProfiles((twitterProfile: TwitterProfile) =>
-        {
-            return twitterProfile.followerCount >= this.minTwitterFollowersLimit && twitterProfile.followerCount <= this.maxTwitterFollowersLimit;
-        });
+        this.twitterGraph?.updateHighlights();
 
-        this.twitterGraph?.highlightCommunities((twitterCommunity: TwitterCommunity) =>
-        {
-            return this.twitterProfiles.some(twitterProfile =>
-            {
-                return twitterProfile.followerCount >= this.minTwitterFollowersLimit 
-                    && twitterProfile.followerCount <= this.maxTwitterFollowersLimit 
-                    && twitterCommunity.members.includes(twitterProfile.username); 
-            });
-        })
+        this.isMinTwitterFollowersFilterActive = this.minTwitterFollowersLimit != HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
+        this.isMaxTwitterFollowersFilterActive = this.maxTwitterFollowersLimit != HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
     }
 
-    public onTwitterMinFollowersLimitSliderMoved(value: number | null) : void
+    public onMinTwitterFollowersLimitSliderMoved(value: number | null) : void
     {
         if(value === null) return;
 
         this.minTwitterFollowersLimit = 10 * value * value;
     }
 
-    public onTwitterMaxFollowersLimitSliderMoved(value: number | null) : void
+    public onMaxTwitterFollowersLimitSliderMoved(value: number | null) : void
     {
         if(value === null) return;
 
@@ -141,15 +164,17 @@ export class HomePage implements OnInit
                 const loadingDialog = this.dialog.open(LoadingDialog, { autoFocus: false, disableClose: true, data: { loadingMessage: "Analysiere Profil..." } });
                 const loadingObservable = this.twitterDataService.loadProfile(searchResult.data, landmarks).subscribe(profile => 
                 {
-                    this.twitterProfiles = [...this.twitterProfiles, profile];
+                    // Update graph
+                    this.twitterGraph?.addProfile(profile);
                     
+                    // Delay
                     setTimeout(() =>
                     {
                         // Close loading dialog
                         loadingDialog.close();
 
                         // Zoom to added profile
-                        setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 250);
+                        setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 500);
 
                     }, 250);
                 });
@@ -160,6 +185,37 @@ export class HomePage implements OnInit
                 break;
             }
         }
+    }
+
+    public onFolloweeFilterOptionSelected(twitterProfile: TwitterProfile) : void
+    {
+        //
+        this.isLoadingFolloweeFilterData = true;
+
+        //
+        this.twitterDataService.loadProfileFollowees(twitterProfile.username).subscribe(data =>
+        {
+            //
+            const followeeIds: number[] = data.map(followee => followee.id!);
+
+            //
+            this.twitterGraph?.putHighlightCondition("followee", twitterProfile => followeeIds.includes(twitterProfile.id));
+            this.twitterGraph?.updateHighlights();
+
+            //
+            this.isFolloweeFilterActive = true;
+            this.isLoadingFolloweeFilterData = false;
+        });
+    }
+
+    public onFolloweeFilterReset() : void
+    {
+        this.followeeFilterFormControl.reset();
+
+        this.twitterGraph?.takeHighlightCondition("followee");
+        this.twitterGraph?.updateHighlights();
+
+        this.isFolloweeFilterActive = false;
     }
 
 
@@ -215,6 +271,35 @@ export class HomePage implements OnInit
         }
     }
 
+    private searchTwitterProfile(query?: string) : TwitterProfile[]
+    {
+        if(!query || !this.twitterProfiles) return [];
+
+        // Sanitize query
+        const sanitizedQuery: string = query.trim().replace(/\@/g, "");
+
+        // Check if query is too short
+        if(sanitizedQuery.length < 3) return [];
+
+        // Normalize query
+        const normalizedQuery: string = sanitizedQuery.toLowerCase();
+
+        // Search twitter profiles
+        return this.twitterProfiles.filter(profile =>
+        { 
+            return profile.name.toLowerCase().includes(normalizedQuery) 
+                || profile.username.toLowerCase().includes(normalizedQuery);
+        })
+        .sort((a, b) => b.followerCount - a.followerCount);
+    }
+
+    public stringifyTwitterProfile(twitterProfile?: TwitterProfile) : string
+    {
+        if(!twitterProfile) return "";
+
+        return `${twitterProfile.username}`;
+    }
+    
 
     /* METHODS - DIALOGS */
 
@@ -253,5 +338,13 @@ export class HomePage implements OnInit
             // Zoom to selected profile
             setTimeout(() => this.twitterGraph?.zoomToProfile(clickedMember), 100);
         });
+    }
+
+
+    /* GETTER & SETTER */
+
+    public get activeFilterCount() : number
+    {
+        return (+this.isFolloweeFilterActive) + (+this.isMinTwitterFollowersFilterActive) + (+this.isMaxTwitterFollowersFilterActive);
     }
 }

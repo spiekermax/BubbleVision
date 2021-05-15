@@ -49,20 +49,38 @@
     text-transform: uppercase;
 }
 
+.menu-text {
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
 .filter-menu-body {
     padding-left: 20px;
-    padding-top: 16px;
+    padding-top: 10px;
     padding-right: 14px; 
     
     overflow: hidden;
 
-    .filter-slider-label {
+    .filter-container {
         display: flex;
-        justify-content: space-between;
     }
 
-    .filter-slider {
-        width: 100%;
+    .filter-container-seperator {
+        margin: -2px -20px 20px -20px;
+    }
+
+    .filter-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .filter-slider-container {
+        width: 220px;
+    
+        .filter-slider {
+            width: 100%;
+        }
     }
 
     .filter-slider-reset-button {
@@ -71,6 +89,45 @@
         
         transform: scale(-1, 1);
     }
+}
+
+.followee-filter {
+    display: flex;
+    flex-direction: column;
+    
+    width: 100%;
+
+    .filter-label {
+        margin-bottom: 2px;
+        height: 28px;
+    }
+
+    .followee-filter-form {
+        margin-right: 6px;
+    }
+    
+    .followee-filter-loading-indicator {
+        margin-right: 8px;
+    }
+    
+    .followee-filter-help-button {
+        margin-right: 4px; 
+    
+        width: 28px;
+        height: 28px;
+    
+        font-size: 14px;
+        line-height: 28px;
+    }
+    
+    .followee-filter-option-icon {
+        color: #666666 !important;
+    }
+}
+
+::ng-deep .followee-filter-help-menu {
+    margin-left: -12px;
+    margin-right: -12px;
 }
 
 

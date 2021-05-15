@@ -45,6 +45,10 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     private scalingFactor: number = TwitterGraphCamera.getLodScalingFactor(this.lod);
 
+    //
+    private sizeLabel?: PIXI.Text;
+    private sizeLabelBounds?: PIXI.Rectangle;
+
     // Events
     private clickSubject: Subject<void> = new Subject();
 
@@ -86,14 +90,10 @@ export class TwitterGraphCommunityView extends PIXI.Container
         circle.endFill();
 
         //
-        // circle.alpha = 0.82;
-
-        //
         const circleTexture: PIXI.Texture = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
         const circleSprite: PIXI.Sprite = PIXI.Sprite.from(circleTexture);
 
-        const circleMask = PIXI.Sprite.from("assets/radial-gradient.png");
-        // const circleMask = PIXI.Sprite.from(PIXI.Texture.WHITE);
+        const circleMask: PIXI.Sprite = PIXI.Sprite.from("assets/radial-gradient.png");
         circleMask.width = circle.width;
         circleMask.height = circle.height;
 
@@ -118,7 +118,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     private addHotspotLabels(hotspot: TwitterCommunityHotspot) : void
     {
-        const nameLabelStyle: PIXI.TextStyle = new PIXI.TextStyle
+        const nameLabel: PIXI.Text = new PIXI.Text("#" + hotspot.name?.toLowerCase() || "error", new PIXI.TextStyle
         ({ 
             fill: "white",
             fontSize: (200 / this.scalingFactor) * hotspot.radius,
@@ -127,8 +127,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
             letterSpacing: 1.5,
             wordWrap: true,
             wordWrapWidth: (1500 / this.scalingFactor) * hotspot.radius
-        });
-        const nameLabel: PIXI.Text = new PIXI.Text("#" + hotspot.name?.toLowerCase() || "error", nameLabelStyle);
+        }));
         
         const nameLabelBounds: PIXI.Rectangle = nameLabel.getBounds();
         const nameLabelWidth: number = nameLabelBounds.width;
@@ -139,10 +138,11 @@ export class TwitterGraphCommunityView extends PIXI.Container
         nameLabel.cacheAsBitmap = true;
 
         this.addChild(nameLabel);
+        
 
         if(this.lod == 1 && this.community.hotspots["1"].length > 1) return;
 
-        const sizeLabelStyle: PIXI.TextStyle = new PIXI.TextStyle
+        this.sizeLabel = new PIXI.Text(this.community.size.toString() || "???", new PIXI.TextStyle
         ({ 
             fill: "white",
             fontSize: (150 / this.scalingFactor) * hotspot.radius,
@@ -151,18 +151,16 @@ export class TwitterGraphCommunityView extends PIXI.Container
             letterSpacing: 1.5,
             wordWrap: true,
             wordWrapWidth: (1200 / this.scalingFactor) * hotspot.radius
-        });
-        const sizeLabel: PIXI.Text = new PIXI.Text(this.community.size.toString() || "???", sizeLabelStyle);
+        }));
         
-        const sizeLabelBounds: PIXI.Rectangle = sizeLabel.getBounds();
-        const sizeLabelWidth: number = sizeLabelBounds.width;
-        const sizeLabelHeight: number = nameLabelBounds.height;
+        this.sizeLabelBounds = this.sizeLabel.getLocalBounds(new PIXI.Rectangle());
+        const sizeLabelWidth: number = this.sizeLabelBounds.width;
+        const sizeLabelHeight: number = this.sizeLabelBounds.height;
 
-        sizeLabel.position.x = (1000 / this.scalingFactor) * (hotspot.centroid[0] - hotspot.radius) + ((1000 / this.scalingFactor) * hotspot.radius) - sizeLabelWidth / 2;
-        sizeLabel.position.y = (1000 / this.scalingFactor) * (hotspot.centroid[1] - hotspot.radius) + ((1100 / this.scalingFactor) * hotspot.radius) - sizeLabelHeight / 2 + nameLabelHeight;
-        sizeLabel.cacheAsBitmap = true;
+        this.sizeLabel.position.x = (1000 / this.scalingFactor) * (hotspot.centroid[0] - hotspot.radius) + ((1000 / this.scalingFactor) * hotspot.radius) - sizeLabelWidth / 2;
+        this.sizeLabel.position.y = (1000 / this.scalingFactor) * (hotspot.centroid[1] - hotspot.radius) + ((1100 / this.scalingFactor) * hotspot.radius) - sizeLabelHeight / 2 + nameLabelHeight;
 
-        this.addChild(sizeLabel);
+        this.addChild(this.sizeLabel);
     }
 
 
@@ -170,12 +168,27 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     public blur() : void
     {
-        this.alpha = 0.18;
+        this.alpha = 0;
     }
 
     public sharpen() : void
     {
         this.alpha = 1;
+    }
+    
+    public updateSizeLabel(size: number) : void
+    {
+        if(!this.sizeLabel) return;
+
+        // Update text
+        this.sizeLabel.text = size.toString();
+
+        //
+        const oldSizeLabelBounds = this.sizeLabelBounds!;
+        this.sizeLabelBounds = this.sizeLabel.getLocalBounds(new PIXI.Rectangle());
+
+        //
+        this.sizeLabel.position.x -= (this.sizeLabelBounds.width - oldSizeLabelBounds.width) / 2;
     }
 
 

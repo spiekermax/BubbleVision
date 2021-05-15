@@ -52,6 +52,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     private lastMouseDownPosition?: Position;
     private isDragGestureActive: boolean = false;
 
+    private highlightConditions: Record<string, (profile: TwitterProfile) => boolean> = {};
+
 
     /* LIFECYCLE */
 
@@ -300,37 +302,91 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     }
 
 
-    /* METHODS  */
+    /* METHODS - STATE */
 
-    public highlightCommunities(condition: (community: TwitterCommunity) => boolean) : void
+    public addProfile(profile: TwitterProfile) : void
     {
-        for(const communityView of this.communityViews)
+        //
+        this.profiles.push(profile);
+
+        //
+        if(!this.camera) return;
+
+        // Create view
+        const profileView: TwitterGraphProfileView = new TwitterGraphProfileView(this.app!.renderer, profile);
+    
+        // Cache view reference
+        this.profileViews.push(profileView);
+    
+        // Bind callbacks
+        profileView.clickedEvent.subscribe(() => this.onProfileClicked(profile));
+    
+        // Add view
+        this.camera.baseLayer.addChild(profileView);
+    }
+
+    public removeProfile(profile: TwitterProfile) : void
+    {
+        throw new Error("Unimplemented");
+    }
+
+    public putHighlightCondition(conditionId: string, condition: (profile: TwitterProfile) => boolean) : void
+    {
+        this.highlightConditions[conditionId] = condition;
+    }
+
+    public takeHighlightCondition(conditionId: string) : void
+    {
+        delete this.highlightConditions[conditionId];
+    }
+
+    public updateHighlights() : void
+    {
+        //
+        const conditions = Object.values(this.highlightConditions);
+
+        //
+        const highlightedCommunityMemberCount: Record<number, number> = {};
+        for(const profileView of this.profileViews)
         {
-            if(condition(communityView.data))
+            if(conditions.every(condition => condition(profileView.data)))
             {
-                communityView.sharpen();
+                //
+                profileView.sharpen();
+
+                //
+                const profileCommunityId: number = profileView.data.communityId;
+                highlightedCommunityMemberCount[profileCommunityId] = (highlightedCommunityMemberCount[profileCommunityId] || 0) + 1;
             }
             else
             {
+                //
+                profileView.blur();
+            }
+        }
+
+        //
+        for(const communityView of this.communityViews)
+        {
+            //
+            const communityId: number = communityView.data.id;
+
+            if(communityId in highlightedCommunityMemberCount)
+            {
+                //
+                communityView.sharpen();
+                communityView.updateSizeLabel(highlightedCommunityMemberCount[communityId]);
+            }
+            else
+            {
+                //
                 communityView.blur();
             }
         }
     }
 
-    public highlightProfiles(condition: (profile: TwitterProfile) => boolean) : void
-    {
-        for(const profileView of this.profileViews)
-        {
-            if(condition(profileView.data))
-            {
-                profileView.sharpen();
-            }
-            else
-            {
-                profileView.blur();
-            }
-        }
-    }
+
+    /* METHODS - CAMERA */
 
     public zoomToProfile(profile: TwitterProfile) : void
     {

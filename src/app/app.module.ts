@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 // Material Design
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatBadgeModule } from "@angular/material/badge";
 import { MatButtonModule } from "@angular/material/button";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -60,6 +61,7 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         HttpClientModule,
 
         MatAutocompleteModule,
+        MatBadgeModule,
         MatButtonModule,
         MatDialogModule,
         MatFormFieldModule,

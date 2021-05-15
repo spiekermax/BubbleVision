@@ -181,6 +181,12 @@
     text-transform: uppercase;
 }
 
+
+::ng-deep .help-menu {
+    margin-left: -12px;
+    margin-right: -12px;
+}
+
 ::ng-deep .twitter-emoji {
     margin-left: 1px;
     margin-right: 1px;
