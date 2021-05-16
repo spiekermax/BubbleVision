@@ -440,7 +440,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             y: (mousePosition.y - this.camera.position.y) / this.camera.zoom
         };
 
-        const newZoom: number = this.camera.zoom * scalingFactor;
+        const newZoom: number = Math.min(this.camera.zoom * scalingFactor, 1);
         const newPosition: Position =
         {
             x: mousePosition.x - (normalizedMousePosition.x * newZoom),
