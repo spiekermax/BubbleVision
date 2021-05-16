@@ -6,7 +6,7 @@ import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 
 // Reactive X
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 
 // Internal dependencies
@@ -46,6 +46,30 @@ export class HomePage implements OnInit, AfterViewInit
     private static readonly MIN_TWITTER_FOLLOWERS_DEFAULT: number = 0;
     private static readonly MAX_TWITTER_FOLLOWERS_DEFAULT: number = 10e6;
 
+    public readonly TWITTER_COMMUNITY_COLORS: string[] =
+    [
+        "#e6194B",
+        "#3cb44b",
+        "#ffe119",
+        "#4363d8",
+        "#f58231",
+        "#911eb4",
+        "#42d4f4",
+        "#f032e6",
+        "#bfef45",
+        "#fabed4",
+        "#469990",
+        "#dcbeff",
+        "#9A6324",
+        "#fffac8",
+        "#800000",
+        "#aaffc3",
+        "#808000",
+        "#ffd8b1",
+        "#000075",
+        "#a9a9a9"
+    ];
+
 
     /* COMPONENTS */
 
@@ -64,14 +88,19 @@ export class HomePage implements OnInit, AfterViewInit
     public twitterProfiles: TwitterProfile[] = [];
     public twitterCommunities: TwitterCommunity[] = [];
 
+    public visibleTwitterProfiles: TwitterProfile[] = [];
+    
+    public visibleTwitterProfilesTweets: any[] = [];
+    private visibleTwitterProfilesTweetsSubscription?: Subscription;
+    
+    public minTwitterFollowersLimit: number = HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
+    public maxTwitterFollowersLimit: number = HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
+    
     private isFolloweeFilterActive: boolean = false;
     private isMinTwitterFollowersFilterActive: boolean = false;
     private isMaxTwitterFollowersFilterActive: boolean = false;
 
     public isLoadingFolloweeFilterData: boolean = false;
-
-    public minTwitterFollowersLimit: number = HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
-    public maxTwitterFollowersLimit: number = HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
 
 
     /* LIFECYCLE */
@@ -123,26 +152,22 @@ export class HomePage implements OnInit, AfterViewInit
 
     /* CALLBACKS */
 
-    public onTwitterFollowersLimitSliderChanged() : void
+    public onVisibleTwitterProfilesChanged(visibleTwitterProfiles: TwitterProfile[]) : void
     {
-        this.twitterGraph?.updateHighlights();
+        //
+        this.visibleTwitterProfilesTweetsSubscription?.unsubscribe();
 
-        this.isMinTwitterFollowersFilterActive = this.minTwitterFollowersLimit != HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
-        this.isMaxTwitterFollowersFilterActive = this.maxTwitterFollowersLimit != HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
-    }
+        //
+        this.visibleTwitterProfiles = visibleTwitterProfiles.sort((a, b) => b.followerCount - a.followerCount);
 
-    public onMinTwitterFollowersLimitSliderMoved(value: number | null) : void
-    {
-        if(value === null) return;
+        //
+        if(!this.visibleTwitterProfiles.length) return;
 
-        this.minTwitterFollowersLimit = 10 * value * value;
-    }
-
-    public onMaxTwitterFollowersLimitSliderMoved(value: number | null) : void
-    {
-        if(value === null) return;
-
-        this.maxTwitterFollowersLimit = 10 * value * value;
+        //
+        this.visibleTwitterProfilesTweetsSubscription = this.twitterDataService.loadTweets(visibleTwitterProfiles).subscribe((tweets: any[]) =>
+        {
+            this.visibleTwitterProfilesTweets = tweets;
+        });
     }
 
     public onSearchResultSelected(searchResult: SearchResult) : void
@@ -185,6 +210,28 @@ export class HomePage implements OnInit, AfterViewInit
                 break;
             }
         }
+    }
+
+    public onTwitterFollowersLimitSliderChanged() : void
+    {
+        this.twitterGraph?.updateHighlights();
+
+        this.isMinTwitterFollowersFilterActive = this.minTwitterFollowersLimit != HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
+        this.isMaxTwitterFollowersFilterActive = this.maxTwitterFollowersLimit != HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
+    }
+
+    public onMinTwitterFollowersLimitSliderMoved(value: number | null) : void
+    {
+        if(value === null) return;
+
+        this.minTwitterFollowersLimit = 10 * value * value;
+    }
+
+    public onMaxTwitterFollowersLimitSliderMoved(value: number | null) : void
+    {
+        if(value === null) return;
+
+        this.maxTwitterFollowersLimit = 10 * value * value;
     }
 
     public onFolloweeFilterOptionSelected(twitterProfile: TwitterProfile) : void

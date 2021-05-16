@@ -3,14 +3,15 @@
     [profiles]="this.twitterProfiles"
     [communities]="this.twitterCommunities"
     (profileClicked)="openTwitterProfileDialog($event)"
-    (communityClicked)="openTwitterCommunityDialog($event)">
+    (communityClicked)="openTwitterCommunityDialog($event)"
+    (visibleProfilesChanged)="onVisibleTwitterProfilesChanged($event)">
 </twitter-graph>
 
 <!-- Searchbar -->
 <mat-form-field class="searchbar" appearance="outline">
     <mat-icon matPrefix>search</mat-icon>
     
-    <mat-label>Suchen</mat-label>
+    <mat-label>Suchen oder Profile hinzufügen</mat-label>
     <input matInput [formControl]="searchFormControl" [matAutocomplete]="searchAutocomplete">
     <mat-autocomplete autoActiveFirstOption class="searchbar-autocomplete" #searchAutocomplete="matAutocomplete"
         [displayWith]="stringifySearchResult"
@@ -49,10 +50,66 @@
 </mat-form-field>
 
 <!-- FAB -->
-<button mat-fab class="fab" color="primary">
-    <mat-icon class="material-icons-outlined"><img src="assets/twitter-on-screen.svg"></mat-icon>
-    <span class="fab-text">Tweets sichtbarer Profile</span>
+<button mat-fab class="fab" color="primary" (click)="drawer.toggle()">
+    <mat-icon >person_search</mat-icon>
+    <span class="fab-text">Sichtbare Profile</span>
 </button>
+
+<!-- Visible profiles drawer -->
+<mat-drawer-container class="visible-profiles-drawer-container" autosize>
+    <mat-drawer #drawer class="visible-profiles-drawer" mode="side" position="end">
+        <h2 class="title">Aktuell sichtbar</h2>
+        <mat-tab-group class="tabs" mat-stretch-tabs [disablePagination]="true">
+
+            <!-- Profiles -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">people</mat-icon>
+                    Profile
+                </ng-template>
+
+                <ng-template matTabContent>
+                    <mat-action-list class="visible-profiles-list">
+                        <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
+                            <ng-container *cdkVirtualFor="let twitterProfile of visibleTwitterProfiles">
+                                <mat-list-item>
+                                    <img matListAvatar class="profile-image"
+                                        [style.border-color]="TWITTER_COMMUNITY_COLORS[twitterProfile.communityId]"
+                                        [src]="twitterProfile.imageUrl.replace('_200x200', '_normal')">
+                                    <div mat-line class="profile-name" [innerHTML]="Utils.twemojify(twitterProfile.name)"></div>
+                                    <div mat-line>@{{twitterProfile.username}}</div>
+                                </mat-list-item>
+                            </ng-container>
+                        </cdk-virtual-scroll-viewport>
+                    </mat-action-list>
+                </ng-template>
+            </mat-tab>
+
+            <!-- Tweets -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">tag</mat-icon>
+                    Tweets
+                </ng-template>
+            
+                <ng-template matTabContent>
+                    <mat-action-list class="visible-profiles-tweets-list">
+                        <cdk-virtual-scroll-viewport autosize class="virtual-scroll" autosize>
+                            <ng-container *cdkVirtualFor="let tweet of visibleTwitterProfilesTweets">
+                                <mat-list-item class="profile-item">
+                                    <div mat-line>@{{tweet.username}}</div>
+                                    <div mat-line>{{tweet.text}}</div>
+                                </mat-list-item>
+                            </ng-container>
+                        </cdk-virtual-scroll-viewport>
+                    </mat-action-list>
+                </ng-template>
+            </mat-tab>
+
+        </mat-tab-group>
+    </mat-drawer>
+</mat-drawer-container>
+
 
 <!-- Filter menu -->
 <mat-menu #filterMenu="matMenu">
