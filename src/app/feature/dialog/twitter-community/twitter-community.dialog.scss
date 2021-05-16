@@ -68,8 +68,8 @@
         }
 
         .profile-image {
-            width: 32px;
-            height: 32px; 
+            width: 36px;
+            height: 36px; 
             border-radius: 50%; 
         }
 
@@ -181,29 +181,29 @@
     text-transform: uppercase;
 }
 
-
-::ng-deep .help-menu {
-    margin-left: -12px;
-    margin-right: -12px;
-}
-
-::ng-deep .twitter-emoji {
-    margin-left: 1px;
-    margin-right: 1px;
-    height: 17px;
+:host {
+    ::ng-deep .help-menu {
+        margin-left: -12px;
+        margin-right: -12px;
+    }
     
-    vertical-align: middle;
-}
+    ::ng-deep .twitter-emoji {
+        margin-left: 1px;
+        margin-right: 1px;
+        height: 17px;
+        
+        vertical-align: middle;
+    }
 
-
-::ng-deep .mat-tab-body-content {
-    display: flex;
-}
-
-::ng-deep .mat-tab-body-wrapper {
-    flex-grow: 1;
-}
-
-::ng-deep .mat-list-item-content {
-    padding-left: 8px !important;
+    ::ng-deep .mat-tab-body-content {
+        display: flex;
+    }
+    
+    ::ng-deep .mat-tab-body-wrapper {
+        flex-grow: 1;
+    }
+    
+    ::ng-deep .mat-list-item-content {
+        padding-left: 8px !important;
+    }
 }
