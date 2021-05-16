@@ -125,7 +125,7 @@ export class TwitterDataService
 
                 const profile: TwitterProfile =
                 {
-                    id: data.info.twitterId,
+                    id: data.info.twitter_id,
                     communityId: 101 * 21 - 1,
                     name: data.info.name,
                     username: data.info.username,
@@ -168,9 +168,11 @@ export class TwitterDataService
         return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");
     }
 
-    public loadTweets(profiles: TwitterProfile[]) : Observable<any>
+    public loadTweets(profiles: TwitterProfile[]) : Observable<any[]>
     {
-        return this.getFromTwitterMinerAPI<any>(`tweets/multi?twitter_ids=${profiles.map(profile => profile.id)}`).pipe(map((data: any) =>
+        if(!profiles.length) return of([]);
+
+        return this.getFromTwitterMinerAPI<any[]>(`tweets/multi?twitter_ids=${profiles.map(profile => profile.id)}`).pipe(map((data: any[]) =>
         {
             return data.map((instance: any) =>
             ({
