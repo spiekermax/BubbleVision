@@ -14,6 +14,8 @@ export class TwitterGraphProfileView extends PIXI.Container
     /* STATIC */
 
     // Constants
+    private static readonly RESOLUTION: number = 0.5;
+
     public static readonly DIAMETER: number = 300;
     private static readonly IMAGE_PADDING: number = 24;
 
@@ -95,7 +97,7 @@ export class TwitterGraphProfileView extends PIXI.Container
             circle.endFill();
 
             // Generate texture
-            TwitterGraphProfileView.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21] = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
+            TwitterGraphProfileView.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21] = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, TwitterGraphProfileView.RESOLUTION);
         }
 
         const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileView.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21]);
@@ -150,7 +152,7 @@ export class TwitterGraphProfileView extends PIXI.Container
             maskedContainer.addChild(imageMask);
             maskedContainer.mask = imageMask;
 
-            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, 1);
+            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, TwitterGraphProfileView.RESOLUTION);
 
             const placeholderImage = PIXI.Sprite.from(maskedImageTexture);
             placeholderImage.position.x = TwitterGraphProfileView.IMAGE_PADDING / 2;
@@ -181,7 +183,7 @@ export class TwitterGraphProfileView extends PIXI.Container
             maskedContainer.addChild(imageMask);
             maskedContainer.mask = imageMask;
 
-            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, 1);
+            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, TwitterGraphProfileView.RESOLUTION);
 
             const maskedImage: PIXI.Sprite = PIXI.Sprite.from(maskedImageTexture);
             maskedImage.position.x = TwitterGraphProfileView.IMAGE_PADDING / 2;

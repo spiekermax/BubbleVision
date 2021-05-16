@@ -16,6 +16,8 @@ export class TwitterGraphCommunityView extends PIXI.Container
     /* STATIC */
 
     // Constants
+    private static readonly RESOLUTION: number = 0.3;
+
     private static readonly COLOR_MAP: number[] =
     [
         0xe6194B,
@@ -90,7 +92,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
         circle.endFill();
 
         //
-        const circleTexture: PIXI.Texture = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
+        const circleTexture: PIXI.Texture = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, TwitterGraphCommunityView.RESOLUTION);
         const circleSprite: PIXI.Sprite = PIXI.Sprite.from(circleTexture);
 
         const circleMask: PIXI.Sprite = PIXI.Sprite.from("assets/radial-gradient.png");
