@@ -36,6 +36,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     @Output()
     public communityClicked: EventEmitter<TwitterCommunity> = new EventEmitter();
 
+    @Output()
+    public visibleProfilesChanged: EventEmitter<TwitterProfile[]> = new EventEmitter();
+
 
     /* ATTRIBUTES */
 
@@ -51,6 +54,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     // State
     private lastMouseDownPosition?: Position;
     private isDragGestureActive: boolean = false;
+
+    private lastVisibleBounds?: PIXI.Rectangle;
+    private lastVisibleProfiles: TwitterProfile[] = [];
 
     private highlightConditions: Record<string, (profile: TwitterProfile) => boolean> = {};
 
@@ -114,39 +120,61 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     {
         if(!this.camera) return;
 
-        // Hide profile details when zoomed out
         if(this.camera.zoom < 0.04)
         {
+            // Hide profile details when zoomed out
             for(const profileView of this.profileViews)
                 profileView.hideDetails();
-
-            return;
+        }
+        else
+        {
+            // Show profile details when zoomed in
+            for(const profileView of this.profileViews)
+                profileView.showDetails();
         }
 
-        // Show profile details when zoomed in
-        for(const profileView of this.profileViews)
-            profileView.showDetails();
-
         //
-        if(this.lastMouseDownPosition || this.camera.zoom < 0.1 || this.camera.isAnimating(10)) return;
-
-        //
-        if(!this.profiles) return;
-
+        if(this.lastMouseDownPosition || this.camera.isAnimating(10)) return;
+        
         // Get visible bounds
         const visibleBounds: PIXI.Rectangle = this.camera.calculateVisibleBounds();
+        const visibleBoundsChanged: boolean = !this.lastVisibleBounds
+            || this.lastVisibleBounds.top != visibleBounds.top
+            || this.lastVisibleBounds.left != visibleBounds.left
+            || this.lastVisibleBounds.bottom != visibleBounds.bottom
+            || this.lastVisibleBounds.right != visibleBounds.right;
 
-        // Request visible images
-        for(const profile of this.profiles)
+        //
+        if(!visibleBoundsChanged) return;
+        this.lastVisibleBounds = visibleBounds;
+
+        // Find visible profiles
+        const visibleProfiles: TwitterProfile[] = this.profiles.filter(profile =>
         {
-            if(profile.position.x < visibleBounds.left || profile.position.y < visibleBounds.top) continue;
-            if(profile.position.x > visibleBounds.right || profile.position.y > visibleBounds.bottom) continue;
-    
-            TwitterGraphResourceManager.add(profile.imageUrl);
+            return profile.position.x >= visibleBounds.left
+                && profile.position.y >= visibleBounds.top
+                && profile.position.x <= visibleBounds.right
+                && profile.position.y <= visibleBounds.bottom;
+        });
+        const visibleProfilesChanged: boolean = visibleProfiles.length != this.lastVisibleProfiles.length
+            || !visibleProfiles.every((value, index) => value == this.lastVisibleProfiles[index]);
+
+        //
+        if(!visibleProfilesChanged) return;
+        this.lastVisibleProfiles = visibleProfiles;
+
+        if(this.camera.zoom >= 0.1)
+        {
+            //
+            for(const visibleProfile of visibleProfiles)
+                TwitterGraphResourceManager.add(visibleProfile.imageUrl);
+
+            // Load visible images
+            TwitterGraphResourceManager.load();
         }
 
-        // Load visible images
-        TwitterGraphResourceManager.load();
+        //
+        this.ngZone.run(() => this.visibleProfilesChanged.emit([...visibleProfiles]));
     }
 
 
