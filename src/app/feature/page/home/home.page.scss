@@ -37,13 +37,14 @@
 
 .fab {
     position: absolute;
+    overflow: hidden;
+    z-index: 2;
 
-    bottom: 48px;
-    right: 66px;
-
-    width: unset;
     padding: 0 26px;
     border-radius: 29px;
+
+    will-change: width, right, bottom, box-shadow;
+    transition: width 0.3s, right 0.3s, bottom 0.3s, box-shadow 0.3s;
 
     .mat-icon {
         margin-right: 10px;
@@ -54,6 +55,35 @@
         letter-spacing: .1em;
         text-transform: uppercase;
     }
+
+    .fab-content-container {
+        display: grid;
+    
+        .fab-content {
+            display: flex;
+            align-items: center; 
+            
+            grid-row: 1;
+            grid-column: 1;
+
+            will-change: opacity;
+            transition: opacity 0.3s; 
+        }
+    }
+}
+
+.fab-drawer-opened {
+    width: 182px;
+
+    right: 96px;
+    bottom: calc(17% - 28px);
+}
+
+.fab-drawer-closed {
+    width: 247px;
+
+    right: 58px;
+    bottom: 42px;
 }
 
 .visible-profiles-drawer-container {

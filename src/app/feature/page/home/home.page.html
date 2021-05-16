@@ -50,9 +50,22 @@
 </mat-form-field>
 
 <!-- FAB -->
-<button mat-fab class="fab" color="primary" (click)="drawer.toggle()">
-    <mat-icon >person_search</mat-icon>
-    <span class="fab-text">Sichtbare Profile</span>
+<button mat-fab class="fab" color="primary" (click)="drawer.toggle()"
+    [ngClass]="{
+        'fab-drawer-opened': drawer.opened,
+        'mat-elevation-z0': drawer.opened,
+        'fab-drawer-closed': !drawer.opened
+    }">
+    <div class="fab-content-container">
+        <div class="fab-content" [style.opacity]="!drawer.opened ? 1 : 0">
+            <mat-icon>person_search</mat-icon>
+            <span class="fab-text">Sichtbare Profile</span>
+        </div>
+        <div class="fab-content" [style.opacity]="drawer.opened ? 1 : 0">
+            <mat-icon>close</mat-icon>
+            <span class="fab-text">Schließen</span>
+        </div>
+    </div>
 </button>
 
 <!-- Visible profiles drawer -->
