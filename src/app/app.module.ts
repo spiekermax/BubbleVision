@@ -4,6 +4,7 @@ import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { HttpClientModule } from "@angular/common/http";
 import { ScrollingModule } from "@angular/cdk/scrolling";
+import { ScrollingModule as ExperimentalScrollingModule } from "@angular/cdk-experimental/scrolling";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 // Material Design
@@ -17,6 +18,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatListModule } from "@angular/material/list";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
@@ -55,6 +57,7 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
+        ExperimentalScrollingModule,
         FormsModule,
         ReactiveFormsModule,
         ScrollingModule,
@@ -70,6 +73,7 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         MatListModule,
         MatMenuModule,
         MatProgressSpinnerModule,
+        MatSidenavModule,
         MatSliderModule,
         MatTabsModule,
         MatToolbarModule
