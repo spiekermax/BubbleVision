@@ -2,6 +2,22 @@
     font-weight: 500;
 }
 
+.body {
+    padding-top: 4px;
+
+    .setting-title {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .setting-slider {
+        width: 300px;
+        margin-left: -4px;
+    }
+}
+
 .footer {
+    padding-top: 0;
+
     justify-content: flex-end;
 }

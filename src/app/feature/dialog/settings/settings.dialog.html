@@ -1,7 +1,32 @@
 <h1 mat-dialog-title class="title">Einstellungen</h1>
 <div mat-dialog-content>
-    <p>Aktuell sind noch keine Optionen verfügbar.</p>
+    <div class="setting-title">
+        <div style="font-weight: 500;">Auflösung von Profilen: </div>
+        <div>{{twitterProfileResolutionPercentage}}%</div>
+    </div>
+    <mat-slider
+        color="primary"
+        class="setting-slider"
+        [(ngModel)]="twitterProfileResolution"
+        step="0.01"
+        min="0.2"
+        max="1">
+    </mat-slider>
+
+    <!-- <div class="setting-title">
+        <div style="font-weight: 500;">Auflösung von Gemeinschaften: </div>
+        <div>{{twitterCommunityResolutionPercentage}}%</div>
+    </div>
+    <mat-slider
+        color="primary"
+        class="setting-slider"
+        [(ngModel)]="twitterCommunityResolution"
+        step="0.01"
+        min="0.01"
+        max="1">
+    </mat-slider> -->
 </div>
 <div mat-dialog-actions class="footer">
-    <button mat-button color="primary" mat-dialog-close cdkFocusInitial>SCHLIESSEN</button>
+    <button mat-button color="primary" mat-dialog-close>ABBRECHEN</button>
+    <button mat-button color="primary" cdkFocusInitial (click)="onApplyButtonClicked()">ANWENDEN</button>
 </div>
