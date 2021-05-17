@@ -29,6 +29,13 @@ export class SettingsDialog
 
     /* CALLBACKS */
 
+    public onTwitterProfileResolutionSliderMoved(twitterProfileResolution: number | null) : void
+    {
+        if(twitterProfileResolution === null) return;
+
+        this.twitterProfileResolution = twitterProfileResolution;
+    }
+
     public onApplyButtonClicked() : void
     {
         this.preferenceService.twitterProfileResolution = this.twitterProfileResolution;

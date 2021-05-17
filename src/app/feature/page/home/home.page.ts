@@ -372,8 +372,11 @@ export class HomePage implements OnInit, AfterViewInit
     {
         this.dialog.open(SettingsDialog).afterClosed().subscribe((settings: any) =>
         {
-            this.twitterGraphProfileResolution = settings.twitterProfileResolution;
-            this.twitterGraphCommunityResolution = settings.twitterCommunityResolution;
+            if(settings.twitterProfileResolution)
+                this.twitterGraphProfileResolution = settings.twitterProfileResolution;
+            
+            if(settings.twitterCommunityResolution)
+                this.twitterGraphCommunityResolution = settings.twitterCommunityResolution;
         });
     }
 

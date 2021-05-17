@@ -7,10 +7,11 @@
     <mat-slider
         color="primary"
         class="setting-slider"
-        [(ngModel)]="twitterProfileResolution"
         step="0.01"
         min="0.2"
-        max="1">
+        max="1"
+        [value]="twitterProfileResolution"
+        (input)="onTwitterProfileResolutionSliderMoved($event.value)">
     </mat-slider>
 
     <!-- <div class="setting-title">
