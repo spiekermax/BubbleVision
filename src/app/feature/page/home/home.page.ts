@@ -51,13 +51,13 @@ export class HomePage implements OnInit, AfterViewInit
     [
         "#e6194B",
         "#3cb44b",
-        "#ffe119",
+        "#f57920",
         "#4363d8",
-        "#f58231",
+        "#ffe119",
         "#911eb4",
         "#42d4f4",
         "#f032e6",
-        "#bfef45",
+        "#a6d13b",
         "#fabed4",
         "#469990",
         "#dcbeff",
@@ -68,7 +68,7 @@ export class HomePage implements OnInit, AfterViewInit
         "#808000",
         "#ffd8b1",
         "#000075",
-        "#a9a9a9"
+        "#a9a9a9",
     ];
 
 
