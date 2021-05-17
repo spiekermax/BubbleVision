@@ -2,9 +2,11 @@
 <twitter-graph class="twitter-graph"
     [profiles]="this.twitterProfiles"
     [communities]="this.twitterCommunities"
+    [profileResolution]="this.twitterGraphProfileResolution"
+    [communityResolution]="this.twitterGraphCommunityResolution"
     (profileClicked)="openTwitterProfileDialog($event)"
     (communityClicked)="openTwitterCommunityDialog($event)"
-    (visibleProfilesChanged)="onVisibleTwitterProfilesChanged($event)">
+    (visibleProfilesChanged)="onVisibleTwitterGraphProfilesChanged($event)">
 </twitter-graph>
 
 <!-- Searchbar -->
@@ -83,9 +85,9 @@
 
                 <ng-template matTabContent>
 
-                    <mat-action-list *ngIf="visibleTwitterProfiles.length" class="visible-profiles-list">
+                    <mat-action-list *ngIf="visibleTwitterGraphProfiles.length" class="visible-profiles-list">
                         <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
-                            <ng-container *cdkVirtualFor="let twitterProfile of visibleTwitterProfiles">
+                            <ng-container *cdkVirtualFor="let twitterProfile of visibleTwitterGraphProfiles">
                                 <mat-list-item (click)="zoomToTwitterProfile(twitterProfile, 100)">
                                     <img matListAvatar class="profile-image"
                                         [style.border-color]="TWITTER_COMMUNITY_COLORS[twitterProfile.communityId]"
@@ -97,7 +99,7 @@
                         </cdk-virtual-scroll-viewport>
                     </mat-action-list>
 
-                    <div *ngIf="!visibleTwitterProfiles.length" class="empty-list-hint">
+                    <div *ngIf="!visibleTwitterGraphProfiles.length" class="empty-list-hint">
                         <mat-icon class="icon">person_off</mat-icon>
                         <span>Keine Profile sichtbar</span>
                     </div>
@@ -114,9 +116,9 @@
             
                 <ng-template matTabContent>
 
-                    <mat-action-list *ngIf="visibleTwitterProfilesTweets.length" class="visible-profiles-tweets-list">
+                    <mat-action-list *ngIf="visibleTwitterGraphProfileTweets.length" class="visible-profiles-tweets-list">
                         <cdk-virtual-scroll-viewport autosize class="virtual-scroll" autosize>
-                            <ng-container *cdkVirtualFor="let tweet of visibleTwitterProfilesTweets">
+                            <ng-container *cdkVirtualFor="let tweet of visibleTwitterGraphProfileTweets">
                                 <mat-list-item class="profile-item">
                                     <div mat-line>@{{tweet.username}}</div>
                                     <div mat-line>{{tweet.text}}</div>
@@ -125,7 +127,7 @@
                         </cdk-virtual-scroll-viewport>
                     </mat-action-list>
 
-                    <div *ngIf="!visibleTwitterProfilesTweets.length" class="empty-list-hint">
+                    <div *ngIf="!visibleTwitterGraphProfileTweets.length" class="empty-list-hint">
                         <mat-icon class="icon">search_off</mat-icon>
                         <span>Keine Tweets gefunden</span>
                     </div>
@@ -143,22 +145,22 @@
     <div class="menu-title">Filter</div>
     <div class="filter-menu-body" 
         (click)="$event.stopPropagation()" 
-        (mouseleave)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();" 
-        (mouseup)="minTwitterFollowersLimitSlider.blur(); maxTwitterFollowersLimitSlider.blur();">
+        (mouseleave)="minFollowersLimitSlider.blur(); maxFollowersLimitSlider.blur();" 
+        (mouseup)="minFollowersLimitSlider.blur(); maxFollowersLimitSlider.blur();">
        
         <div class="filter-container">
             <div class="followee-filter">
                 <div class="filter-label">
                     <span>Gefolgt von:</span>
                     <button
-                        *ngIf="!isLoadingFolloweeFilterData"
+                        *ngIf="!isFolloweeFilterLoading"
                         class="followee-filter-help-button"
                         mat-icon-button
                         [matMenuTriggerFor]="followeeFilterHelpMenu">
                         <mat-icon [inline]="true">help_outline</mat-icon>
                     </button>
                     <mat-spinner
-                        *ngIf="isLoadingFolloweeFilterData"
+                        *ngIf="isFolloweeFilterLoading"
                         class="followee-filter-loading-indicator"
                         [diameter]="16">
                     </mat-spinner>
@@ -194,21 +196,21 @@
             <div class="filter-slider-container">
                 <div class="filter-label">
                     <span>Follower (Mindestens):</span>
-                    <span style="color: #696969;">{{Utils.shortenNumber(minTwitterFollowersLimit)}}</span>
+                    <span style="color: #696969;">{{Utils.shortenNumber(minFollowersLimit)}}</span>
                 </div>
-                <mat-slider #minTwitterFollowersLimitSlider 
+                <mat-slider #minFollowersLimitSlider 
                     class="filter-slider" 
                     color="primary"
                     min="0"
                     max="1000"
                     step="1"
                     value="0"
-                    (change)="onTwitterFollowersLimitSliderChanged()"
-                    (input)="onMinTwitterFollowersLimitSliderMoved($event.value)">
+                    (change)="onFollowersLimitSliderChanged()"
+                    (input)="onMinFollowersLimitSliderMoved($event.value)">
                 </mat-slider>
             </div>
             <button class="filter-slider-reset-button" mat-icon-button
-                (click)="minTwitterFollowersLimitSlider.value = 0; onMinTwitterFollowersLimitSliderMoved(0); onTwitterFollowersLimitSliderChanged();">
+                (click)="minFollowersLimitSlider.value = 0; onMinFollowersLimitSliderMoved(0); onFollowersLimitSliderChanged();">
                 <mat-icon>refresh</mat-icon>
             </button>
         </div>
@@ -217,21 +219,21 @@
             <div class="filter-slider-container">
                 <div class="filter-label">
                     <span>Follower (Höchstens):</span>
-                    <span style="color: #696969;">{{Utils.shortenNumber(maxTwitterFollowersLimit)}}</span>
+                    <span style="color: #696969;">{{Utils.shortenNumber(maxFollowersLimit)}}</span>
                 </div>
-                <mat-slider #maxTwitterFollowersLimitSlider
+                <mat-slider #maxFollowersLimitSlider
                     class="filter-slider"
                     color="primary"
                     min="0"
                     max="1000"
                     step="1"
                     value="1000"
-                    (change)="onTwitterFollowersLimitSliderChanged()"
-                    (input)="onMaxTwitterFollowersLimitSliderMoved($event.value)">
+                    (change)="onFollowersLimitSliderChanged()"
+                    (input)="onMaxFollowersLimitSliderMoved($event.value)">
                 </mat-slider>
             </div>
             <button class="filter-slider-reset-button" mat-icon-button 
-                (click)="maxTwitterFollowersLimitSlider.value = 1000; onMaxTwitterFollowersLimitSliderMoved(1000); onTwitterFollowersLimitSliderChanged();">
+                (click)="maxFollowersLimitSlider.value = 1000; onMaxFollowersLimitSliderMoved(1000); onFollowersLimitSliderChanged();">
                 <mat-icon>refresh</mat-icon>
             </button>
         </div>
