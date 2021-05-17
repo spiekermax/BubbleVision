@@ -16,9 +16,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
     /* STATIC */
 
     // Constants
-    private static readonly RESOLUTION: number = 0.3;
-
-    private static readonly COLOR_MAP: number[] =
+    private static readonly BACKGROUND_COLORS: number[] =
     [
         0xe6194B,
         0x3cb44b,
@@ -57,7 +55,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     /* LIFECYCLE */
 
-    public constructor(private renderer: PIXI.Renderer, private community: TwitterCommunity, private lod: number)
+    public constructor(private renderer: PIXI.Renderer, private community: TwitterCommunity, private lod: number, private resolution: number = 1)
     {
         super();
 
@@ -87,12 +85,12 @@ export class TwitterGraphCommunityView extends PIXI.Container
     {
         //
         const circle: PIXI.Graphics = new PIXI.Graphics();
-        circle.beginFill(TwitterGraphCommunityView.COLOR_MAP[this.community.id % 21]);
+        circle.beginFill(TwitterGraphCommunityView.BACKGROUND_COLORS[this.community.id % 21]);
         circle.drawCircle(0, 0, (1000 / this.scalingFactor) * 2 * hotspot.radius);
         circle.endFill();
 
         //
-        const circleTexture: PIXI.Texture = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, TwitterGraphCommunityView.RESOLUTION);
+        const circleTexture: PIXI.Texture = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, this.resolution);
         const circleSprite: PIXI.Sprite = PIXI.Sprite.from(circleTexture);
 
         const circleMask: PIXI.Sprite = PIXI.Sprite.from("assets/radial-gradient.png");
@@ -176,6 +174,31 @@ export class TwitterGraphCommunityView extends PIXI.Container
     public sharpen() : void
     {
         this.alpha = 1;
+    }
+
+    public updateResolution(newResolution: number) : void
+    {
+        if(newResolution == this.resolution) return;
+
+        // Update resolution
+        this.resolution = newResolution;
+
+        // Update graphics
+        this.removeChildren();
+
+        for(const lod of Object.keys(this.community.hotspots))
+        {
+            if(lod != this.lod.toString()) continue;
+
+            // Iterate over hotspots
+            for(const hotspot of this.community.hotspots[lod])
+            {
+                if(hotspot.radius < 0.1) continue;
+
+                this.addHotspotBackground(hotspot);
+                this.addHotspotLabels(hotspot);
+            }
+        }
     }
     
     public updateSizeLabel(size: number) : void
