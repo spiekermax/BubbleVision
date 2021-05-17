@@ -82,7 +82,8 @@
                 </ng-template>
 
                 <ng-template matTabContent>
-                    <mat-action-list class="visible-profiles-list">
+
+                    <mat-action-list *ngIf="visibleTwitterProfiles.length" class="visible-profiles-list">
                         <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
                             <ng-container *cdkVirtualFor="let twitterProfile of visibleTwitterProfiles">
                                 <mat-list-item>
@@ -95,6 +96,12 @@
                             </ng-container>
                         </cdk-virtual-scroll-viewport>
                     </mat-action-list>
+
+                    <div *ngIf="!visibleTwitterProfiles.length" class="empty-list-hint">
+                        <mat-icon class="icon">person_off</mat-icon>
+                        <span>Keine Profile sichtbar</span>
+                    </div>
+
                 </ng-template>
             </mat-tab>
 
@@ -106,7 +113,8 @@
                 </ng-template>
             
                 <ng-template matTabContent>
-                    <mat-action-list class="visible-profiles-tweets-list">
+
+                    <mat-action-list *ngIf="visibleTwitterProfilesTweets.length" class="visible-profiles-tweets-list">
                         <cdk-virtual-scroll-viewport autosize class="virtual-scroll" autosize>
                             <ng-container *cdkVirtualFor="let tweet of visibleTwitterProfilesTweets">
                                 <mat-list-item class="profile-item">
@@ -116,6 +124,12 @@
                             </ng-container>
                         </cdk-virtual-scroll-viewport>
                     </mat-action-list>
+
+                    <div *ngIf="!visibleTwitterProfilesTweets.length" class="empty-list-hint">
+                        <mat-icon class="icon">search_off</mat-icon>
+                        <span>Keine Tweets gefunden</span>
+                    </div>
+
                 </ng-template>
             </mat-tab>
 
