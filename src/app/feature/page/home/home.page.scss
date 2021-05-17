@@ -43,8 +43,7 @@
     padding: 0 26px;
     border-radius: 29px;
 
-    will-change: width, right, bottom, box-shadow;
-    transition: width 0.3s, right 0.3s, bottom 0.3s, box-shadow 0.3s;
+    transition: width 0.3s, box-shadow 0.3s, right 0.3s, bottom 0.3s;
 
     .mat-icon {
         margin-right: 10px;
@@ -66,7 +65,6 @@
             grid-row: 1;
             grid-column: 1;
 
-            will-change: opacity;
             transition: opacity 0.3s; 
         }
     }
