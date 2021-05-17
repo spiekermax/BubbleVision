@@ -86,7 +86,7 @@
                     <mat-action-list *ngIf="visibleTwitterProfiles.length" class="visible-profiles-list">
                         <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
                             <ng-container *cdkVirtualFor="let twitterProfile of visibleTwitterProfiles">
-                                <mat-list-item>
+                                <mat-list-item (click)="zoomToTwitterProfile(twitterProfile, 100)">
                                     <img matListAvatar class="profile-image"
                                         [style.border-color]="TWITTER_COMMUNITY_COLORS[twitterProfile.communityId]"
                                         [src]="twitterProfile.imageUrl.replace('_200x200', '_normal')">

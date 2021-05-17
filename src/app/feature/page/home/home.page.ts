@@ -177,7 +177,7 @@ export class HomePage implements OnInit, AfterViewInit
             case "existing-twitter-profile":
             {
                 // Zoom to selected profile
-                setTimeout(() => this.twitterGraph?.zoomToProfile(searchResult.data), 100);
+                this.zoomToTwitterProfile(searchResult.data, 100);
                 break;
             }
             case "custom-twitter-profile":
@@ -199,7 +199,7 @@ export class HomePage implements OnInit, AfterViewInit
                         loadingDialog.close();
 
                         // Zoom to added profile
-                        setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 500);
+                        this.zoomToTwitterProfile(profile, 500);
 
                     }, 250);
                 });
@@ -346,6 +346,11 @@ export class HomePage implements OnInit, AfterViewInit
 
         return `${twitterProfile.username}`;
     }
+
+    public zoomToTwitterProfile(twitterProfile: TwitterProfile, delay: number = 0) : void
+    {
+        setTimeout(() => this.twitterGraph?.zoomToProfile(twitterProfile), delay);
+    }
     
 
     /* METHODS - DIALOGS */
@@ -383,7 +388,7 @@ export class HomePage implements OnInit, AfterViewInit
             if(!clickedMember) return;
 
             // Zoom to selected profile
-            setTimeout(() => this.twitterGraph?.zoomToProfile(clickedMember), 100);
+            this.zoomToTwitterProfile(clickedMember, 100);
         });
     }
 
