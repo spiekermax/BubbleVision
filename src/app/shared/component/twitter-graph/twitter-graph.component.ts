@@ -30,6 +30,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     private _profiles: TwitterProfile[] = [];
     private _communities: TwitterCommunity[] = [];
 
+    private _profileResolution: number = 1;
+    private _communityResolution: number = 1;
+
     @Output()
     public profileClicked: EventEmitter<TwitterProfile> = new EventEmitter();
     
@@ -278,7 +281,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         for(const profile of this._profiles)
         {
             // Create view
-            const profileView: TwitterGraphProfileView = new TwitterGraphProfileView(this.app!.renderer, profile);
+            const profileView: TwitterGraphProfileView = new TwitterGraphProfileView(this.app!.renderer, profile, this.profileResolution);
 
             // Cache view reference
             this.profileViews.push(profileView);
@@ -303,7 +306,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         for(const community of this.communities)
         {
             // Create view
-            const communityViewLOD0: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 0);
+            const communityViewLOD0: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 0, this.communityResolution);
 
             // Cache view reference
             this.communityViews.push(communityViewLOD0);
@@ -316,7 +319,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
 
             // Create view
-            const communityViewLOD1: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 1);
+            const communityViewLOD1: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 1, this.communityResolution);
 
             // Cache view reference
             this.communityViews.push(communityViewLOD1);
@@ -327,6 +330,18 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             // Add view
             this.camera.lod1Layer.addChild(communityViewLOD1);
         }
+    }
+
+    private onProfileResolutionChanged() : void
+    {
+        for(const profileView of this.profileViews)
+            profileView.updateResolution(this.profileResolution);
+    }
+
+    private onCommunityResolutionChanged() : void
+    {
+        for(const communityView of this.communityViews)
+            communityView.updateResolution(this.communityResolution);
     }
 
 
@@ -482,5 +497,35 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
         //
         this.onCommunitiesChanged();
+    }
+
+    public get profileResolution() : number
+    {
+        return this._profileResolution;
+    }
+
+    @Input()
+    public set profileResolution(newProfileResolution: number)
+    {
+        //
+        this._profileResolution = newProfileResolution;
+
+        //
+        this.onProfileResolutionChanged();
+    }
+
+    public get communityResolution() : number
+    {
+        return this._communityResolution;
+    }
+
+    @Input()
+    public set communityResolution(newCommunityResolution: number)
+    {
+        //
+        this._communityResolution = newCommunityResolution;
+
+        //
+        this.onCommunityResolutionChanged();
     }
 }
