@@ -52,18 +52,19 @@
 </mat-form-field>
 
 <!-- FAB -->
-<button mat-fab class="fab" color="primary" (click)="drawer.toggle()"
-    [ngClass]="{
-        'fab-drawer-opened': drawer.opened,
-        'mat-elevation-z0': drawer.opened,
-        'fab-drawer-closed': !drawer.opened
+<button mat-fab class="fab" color="primary" (click)="visibleProfilesDrawer.toggle()"
+    [ngClass]=
+    "{
+        'fab-drawer-opened': visibleProfilesDrawer.opened,
+        'mat-elevation-z0': visibleProfilesDrawer.opened,
+        'fab-drawer-closed': !visibleProfilesDrawer.opened
     }">
     <div class="fab-content-container">
-        <div class="fab-content" [style.opacity]="!drawer.opened ? 1 : 0">
+        <div class="fab-content" [style.opacity]="!visibleProfilesDrawer.opened ? 1 : 0">
             <mat-icon>person_search</mat-icon>
             <span class="fab-text">Sichtbare Profile</span>
         </div>
-        <div class="fab-content" [style.opacity]="drawer.opened ? 1 : 0">
+        <div class="fab-content" [style.opacity]="visibleProfilesDrawer.opened ? 1 : 0">
             <mat-icon>close</mat-icon>
             <span class="fab-text">Schließen</span>
         </div>
@@ -72,7 +73,7 @@
 
 <!-- Visible profiles drawer -->
 <mat-drawer-container class="visible-profiles-drawer-container" autosize>
-    <mat-drawer #drawer class="visible-profiles-drawer" mode="side" position="end">
+    <mat-drawer #visibleProfilesDrawer class="visible-profiles-drawer" mode="side" position="end">
         <h2 class="title">Aktuell sichtbar</h2>
         <mat-tab-group class="tabs" mat-stretch-tabs [disablePagination]="true">
 
@@ -93,7 +94,7 @@
                                         [style.border-color]="TWITTER_COMMUNITY_COLORS[twitterProfile.communityId % 21]"
                                         [src]="twitterProfile.imageUrl.replace('_200x200', '_normal')">
                                     <div mat-line class="profile-name" [innerHTML]="Utils.twemojify(twitterProfile.name)"></div>
-                                    <div mat-line>@{{twitterProfile.username}}{{twitterProfile.communityId}}</div>
+                                    <div mat-line>@{{twitterProfile.username}}</div>
                                 </mat-list-item>
                             </ng-container>
                         </cdk-virtual-scroll-viewport>
@@ -116,16 +117,7 @@
             
                 <ng-template matTabContent>
 
-                    <mat-action-list *ngIf="visibleTwitterGraphProfileTweets.length" class="visible-profiles-tweets-list">
-                        <cdk-virtual-scroll-viewport autosize class="virtual-scroll" autosize>
-                            <ng-container *cdkVirtualFor="let tweet of visibleTwitterGraphProfileTweets">
-                                <mat-list-item class="profile-item">
-                                    <div mat-line>@{{tweet.username}}</div>
-                                    <div mat-line>{{tweet.text}}</div>
-                                </mat-list-item>
-                            </ng-container>
-                        </cdk-virtual-scroll-viewport>
-                    </mat-action-list>
+                    <tweet *ngFor="let tweet of visibleTwitterGraphProfileTweets" [data]="tweet"></tweet>
 
                     <div *ngIf="!visibleTwitterGraphProfileTweets.length" class="empty-list-hint">
                         <mat-icon class="icon">search_off</mat-icon>
@@ -138,6 +130,7 @@
         </mat-tab-group>
     </mat-drawer>
 </mat-drawer-container>
+
 
 
 <!-- Filter menu -->
