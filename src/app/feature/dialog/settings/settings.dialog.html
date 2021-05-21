@@ -1,7 +1,21 @@
 <h1 mat-dialog-title class="title">Einstellungen</h1>
 <div mat-dialog-content class="body">
-    <div class="setting-title">
-        <div style="font-weight: 500;">Auflösung von Profilen: </div>
+    <div class="setting-header" style="margin-bottom: 24px">
+        <div>
+            <div class="setting-title">Nur sichtbare Profile zeichnen</div>
+            <div class="setting-subtitle">Aktivierung verbessert die Performanz</div>
+        </div>
+        <mat-slide-toggle
+            color="primary"
+            [(ngModel)]="cullingEnabled">
+        </mat-slide-toggle>
+    </div>
+
+    <div class="setting-header" style="margin-bottom: -4px">
+        <div>
+            <div class="setting-title">Auflösung von Profilen: </div>
+            <div class="setting-subtitle">Geringere Auflösung verbessert die Performanz</div>
+        </div>
         <div>{{twitterProfileResolutionPercentage}}%</div>
     </div>
     <mat-slider

@@ -20,6 +20,7 @@ import { MatMenuModule } from "@angular/material/menu";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSliderModule } from "@angular/material/slider";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 
@@ -77,6 +78,7 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         MatProgressSpinnerModule,
         MatSidenavModule,
         MatSliderModule,
+        MatSlideToggleModule,
         MatTabsModule,
         MatToolbarModule
     ],

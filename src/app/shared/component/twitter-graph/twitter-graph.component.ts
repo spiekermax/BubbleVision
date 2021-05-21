@@ -33,6 +33,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     private _profileResolution: number = 1;
     private _communityResolution: number = 1;
 
+    private _cullingEnabled: boolean = true;
+
     @Output()
     public profileClicked: EventEmitter<TwitterProfile> = new EventEmitter();
     
@@ -59,7 +61,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     private isDragGestureActive: boolean = false;
 
     private lastVisibleBounds?: PIXI.Rectangle;
-    private lastVisibleProfiles: TwitterProfile[] = [];
+    private lastVisibleProfileViews: TwitterGraphProfileView[] = [];
 
     private highlightConditions: Record<string, (profile: TwitterProfile) => boolean> = {};
 
@@ -152,32 +154,36 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this.lastVisibleBounds = visibleBounds;
 
         // Find visible profiles
-        const visibleProfiles: TwitterProfile[] = this.profiles.filter(profile =>
+        const visibleProfileViews: TwitterGraphProfileView[] = this.profileViews.filter(profileView =>
         {
-            return profile.position.x >= visibleBounds.left - TwitterGraphProfileView.DIAMETER
-                && profile.position.y >= visibleBounds.top - TwitterGraphProfileView.DIAMETER
-                && profile.position.x <= visibleBounds.right
-                && profile.position.y <= visibleBounds.bottom;
+            const isVisible: boolean = profileView.data.position.x >= visibleBounds.left - TwitterGraphProfileView.DIAMETER
+                && profileView.data.position.y >= visibleBounds.top - TwitterGraphProfileView.DIAMETER
+                && profileView.data.position.x <= visibleBounds.right
+                && profileView.data.position.y <= visibleBounds.bottom;
+
+            profileView.visible = !this.cullingEnabled || isVisible;
+
+            return isVisible;
         });
-        const visibleProfilesChanged: boolean = visibleProfiles.length != this.lastVisibleProfiles.length
-            || !visibleProfiles.every((value, index) => value == this.lastVisibleProfiles[index]);
+        const visibleProfileViewsChanged: boolean = visibleProfileViews.length != this.lastVisibleProfileViews.length
+            || !visibleProfileViews.every((value, index) => value == this.lastVisibleProfileViews[index]);
 
         //
-        if(!visibleProfilesChanged) return;
-        this.lastVisibleProfiles = visibleProfiles;
+        if(!visibleProfileViewsChanged) return;
+        this.lastVisibleProfileViews = visibleProfileViews;
 
         if(this.camera.zoom >= 0.1)
         {
             //
-            for(const visibleProfile of visibleProfiles)
-                TwitterGraphResourceManager.add(visibleProfile.imageUrl);
+            for(const visibleProfileView of visibleProfileViews)
+                TwitterGraphResourceManager.add(visibleProfileView.data.imageUrl);
 
             // Load visible images
             TwitterGraphResourceManager.load();
         }
 
         //
-        this.ngZone.run(() => this.visibleProfilesChanged.emit([...visibleProfiles]));
+        this.ngZone.run(() => this.visibleProfilesChanged.emit(visibleProfileViews.map(profileView => profileView.data)));
     }
 
 
@@ -527,5 +533,16 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
         //
         this.onCommunityResolutionChanged();
+    }
+
+    public get cullingEnabled() : boolean
+    {
+        return this._cullingEnabled;
+    }
+
+    @Input()
+    public set cullingEnabled(newCullingEnabled: boolean)
+    {
+        this._cullingEnabled = newCullingEnabled;
     }
 }

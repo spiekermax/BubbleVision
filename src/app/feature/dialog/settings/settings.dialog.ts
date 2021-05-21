@@ -18,6 +18,7 @@ export class SettingsDialog
 {
     /* ATTRIBUTES */
 
+    public cullingEnabled: boolean = this.preferenceService.cullingEnabled;
     public twitterProfileResolution: number = this.preferenceService.twitterProfileResolution;
     public twitterCommunityResolution: number = this.preferenceService.twitterCommunityResolution;
 
@@ -38,11 +39,13 @@ export class SettingsDialog
 
     public onApplyButtonClicked() : void
     {
+        this.preferenceService.cullingEnabled = this.cullingEnabled;
         this.preferenceService.twitterProfileResolution = this.twitterProfileResolution;
         this.preferenceService.twitterCommunityResolution = this.twitterCommunityResolution;
 
         this.dialogRef.close
         ({
+            cullingEnabled: this.cullingEnabled,
             twitterProfileResolution: this.twitterProfileResolution,
             twitterCommunityResolution:  this.twitterCommunityResolution
         });

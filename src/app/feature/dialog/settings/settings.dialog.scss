@@ -3,11 +3,24 @@
 }
 
 .body {
-    padding-top: 4px;
+    padding-top: 8px;
 
-    .setting-title {
+    .setting-header {
         display: flex;
+        flex-direction: row;
+
+        align-items: center;
         justify-content: space-between;
+
+        .setting-title {
+            font-weight: 500;
+        }
+
+        .setting-subtitle {
+            color: gray;
+            font-size: 11px; 
+            line-height: 11px;
+        }
     }
 
     .setting-slider {

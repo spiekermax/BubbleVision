@@ -85,6 +85,11 @@ export class HomePage implements OnInit, AfterViewInit
     public twitterProfiles: TwitterProfile[] = [];
     public twitterCommunities: TwitterCommunity[] = [];
 
+    // Preferences
+    public twitterGraphCullingEnabled: boolean = this.preferenceService.cullingEnabled;
+    public twitterGraphProfileResolution: number = this.preferenceService.twitterProfileResolution;
+    public twitterGraphCommunityResolution: number = this.preferenceService.twitterCommunityResolution;
+
     // Search controls
     public searchFormControl: FormControl = new FormControl();
     public searchResults?: Observable<SearchResult[]>;
@@ -98,9 +103,6 @@ export class HomePage implements OnInit, AfterViewInit
 
     public visibleTwitterGraphProfileTweets: Tweet[] = [];
     public visibleTwitterGraphProfileTweetsSubscription?: Subscription;
-
-    public twitterGraphProfileResolution: number = this.preferenceService.twitterProfileResolution;
-    public twitterGraphCommunityResolution: number = this.preferenceService.twitterCommunityResolution;
 
     // Filter state
     public minFollowersLimit: number = HomePage.MIN_FOLLOWERS_DEFAULT;
@@ -373,10 +375,15 @@ export class HomePage implements OnInit, AfterViewInit
     {
         this.dialog.open(SettingsDialog).afterClosed().subscribe((settings: any) =>
         {
-            if(settings.twitterProfileResolution)
+            if(!settings) return;
+
+            if(settings.cullingEnabled !== undefined)
+                this.twitterGraphCullingEnabled = settings.cullingEnabled;
+
+            if(settings.twitterProfileResolution !== undefined)
                 this.twitterGraphProfileResolution = settings.twitterProfileResolution;
             
-            if(settings.twitterCommunityResolution)
+            if(settings.twitterCommunityResolution !== undefined)
                 this.twitterGraphCommunityResolution = settings.twitterCommunityResolution;
         });
     }
