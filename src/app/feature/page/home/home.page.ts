@@ -12,6 +12,7 @@ import { map, startWith } from "rxjs/operators";
 // Internal dependencies
 import { Utils } from "src/app/core/utils";
 
+import { Tweet } from "src/app/shared/model/twitter/tweet/tweet";
 import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
 import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 import { SearchResult } from "./model/search-result";
@@ -95,7 +96,7 @@ export class HomePage implements OnInit, AfterViewInit
     // Twitter graph state
     public visibleTwitterGraphProfiles: TwitterProfile[] = [];
 
-    public visibleTwitterGraphProfileTweets: any[] = [];
+    public visibleTwitterGraphProfileTweets: Tweet[] = [];
     public visibleTwitterGraphProfileTweetsSubscription?: Subscription;
 
     public twitterGraphProfileResolution: number = this.preferenceService.twitterProfileResolution;
