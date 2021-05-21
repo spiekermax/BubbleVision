@@ -154,8 +154,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         // Find visible profiles
         const visibleProfiles: TwitterProfile[] = this.profiles.filter(profile =>
         {
-            return profile.position.x >= visibleBounds.left
-                && profile.position.y >= visibleBounds.top
+            return profile.position.x >= visibleBounds.left - TwitterGraphProfileView.DIAMETER
+                && profile.position.y >= visibleBounds.top - TwitterGraphProfileView.DIAMETER
                 && profile.position.x <= visibleBounds.right
                 && profile.position.y <= visibleBounds.bottom;
         });
