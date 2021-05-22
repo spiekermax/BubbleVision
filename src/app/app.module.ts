@@ -35,6 +35,7 @@ import { LoadingDialog } from "./feature/dialog/loading/loading.dialog";
 import { SettingsDialog } from "./feature/dialog/settings/settings.dialog";
 
 import { TwitterCommunityDialog } from "./feature/dialog/twitter-community/twitter-community.dialog";
+import { TwitterCommunityHotspotDialog } from "./feature/dialog/twitter-community-hotspot/twitter-community-hotspot.dialog";
 import { TwitterProfileDialog } from "./feature/dialog/twitter-profile/twitter-profile.dialog";
 
 import { TweetComponent } from './shared/component/tweet/tweet.component';
@@ -51,6 +52,7 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         SettingsDialog,
 
         TwitterCommunityDialog,
+        TwitterCommunityHotspotDialog,
         TwitterProfileDialog,
 
         TweetComponent,

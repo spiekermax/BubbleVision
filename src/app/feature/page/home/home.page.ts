@@ -15,6 +15,7 @@ import { Utils } from "src/app/core/utils";
 
 import { Tweet } from "src/app/shared/model/twitter/tweet/tweet";
 import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
+import { TwitterCommunityHotspot } from "src/app/shared/model/twitter/community/twitter-community-hotspot";
 import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 import { SearchResult } from "./model/search-result";
 
@@ -29,6 +30,7 @@ import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 
 import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
 import { TwitterCommunityDialog } from "../../dialog/twitter-community/twitter-community.dialog";
+import { TwitterCommunityHotspotDialog } from "../../dialog/twitter-community-hotspot/twitter-community-hotspot.dialog";
 
 
 @Component
@@ -382,6 +384,24 @@ export class HomePage implements OnInit, AfterViewInit
         this.dialog.open(TwitterCommunityDialog,
         { 
             data: [twitterCommunity, twitterCommunityMembers],
+            width: "514px"
+        })
+        .afterClosed().subscribe((clickedMember?: TwitterProfile) =>
+        {
+            if(!clickedMember) return;
+
+            // Zoom to selected profile
+            this.zoomToTwitterProfile(clickedMember, 100);
+        });
+    }
+
+    public openTwitterCommunityHotspotDialog(twitterCommunityHotspot: TwitterCommunityHotspot) : void
+    {
+        const twitterCommunityMembers: TwitterProfile[] = this.twitterProfiles.filter(profile => twitterCommunityHotspot.members.includes(profile.username));
+
+        this.dialog.open(TwitterCommunityHotspotDialog,
+        { 
+            data: [twitterCommunityHotspot, twitterCommunityMembers],
             width: "514px"
         })
         .afterClosed().subscribe((clickedMember?: TwitterProfile) =>
