@@ -37,6 +37,13 @@ export class SettingsDialog
         this.twitterProfileResolution = twitterProfileResolution;
     }
 
+    public onTwitterCommunityResolutionSliderMoved(twitterCommunityResolution: number | null) : void
+    {
+        if(twitterCommunityResolution === null) return;
+
+        this.twitterCommunityResolution = twitterCommunityResolution;
+    }
+
     public onApplyButtonClicked() : void
     {
         this.preferenceService.cullingEnabled = this.cullingEnabled;

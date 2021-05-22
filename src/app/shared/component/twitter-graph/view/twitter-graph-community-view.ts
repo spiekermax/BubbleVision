@@ -34,7 +34,8 @@ export class TwitterGraphCommunityView extends PIXI.Container
         super();
 
         //
-        if(this.community.radius < 0.1) return;
+        if(this.community.radius < 0.1)
+            throw new Error("Community radius too small!");
 
         //
         this.zIndex = this.community.size;

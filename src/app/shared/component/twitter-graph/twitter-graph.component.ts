@@ -324,6 +324,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         // Add new views
         for(const community of this.communities)
         {
+            //
+            if(community.radius < 0.1) continue;
+
             // Create view
             const communityView: TwitterGraphCommunityView = new TwitterGraphCommunityView(community, this.app!.renderer, 0, this.communityResolution);
 
@@ -339,6 +342,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             //
             for(const communityHotspot of community.hotspots)
             {
+                if(communityHotspot.radius < 0.1) continue;
+
                 // Create view
                 const communityHotspotView: TwitterGraphCommunityHotspotView = new TwitterGraphCommunityHotspotView(community, communityHotspot, this.app!.renderer, 1, this.communityResolution);
 

@@ -18,7 +18,7 @@ export class PreferenceService
     // Defaults
     private static readonly DEFAULT_CULLING_ENABLED: boolean = false;
     private static readonly DEFAULT_TWITTER_PROFILE_RESOLUTION: number = 0.65;
-    private static readonly DEFAULT_TWITTER_COMMUNITY_RESOLUTION: number = 0.65;
+    private static readonly DEFAULT_TWITTER_COMMUNITY_RESOLUTION: number = 0.35;
 
 
     /* GETTER & SETTER */
