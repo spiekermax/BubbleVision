@@ -5,6 +5,8 @@ import { Observable, Subject } from "rxjs";
 import * as PIXI from "pixi.js";
 
 // Internal dependencies
+import { Colors } from "src/app/core/colors";
+
 import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 import { TwitterGraphResourceManager } from "../resource/twitter-graph-resource-manager";
 
@@ -16,30 +18,6 @@ export class TwitterGraphProfileView extends PIXI.Container
     // Constants
     public static readonly DIAMETER: number = 300;
     public static readonly IMAGE_PADDING: number = 24;
-
-    private static readonly BACKGROUND_COLORS: number[] =
-    [
-        0xe6194B,
-        0x3cb44b,
-        0xf57920,
-        0x4363d8,
-        0xffe119,
-        0x911eb4,
-        0x42d4f4,
-        0xf032e6,
-        0xa6d13b,
-        0xfabed4,
-        0x469990,
-        0xdcbeff,
-        0x9A6324,
-        0xfffac8,
-        0x800000,
-        0xaaffc3,
-        0x808000,
-        0xffd8b1,
-        0x000075,
-        0xa9a9a9,
-    ];
 
     // Variables
     private static BACKGROUND_TEXTURES: Record<number, PIXI.Texture> = {};
@@ -101,16 +79,7 @@ export class TwitterGraphProfileView extends PIXI.Container
 
         //
         const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileView.BACKGROUND_TEXTURES[this.resolution]);
-        if(this.profile.communityId !== undefined)
-        {
-            //
-            background.tint = TwitterGraphProfileView.BACKGROUND_COLORS[this.profile.communityId.asNumber % 20];
-        }
-        else
-        {
-            //
-            background.tint = 0x000000;
-        }
+        background.tint = Colors.getTwitterCommunityColor(this.profile.communityId?.asNumber).asNumber;
 
         //
         this.addChild(background);

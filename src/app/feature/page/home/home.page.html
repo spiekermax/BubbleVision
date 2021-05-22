@@ -92,7 +92,7 @@
                             <ng-container *cdkVirtualFor="let twitterProfile of visibleTwitterGraphProfiles">
                                 <mat-list-item (click)="zoomToTwitterProfile(twitterProfile, 100)">
                                     <img matListAvatar class="profile-image"
-                                        [style.border-color]="TWITTER_COMMUNITY_COLORS[twitterProfile.communityId % 21]"
+                                        [style.border-color]="Colors.getTwitterCommunityColor(twitterProfile.communityId?.asNumber).asString"
                                         [src]="twitterProfile.imageUrl.replace('_200x200', '_normal')">
                                     <div mat-line class="profile-name" [innerHTML]="Utils.twemojify(twitterProfile.name)"></div>
                                     <div mat-line>@{{twitterProfile.username}}</div>

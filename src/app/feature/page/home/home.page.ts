@@ -10,6 +10,7 @@ import { Observable, Subscription } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 
 // Internal dependencies
+import { Colors } from "src/app/core/colors";
 import { Utils } from "src/app/core/utils";
 
 import { Tweet } from "src/app/shared/model/twitter/tweet/tweet";
@@ -40,6 +41,7 @@ export class HomePage implements OnInit, AfterViewInit
 {
     /* NAMESPACES */
 
+    public Colors = Colors;
     public Utils = Utils;
 
 
@@ -47,30 +49,6 @@ export class HomePage implements OnInit, AfterViewInit
 
     private static readonly MIN_FOLLOWERS_DEFAULT: number = 0;
     private static readonly MAX_FOLLOWERS_DEFAULT: number = 10e6;
-
-    public readonly TWITTER_COMMUNITY_COLORS: string[] =
-    [
-        "#e6194B",
-        "#3cb44b",
-        "#f57920",
-        "#4363d8",
-        "#ffe119",
-        "#911eb4",
-        "#42d4f4",
-        "#f032e6",
-        "#a6d13b",
-        "#fabed4",
-        "#469990",
-        "#dcbeff",
-        "#9A6324",
-        "#fffac8",
-        "#800000",
-        "#aaffc3",
-        "#808000",
-        "#ffd8b1",
-        "#000075",
-        "#a9a9a9",
-    ];
 
 
     /* COMPONENTS */
