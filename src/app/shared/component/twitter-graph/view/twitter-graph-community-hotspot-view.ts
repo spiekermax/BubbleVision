@@ -6,11 +6,12 @@ import * as PIXI from "pixi.js";
 
 // Internal dependencies
 import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
+import { TwitterCommunityHotspot } from "src/app/shared/model/twitter/community/twitter-community-hotspot";
 
 import { TwitterGraphCamera } from "../camera/twitter-graph-camera";
 
 
-export class TwitterGraphCommunityView extends PIXI.Container
+export class TwitterGraphCommunityHotspotView extends PIXI.Container
 {
     /* STATIC */
 
@@ -55,15 +56,15 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     /* LIFECYCLE */
 
-    public constructor(private community: TwitterCommunity, private renderer: PIXI.Renderer, private lod?: number, private resolution: number = 1)
+    public constructor(private community: TwitterCommunity, private hotspot: TwitterCommunityHotspot, private renderer: PIXI.Renderer, private lod?: number, private resolution: number = 1)
     {
         super();
 
         //
-        if(this.community.radius < 0.1) return;
+        if(this.hotspot.radius < 0.1) return;
 
         //
-        this.zIndex = this.community.size;
+        this.zIndex = this.hotspot.size;
 
         //
         this.addBackground();
@@ -77,14 +78,14 @@ export class TwitterGraphCommunityView extends PIXI.Container
     {
         //
         const circleSprite: PIXI.Sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
-        circleSprite.tint = TwitterGraphCommunityView.BACKGROUND_COLORS[this.community.numericId % 20];
-        circleSprite.width = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
-        circleSprite.height = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
+        circleSprite.tint = TwitterGraphCommunityHotspotView.BACKGROUND_COLORS[this.community.numericId % 21];
+        circleSprite.width = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
+        circleSprite.height = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
 
         //
         const circleMask: PIXI.Sprite = PIXI.Sprite.from("assets/radial-gradient.png");
-        circleMask.width = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
-        circleMask.height = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
+        circleMask.width = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
+        circleMask.height = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
 
         //
         const maskedContainer: PIXI.Container = new PIXI.Container();
@@ -93,12 +94,12 @@ export class TwitterGraphCommunityView extends PIXI.Container
         circleSprite.mask = circleMask;
 
         //
-        maskedContainer.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - 2 * this.community.radius);
-        maskedContainer.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - 2 * this.community.radius);
+        maskedContainer.position.x = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[0] - 2 * this.hotspot.radius);
+        maskedContainer.position.y = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[1] - 2 * this.hotspot.radius);
         
         maskedContainer.interactive = true;
         maskedContainer.cursor = "pointer";
-        maskedContainer.hitArea = new PIXI.Circle((1000 / this.lodScalingFactor) * 2 * this.community.radius, (1000 / this.lodScalingFactor) * 2 * this.community.radius, (1000 / this.lodScalingFactor) * 1.2 * this.community.radius);
+        maskedContainer.hitArea = new PIXI.Circle((1000 / this.lodScalingFactor) * 2 * this.hotspot.radius, (1000 / this.lodScalingFactor) * 2 * this.hotspot.radius, (1000 / this.lodScalingFactor) * 1.2 * this.hotspot.radius);
 
         maskedContainer.on("click", () => this.onClicked());
 
@@ -108,45 +109,45 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     private addLabel() : void
     {
-        const nameLabel: PIXI.Text = new PIXI.Text("#" + this.community.name?.toLowerCase() || "error", new PIXI.TextStyle
+        const nameLabel: PIXI.Text = new PIXI.Text("#" + this.hotspot.name?.toLowerCase() || "error", new PIXI.TextStyle
         ({ 
             fill: "white",
-            fontSize: (200 / this.lodScalingFactor) * this.community.radius,
+            fontSize: (200 / this.lodScalingFactor) * this.hotspot.radius,
             fontFamily: "Roboto", 
             align: "center",
             letterSpacing: 1.5,
             wordWrap: true,
-            wordWrapWidth: (1500 / this.lodScalingFactor) * this.community.radius
+            wordWrapWidth: (1500 / this.lodScalingFactor) * this.hotspot.radius
         }));
         
         const nameLabelBounds: PIXI.Rectangle = nameLabel.getLocalBounds(new PIXI.Rectangle());
         const nameLabelWidth: number = nameLabelBounds.width;
         const nameLabelHeight: number = nameLabelBounds.height;
 
-        nameLabel.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - this.community.radius) + ((1000 / this.lodScalingFactor) * this.community.radius) - nameLabelWidth / 2;
-        nameLabel.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - this.community.radius) + ((1000 / this.lodScalingFactor) * this.community.radius) - nameLabelHeight / 2;
+        nameLabel.position.x = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[0] - this.hotspot.radius) + ((1000 / this.lodScalingFactor) * this.hotspot.radius) - nameLabelWidth / 2;
+        nameLabel.position.y = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[1] - this.hotspot.radius) + ((1000 / this.lodScalingFactor) * this.hotspot.radius) - nameLabelHeight / 2;
         nameLabel.resolution = this.resolution;
         nameLabel.cacheAsBitmap = true;
 
         this.addChild(nameLabel);
 
-        this.sizeLabel = new PIXI.Text(this.community.size.toString() || "???", new PIXI.TextStyle
+        this.sizeLabel = new PIXI.Text(this.hotspot.size.toString() || "???", new PIXI.TextStyle
         ({ 
             fill: "white",
-            fontSize: (150 / this.lodScalingFactor) * this.community.radius,
+            fontSize: (150 / this.lodScalingFactor) * this.hotspot.radius,
             fontFamily: "Roboto", 
             align: "center",
             letterSpacing: 1.5,
             wordWrap: true,
-            wordWrapWidth: (1200 / this.lodScalingFactor) * this.community.radius
+            wordWrapWidth: (1200 / this.lodScalingFactor) * this.hotspot.radius
         }));
         
         this.sizeLabelBounds = this.sizeLabel.getLocalBounds(new PIXI.Rectangle());
         const sizeLabelWidth: number = this.sizeLabelBounds.width;
         const sizeLabelHeight: number = this.sizeLabelBounds.height;
 
-        this.sizeLabel.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - this.community.radius) + ((1000 / this.lodScalingFactor) * this.community.radius) - sizeLabelWidth / 2;
-        this.sizeLabel.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - this.community.radius) + ((1100 / this.lodScalingFactor) * this.community.radius) - sizeLabelHeight / 2 + nameLabelHeight;
+        this.sizeLabel.position.x = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[0] - this.hotspot.radius) + ((1000 / this.lodScalingFactor) * this.hotspot.radius) - sizeLabelWidth / 2;
+        this.sizeLabel.position.y = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[1] - this.hotspot.radius) + ((1100 / this.lodScalingFactor) * this.hotspot.radius) - sizeLabelHeight / 2 + nameLabelHeight;
         this.sizeLabel.resolution = this.resolution;
         this.sizeLabel.cacheAsBitmap = true;
 
@@ -207,9 +208,9 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
     /* GETTER & SETTER */
 
-    public get data() : TwitterCommunity
+    public get data() : TwitterCommunityHotspot
     {
-        return this.community;
+        return this.hotspot;
     }
 
     public get clickedEvent() : Observable<void>

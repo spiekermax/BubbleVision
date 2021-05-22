@@ -5,7 +5,13 @@ import { Position } from "../../position/position";
 export interface TwitterProfile
 {
     id: number;
-    communityId: number;
+
+    communityId?:
+    {
+        asString: string;
+        asNumber: number;
+    }
+    communityHotspotId?: string;
 
     name: string;
     username: string;

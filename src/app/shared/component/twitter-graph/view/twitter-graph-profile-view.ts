@@ -101,7 +101,16 @@ export class TwitterGraphProfileView extends PIXI.Container
 
         //
         const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileView.BACKGROUND_TEXTURES[this.resolution]);
-        background.tint = TwitterGraphProfileView.BACKGROUND_COLORS[this.profile.communityId % 21];
+        if(this.profile.communityId !== undefined)
+        {
+            //
+            background.tint = TwitterGraphProfileView.BACKGROUND_COLORS[this.profile.communityId.asNumber % 20];
+        }
+        else
+        {
+            //
+            background.tint = 0x000000;
+        }
 
         //
         this.addChild(background);
@@ -127,6 +136,7 @@ export class TwitterGraphProfileView extends PIXI.Container
         
         label.position.x = (1.00 * TwitterGraphProfileView.DIAMETER - labelWidth) / 2;
         label.position.y = (1.65 * TwitterGraphProfileView.DIAMETER - labelHeight) / 2;
+        label.resolution = this.resolution;
         label.cacheAsBitmap = true;
         
         this.label = label;
@@ -239,7 +249,6 @@ export class TwitterGraphProfileView extends PIXI.Container
 
         // Update graphics
         this.removeChildren();
-
         this.addBackground();
         this.addLabel();
         this.addPlaceholderImage();

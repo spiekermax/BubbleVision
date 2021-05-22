@@ -39,10 +39,10 @@ export class TwitterDataService
     {
         return forkJoin
         ({
-            mapping: this.http.get<any>("assets/graph/de_1000_mapping_base.json"),
-            communities: this.http.get<any>("assets/graph/de_1000_communities_weighted_louvain.json")
+            mapping: this.http.get<any>("assets/graph/de_1000_profiles.json"),
+            communities: this.http.get<TwitterCommunity[]>("assets/graph/de_1000_communities.json")
         })
-        .pipe(map((json: any) =>
+        .pipe(map(json =>
         {
             // Transform data
             return json.mapping.profiles.map((profileDTO: any) =>
@@ -67,13 +67,29 @@ export class TwitterDataService
                 };
 
                 // Find associated community
-                for(const communityId of Object.keys(json.communities))
+                for(const community of json.communities)
                 {
-                    if(json.communities[communityId].includes(profileDTO.username))
+                    if(!community.members.includes(profileDTO.username)) continue;
+
+                    //
+                    profile.communityId =
                     {
-                        profile.communityId = Number(communityId);
+                        asString: community.id,
+                        asNumber: community.numericId
+                    }
+
+                    //
+                    for(const communityHotspot of community.hotspots)
+                    {
+                        if(!communityHotspot.members.includes(profileDTO.username)) continue;
+                        
+                        //
+                        profile.communityHotspotId = communityHotspot.id;
                         break;
                     }
+
+                    //
+                    break;
                 }
 
                 return profile;
@@ -127,7 +143,6 @@ export class TwitterDataService
                 const profile: TwitterProfile =
                 {
                     id: data.info.twitter_id,
-                    communityId: 101 * 21 - 1,
                     name: data.info.name,
                     username: data.info.username,
                     description: data.info.description || "",
@@ -166,7 +181,7 @@ export class TwitterDataService
 
     public loadCommunities() : Observable<TwitterCommunity[]>
     {
-        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");
+        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_communities.json");
     }
 
     public loadTweets(profiles: TwitterProfile[]) : Observable<Tweet[]>

@@ -67,7 +67,7 @@ export class TwitterCommunityDialog
 
     public get name() : string
     {
-        return this.community.hotspots["0"][0].name;
+        return this.community.name;
     }
 
     public get minFollowers() : string
@@ -86,7 +86,7 @@ export class TwitterCommunityDialog
 
     public get twitterListUrl() : string
     {
-        return `https://twitter.com/${this.community.twitterList.user}/lists/${this.community.twitterList.slug}`;
+        return `https://twitter.com/${this.community.twitterList.author}/lists/${this.community.twitterList.slug}`;
     }
 
     public get membersSortedByFollowers() : TwitterProfile[]

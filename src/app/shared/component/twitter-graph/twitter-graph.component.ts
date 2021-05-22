@@ -8,12 +8,14 @@ import * as PIXI from "pixi.js";
 import { Position } from "../../model/position/position";
 
 import { TwitterCommunity } from "../../model/twitter/community/twitter-community";
+import { TwitterCommunityHotspot } from "../../model/twitter/community/twitter-community-hotspot";
 import { TwitterProfile } from "../../model/twitter/profile/twitter-profile";
 
 import { TwitterGraphCamera } from "./camera/twitter-graph-camera";
 import { TwitterGraphResourceManager } from "./resource/twitter-graph-resource-manager";
 
 import { TwitterGraphCommunityView } from "./view/twitter-graph-community-view";
+import { TwitterGraphCommunityHotspotView } from "./view/twitter-graph-community-hotspot-view";
 import { TwitterGraphProfileView } from "./view/twitter-graph-profile-view";
 
 
@@ -42,6 +44,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     public communityClicked: EventEmitter<TwitterCommunity> = new EventEmitter();
 
     @Output()
+    public communityHotspotClicked: EventEmitter<TwitterCommunityHotspot> = new EventEmitter();
+
+    @Output()
     public visibleProfilesChanged: EventEmitter<TwitterProfile[]> = new EventEmitter();
 
 
@@ -55,6 +60,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     private profileViews: TwitterGraphProfileView[] = [];
     private communityViews: TwitterGraphCommunityView[] = [];
+    private communityHotspotViews: TwitterGraphCommunityHotspotView[] = [];
     
     // State
     private lastMouseDownPosition?: Position;
@@ -268,6 +274,13 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this.ngZone.run(() => this.communityClicked.emit(community));
     }
 
+    private onCommunityHotspotClicked(communityHotspot: TwitterCommunityHotspot) : void
+    {
+        if(this.isDragGestureActive) return;
+
+        this.ngZone.run(() => this.communityHotspotClicked.emit(communityHotspot));
+    }
+
 
     /* CALLBACKS - STATE */
 
@@ -312,29 +325,32 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         for(const community of this.communities)
         {
             // Create view
-            const communityViewLOD0: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 0, this.communityResolution);
+            const communityView: TwitterGraphCommunityView = new TwitterGraphCommunityView(community, this.app!.renderer, 0, this.communityResolution);
 
             // Cache view reference
-            this.communityViews.push(communityViewLOD0);
+            this.communityViews.push(communityView);
 
             // Bind callbacks
-            communityViewLOD0.clickedEvent.subscribe(() => this.onCommunityClicked(community));
+            communityView.clickedEvent.subscribe(() => this.onCommunityClicked(community));
 
             // Add view
-            this.camera.lod0Layer.addChild(communityViewLOD0);
+            this.camera.lod0Layer.addChild(communityView);
 
+            //
+            for(const communityHotspot of community.hotspots)
+            {
+                // Create view
+                const communityHotspotView: TwitterGraphCommunityHotspotView = new TwitterGraphCommunityHotspotView(community, communityHotspot, this.app!.renderer, 1, this.communityResolution);
 
-            // Create view
-            const communityViewLOD1: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 1, this.communityResolution);
+                // Cache view reference
+                this.communityHotspotViews.push(communityHotspotView);
 
-            // Cache view reference
-            this.communityViews.push(communityViewLOD1);
+                // Bind callbacks
+                communityHotspotView.clickedEvent.subscribe(() => this.onCommunityHotspotClicked(communityHotspot));
 
-            // Bind callbacks
-            communityViewLOD1.clickedEvent.subscribe(() => this.onCommunityClicked(community));
-
-            // Add view
-            this.camera.lod1Layer.addChild(communityViewLOD1);
+                // Add view
+                this.camera.lod1Layer.addChild(communityHotspotView);
+            }
         }
     }
 
@@ -348,6 +364,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     {
         for(const communityView of this.communityViews)
             communityView.updateResolution(this.communityResolution);
+
+        for(const communityHotspotView of this.communityHotspotViews)
+            communityHotspotView.updateResolution(this.communityResolution);
     }
 
 
@@ -395,30 +414,42 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         const conditions = Object.values(this.highlightConditions);
 
         //
-        const highlightedCommunityMemberCount: Record<number, number> = {};
+        const highlightedCommunityMemberCount: Record<string, number> = {};
+        const highlightedCommunityHotspotMemberCount: Record<string, number> = {};
+
+        //
         for(const profileView of this.profileViews)
         {
-            if(conditions.every(condition => condition(profileView.data)))
-            {
-                //
-                profileView.sharpen();
-
-                //
-                const profileCommunityId: number = profileView.data.communityId;
-                highlightedCommunityMemberCount[profileCommunityId] = (highlightedCommunityMemberCount[profileCommunityId] || 0) + 1;
-            }
-            else
+            if(!conditions.every(condition => condition(profileView.data)))
             {
                 //
                 profileView.blur();
+                continue;
             }
+
+            //
+            profileView.sharpen();
+
+            //
+            if(!profileView.data.communityId) continue;
+
+            //
+            const profileCommunityId: string = profileView.data.communityId.asString;
+            highlightedCommunityMemberCount[profileCommunityId] = (highlightedCommunityMemberCount[profileCommunityId] || 0) + 1;
+
+            //
+            if(!profileView.data.communityHotspotId) continue;
+
+            //
+            const profileCommunityHotspotId: string = profileView.data.communityHotspotId;
+            highlightedCommunityHotspotMemberCount[profileCommunityHotspotId] = (highlightedCommunityHotspotMemberCount[profileCommunityHotspotId] || 0) + 1;
         }
 
         //
         for(const communityView of this.communityViews)
         {
             //
-            const communityId: number = communityView.data.id;
+            const communityId: string = communityView.data.id;
 
             if(communityId in highlightedCommunityMemberCount)
             {
@@ -430,6 +461,25 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             {
                 //
                 communityView.blur();
+            }
+        }
+
+        //
+        for(const communityHotspotView of this.communityHotspotViews)
+        {
+            //
+            const communityHotspotId: string = communityHotspotView.data.id;
+
+            if(communityHotspotId in highlightedCommunityHotspotMemberCount)
+            {
+                //
+                communityHotspotView.sharpen();
+                communityHotspotView.updateSizeLabel(highlightedCommunityHotspotMemberCount[communityHotspotId]);
+            }
+            else
+            {
+                //
+                communityHotspotView.blur();
             }
         }
     }
