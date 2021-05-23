@@ -153,7 +153,12 @@
                     "PSAIKODINO",
                     "SILLAofficial",
                     "Nazar10"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389055068258305",
+                    "slug": "ba-v2-1-0-54266",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "1_1",
@@ -180,7 +185,12 @@
                     "thomasdofficial",
                     "donotsofficial",
                     "MaxRiemelt"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389055621967874",
+                    "slug": "ba-v2-1-1-12468",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "1_2",
@@ -248,9 +258,19 @@
                     "buelent_ceylan",
                     "Radio_ENERGY",
                     "hmdeutschland"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389056431468545",
+                    "slug": "ba-v2-1-2-62960",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678460046184450",
+            "slug": "ba-v1-1-14036",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "0",
@@ -732,7 +752,12 @@
                     "SPIEGEL_Kultur",
                     "WELT_Kultur",
                     "SPIEGEL_Rezens"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389058662785026",
+                    "slug": "ba-v2-0-0-74585",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "0_1",
@@ -765,7 +790,12 @@
                     "JanJosefLiefers",
                     "OTTOausE",
                     "herbstblond"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389059103182849",
+                    "slug": "ba-v2-0-1-21151",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "0_2",
@@ -872,7 +902,12 @@
                     "VivianeRedingEU",
                     "Wurfschuh",
                     "bundeswehrInfo"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389059455488002",
+                    "slug": "ba-v2-0-2-60840",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "0_3",
@@ -912,7 +947,12 @@
                     "rlpNews",
                     "hessenschau",
                     "LVZ"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389060000768008",
+                    "slug": "ba-v2-0-3-34111",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "0_4",
@@ -951,7 +991,12 @@
                     "heuteshow",
                     "MartinSonneborn",
                     "erzaehlmirnix"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389060403474433",
+                    "slug": "ba-v2-0-4-17737",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "0_5",
@@ -993,7 +1038,12 @@
                     "georgrestle",
                     "KuehniKev",
                     "law_forensic"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389060642549760",
+                    "slug": "ba-v2-0-5-18438",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "0_6",
@@ -1030,9 +1080,19 @@
                     "feuerwehrffm",
                     "WetterOnline",
                     "BVG_Ubahn"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389061250670594",
+                    "slug": "ba-v2-0-6-27302",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678461711327236",
+            "slug": "ba-v1-0-11417",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "2",
@@ -1203,7 +1263,12 @@
                     "RBuerki1",
                     "HazardThorgan8",
                     "RNBVB"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389063138086917",
+                    "slug": "ba-v2-2-0-94115",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "2_1",
@@ -1263,7 +1328,12 @@
                     "fsv_frankfurt",
                     "kicker_live",
                     "FAZ_Sport"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389063612043271",
+                    "slug": "ba-v2-2-1-19116",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "2_2",
@@ -1337,9 +1407,19 @@
                     "wataru0209",
                     "TBoyd91",
                     "PetterNorthugJr"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389064450977793",
+                    "slug": "ba-v2-2-2-15442",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678464001449985",
+            "slug": "ba-v1-2-20159",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "6",
@@ -1568,7 +1648,12 @@
                     "ungespielt",
                     "datfcknadam",
                     "crispyrob"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389067080753156",
+                    "slug": "ba-v2-6-0-14782",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "6_1",
@@ -1636,7 +1721,12 @@
                     "DieCrewPlayz",
                     "SummonersInnDE",
                     "gheed_com"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389067428929541",
+                    "slug": "ba-v2-6-1-16947",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "6_2",
@@ -1667,9 +1757,19 @@
                     "PokemonGOdeu",
                     "BlizzardCSEU_DE",
                     "ps5botde"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389067911217152",
+                    "slug": "ba-v2-6-2-75410",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678466262142989",
+            "slug": "ba-v1-6-12681",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "3",
@@ -1812,7 +1912,12 @@
                     "DoertheBi",
                     "_LifeWithMelina",
                     "LlONTTV"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389071333871616",
+                    "slug": "ba-v2-3-0-13191",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "3_1",
@@ -1831,9 +1936,19 @@
                     "FelixJaehn",
                     "MedizinDoc",
                     "DummeWitze"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389072051048448",
+                    "slug": "ba-v2-3-1-13522",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678468405440516",
+            "slug": "ba-v1-3-15831",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "9",
@@ -1946,9 +2061,19 @@
                     "falter_at",
                     "webstandardat",
                     "KURIERat"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389079625895936",
+                    "slug": "ba-v2-7-0-11637",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678472440303616",
+            "slug": "ba-v1-7-17117",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "14",
@@ -1980,7 +2105,12 @@
                     "CiesekSandra"
                 ]
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678474512375811",
+            "slug": "ba-v1-14-13757",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "13",
@@ -2011,9 +2141,19 @@
                     "beyond_ideology",
                     "sciforfuture",
                     "VQuaschning"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389088228433920",
+                    "slug": "ba-v2-13-0-19718",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678476735320065",
+            "slug": "ba-v1-13-64627",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "5",
@@ -2066,9 +2206,19 @@
                     "flyinguwe",
                     "ELoTRiX",
                     "GunElite"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389092007583745",
+                    "slug": "ba-v2-5-0-63050",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678478677331975",
+            "slug": "ba-v1-5-48208",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "11",
@@ -2115,7 +2265,12 @@
                     "SRF",
                     "alain_berset",
                     "srfnews"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389096625483776",
+                    "slug": "ba-v2-11-0-45111",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "11_1",
@@ -2130,7 +2285,12 @@
                     "20min",
                     "Blickch",
                     "hypebyblick"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389097137131524",
+                    "slug": "ba-v2-11-1-12842",
+                    "author": "spiekermax"
+                }
             },
             {
                 "id": "11_2",
@@ -2146,9 +2306,19 @@
                     "watson_news",
                     "RailService",
                     "migros"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389097988571137",
+                    "slug": "ba-v2-11-2-11460",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678480719843333",
+            "slug": "ba-v1-11-13931",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "19",
@@ -2179,9 +2349,19 @@
                     "GoogleDE",
                     "deutschetelekom",
                     "TwitterDE"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389100601626626",
+                    "slug": "ba-v2-19-0-21358",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678482758160384",
+            "slug": "ba-v1-19-10265",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "10",
@@ -2220,9 +2400,19 @@
                     "Alice_Weidel",
                     "Joerg_Meuthen",
                     "reitschuster"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389104896589827",
+                    "slug": "ba-v2-10-0-15910",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678484779995138",
+            "slug": "ba-v1-10-97305",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "15",
@@ -2253,9 +2443,19 @@
                     "dw_wissenschaft",
                     "spektrum",
                     "helmholtz_de"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389108801576961",
+                    "slug": "ba-v2-15-0-10430",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678487086796801",
+            "slug": "ba-v1-15-21286",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "22",
@@ -2340,9 +2540,19 @@
                     "twitt_erfolg_de",
                     "heiternet",
                     "Doc_Sibylle"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389117211156486",
+                    "slug": "ba-v2-18-0-11249",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678491239227393",
+            "slug": "ba-v1-18-75166",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "23",
@@ -2491,9 +2701,19 @@
                     "DayniaXXX",
                     "lexyroxxcom",
                     "JuliaPinkcom"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389134789447684",
+                    "slug": "ba-v2-8-0-10448",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678499430633472",
+            "slug": "ba-v1-8-15263",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "12",
@@ -2524,9 +2744,19 @@
                     "muenchen",
                     "StadtMuenchen",
                     "SZ_Muenchen"
-                ]
+                ],
+                "twitterList": {
+                    "id": "1396389138333581317",
+                    "slug": "ba-v2-12-0-19939",
+                    "author": "spiekermax"
+                }
             }
-        ]
+        ],
+        "twitterList": {
+            "id": "1390678501725020161",
+            "slug": "ba-v1-12-71143",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "17",
@@ -2590,7 +2820,12 @@
             "PornoSexBilder",
             "DailyFittGirls"
         ],
-        "hotspots": []
+        "hotspots": [],
+        "twitterList": {
+            "id": "1390678508003803138",
+            "slug": "ba-v1-24-11028",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "28",
@@ -2607,7 +2842,12 @@
             "BoneheadsPage",
             "UltrasTifo"
         ],
-        "hotspots": []
+        "hotspots": [],
+        "twitterList": {
+            "id": "1390678509920690178",
+            "slug": "ba-v1-28-70530",
+            "author": "spiekermax"
+        }
     },
     {
         "id": "27",

@@ -8,4 +8,11 @@ export interface TwitterCommunityHotspot
     size: number;
 
     members: string[];
+    
+    twitterList:
+    {
+        id: string;
+        slug: string;
+        author: string;
+    };
 }

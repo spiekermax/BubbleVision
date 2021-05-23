@@ -86,8 +86,7 @@ export class TwitterCommunityHotspotDialog
 
     public get twitterListUrl() : string
     {
-        return "";
-        // return `https://twitter.com/${this.communityHotspot.twitterList.author}/lists/${this.communityHotspot.twitterList.slug}`;
+        return `https://twitter.com/${this.communityHotspot.twitterList.author}/lists/${this.communityHotspot.twitterList.slug}`;
     }
 
     public get membersSortedByFollowers() : TwitterProfile[]
