@@ -131,7 +131,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     {
         if(!this.camera) return;
 
-        if(this.camera.zoom < 0.05)
+        if(this.camera.zoom < 0.04)
         {
             // Hide profile details when zoomed out
             for(const profileView of this.profileViews)
