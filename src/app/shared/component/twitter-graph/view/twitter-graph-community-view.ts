@@ -10,6 +10,7 @@ import { Colors } from "src/app/core/colors";
 import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
 
 import { TwitterGraphCamera } from "../camera/twitter-graph-camera";
+import { TwitterGraphResourceManager } from "../resource/twitter-graph-resource-manager";
 
 
 export class TwitterGraphCommunityView extends PIXI.Container
@@ -41,6 +42,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
             throw new Error("Community radius too small!");
 
         //
+        this.sortableChildren = true;
         this.zIndex = this.community.size;
 
         //
@@ -54,34 +56,42 @@ export class TwitterGraphCommunityView extends PIXI.Container
     private addBackground() : void
     {
         //
-        const circleSprite: PIXI.Sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
-        circleSprite.tint = Colors.getTwitterCommunityColor(this.community.numericId).asNumber;
-        circleSprite.width = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
-        circleSprite.height = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
+        const backgroundPlane: PIXI.Sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
+        backgroundPlane.tint = Colors.getTwitterCommunityColor(this.community.numericId).asNumber;
+        backgroundPlane.width = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
+        backgroundPlane.height = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
 
         //
-        const circleMask: PIXI.Sprite = PIXI.Sprite.from("assets/radial-gradient.png");
-        circleMask.width = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
-        circleMask.height = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
+        TwitterGraphResourceManager.addAndAwait("assets/radial-gradient.png").subscribe((imageResource: PIXI.LoaderResource) =>
+        {
+            const circleMask: PIXI.Sprite = PIXI.Sprite.from(imageResource.texture);
+            circleMask.width = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
+            circleMask.height = (1000 / this.lodScalingFactor) * 4 * this.community.radius;
 
-        //
-        const maskedContainer: PIXI.Container = new PIXI.Container();
-        maskedContainer.addChild(circleMask);
-        maskedContainer.addChild(circleSprite);
-        circleSprite.mask = circleMask;
+            //
+            const maskedContainer: PIXI.Container = new PIXI.Container();
+            maskedContainer.addChild(circleMask);
+            maskedContainer.addChild(backgroundPlane);
+            backgroundPlane.mask = circleMask;
 
-        //
-        maskedContainer.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - 2 * this.community.radius);
-        maskedContainer.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - 2 * this.community.radius);
-        
-        maskedContainer.interactive = true;
-        maskedContainer.cursor = "pointer";
-        maskedContainer.hitArea = new PIXI.Circle((1000 / this.lodScalingFactor) * 2 * this.community.radius, (1000 / this.lodScalingFactor) * 2 * this.community.radius, (1000 / this.lodScalingFactor) * 1.2 * this.community.radius);
+            //
+            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, this.resolution / (2 * this.community.radius));
+            const maskedImage: PIXI.Sprite = PIXI.Sprite.from(maskedImageTexture);
 
-        maskedContainer.on("click", () => this.onClicked());
+            //
+            maskedImage.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - 2 * this.community.radius);
+            maskedImage.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - 2 * this.community.radius);
+            
+            maskedImage.interactive = true;
+            maskedImage.cursor = "pointer";
+            maskedImage.hitArea = new PIXI.Circle((1000 / this.lodScalingFactor) * 2 * this.community.radius, (1000 / this.lodScalingFactor) * 2 * this.community.radius, (1000 / this.lodScalingFactor) * 1.2 * this.community.radius);
+            maskedImage.zIndex = 0;
 
-        //
-        this.addChild(maskedContainer);
+            maskedImage.on("click", () => this.onClicked());
+
+            //
+            this.addChild(maskedImage);
+        });
     }
 
     private addLabels() : void
@@ -103,6 +113,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
         nameLabel.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - this.community.radius) + ((1000 / this.lodScalingFactor) * this.community.radius) - nameLabelWidth / 2;
         nameLabel.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - this.community.radius) + ((1000 / this.lodScalingFactor) * this.community.radius) - nameLabelHeight / 2;
+        nameLabel.zIndex = 1;
         nameLabel.resolution = this.resolution;
         nameLabel.cacheAsBitmap = true;
 
@@ -125,6 +136,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
         this.currentSizeLabel.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - this.community.radius) + ((1000 / this.lodScalingFactor) * this.community.radius) - currentSizeLabelWidth / 2;
         this.currentSizeLabel.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - this.community.radius) + ((1200 / this.lodScalingFactor) * this.community.radius) - currentSizeLabelHeight / 2 + nameLabelHeight / 2;
+        this.currentSizeLabel.zIndex = 1;
         this.currentSizeLabel.resolution = this.resolution;
         this.currentSizeLabel.cacheAsBitmap = true;
 
@@ -143,6 +155,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
         this.totalSizeLabelBounds = this.totalSizeLabel.getLocalBounds(new PIXI.Rectangle());
 
+        this.totalSizeLabel.zIndex = 1;
         this.totalSizeLabel.resolution = this.resolution;
         this.totalSizeLabel.cacheAsBitmap = true;
         this.totalSizeLabel.visible = false;

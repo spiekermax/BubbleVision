@@ -11,6 +11,7 @@ import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter
 import { TwitterCommunityHotspot } from "src/app/shared/model/twitter/community/twitter-community-hotspot";
 
 import { TwitterGraphCamera } from "../camera/twitter-graph-camera";
+import { TwitterGraphResourceManager } from "../resource/twitter-graph-resource-manager";
 
 
 export class TwitterGraphCommunityHotspotView extends PIXI.Container
@@ -41,6 +42,7 @@ export class TwitterGraphCommunityHotspotView extends PIXI.Container
         if(this.hotspot.radius < 0.1) return;
 
         //
+        this.sortableChildren = true;
         this.zIndex = this.hotspot.size;
 
         //
@@ -54,34 +56,43 @@ export class TwitterGraphCommunityHotspotView extends PIXI.Container
     private addBackground() : void
     {
         //
-        const circleSprite: PIXI.Sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
-        circleSprite.tint = Colors.getTwitterCommunityColor(this.community.numericId).asNumber;
-        circleSprite.width = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
-        circleSprite.height = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
+        const backgroundPlane: PIXI.Sprite = PIXI.Sprite.from(PIXI.Texture.WHITE);
+        backgroundPlane.tint = Colors.getTwitterCommunityColor(this.community.numericId).asNumber;
+        backgroundPlane.width = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
+        backgroundPlane.height = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
 
         //
-        const circleMask: PIXI.Sprite = PIXI.Sprite.from("assets/radial-gradient.png");
-        circleMask.width = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
-        circleMask.height = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
+        TwitterGraphResourceManager.addAndAwait("assets/radial-gradient.png").subscribe((imageResource: PIXI.LoaderResource) =>
+        {
+            //
+            const circleMask: PIXI.Sprite = PIXI.Sprite.from(imageResource.texture);
+            circleMask.width = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
+            circleMask.height = (1000 / this.lodScalingFactor) * 4 * this.hotspot.radius;
 
-        //
-        const maskedContainer: PIXI.Container = new PIXI.Container();
-        maskedContainer.addChild(circleMask);
-        maskedContainer.addChild(circleSprite);
-        circleSprite.mask = circleMask;
+            //
+            const maskedContainer: PIXI.Container = new PIXI.Container();
+            maskedContainer.addChild(circleMask);
+            maskedContainer.addChild(backgroundPlane);
+            backgroundPlane.mask = circleMask;
 
-        //
-        maskedContainer.position.x = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[0] - 2 * this.hotspot.radius);
-        maskedContainer.position.y = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[1] - 2 * this.hotspot.radius);
-        
-        maskedContainer.interactive = true;
-        maskedContainer.cursor = "pointer";
-        maskedContainer.hitArea = new PIXI.Circle((1000 / this.lodScalingFactor) * 2 * this.hotspot.radius, (1000 / this.lodScalingFactor) * 2 * this.hotspot.radius, (1000 / this.lodScalingFactor) * 1.2 * this.hotspot.radius);
+            //
+            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, this.resolution / (2 * this.hotspot.radius));
+            const maskedImage: PIXI.Sprite = PIXI.Sprite.from(maskedImageTexture);
 
-        maskedContainer.on("click", () => this.onClicked());
+            //
+            maskedImage.position.x = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[0] - 2 * this.hotspot.radius);
+            maskedImage.position.y = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[1] - 2 * this.hotspot.radius);
+            
+            maskedImage.interactive = true;
+            maskedImage.cursor = "pointer";
+            maskedImage.hitArea = new PIXI.Circle((1000 / this.lodScalingFactor) * 2 * this.hotspot.radius, (1000 / this.lodScalingFactor) * 2 * this.hotspot.radius, (1000 / this.lodScalingFactor) * 1.2 * this.hotspot.radius);
+            maskedImage.zIndex = 0;
 
-        //
-        this.addChild(maskedContainer);
+            maskedImage.on("click", () => this.onClicked());
+
+            //
+            this.addChild(maskedImage);
+        });
     }
 
     private addLabels() : void
@@ -103,6 +114,7 @@ export class TwitterGraphCommunityHotspotView extends PIXI.Container
 
         nameLabel.position.x = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[0] - this.hotspot.radius) + ((1000 / this.lodScalingFactor) * this.hotspot.radius) - nameLabelWidth / 2;
         nameLabel.position.y = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[1] - this.hotspot.radius) + ((1000 / this.lodScalingFactor) * this.hotspot.radius) - nameLabelHeight / 2;
+        nameLabel.zIndex = 1;
         nameLabel.resolution = this.resolution;
         nameLabel.cacheAsBitmap = true;
 
@@ -125,6 +137,7 @@ export class TwitterGraphCommunityHotspotView extends PIXI.Container
 
         this.currentSizeLabel.position.x = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[0] - this.hotspot.radius) + ((1000 / this.lodScalingFactor) * this.hotspot.radius) - currentSizeLabelWidth / 2;
         this.currentSizeLabel.position.y = (1000 / this.lodScalingFactor) * (this.hotspot.centroid[1] - this.hotspot.radius) + ((1200 / this.lodScalingFactor) * this.hotspot.radius) - currentSizeLabelHeight / 2 + nameLabelHeight / 2;
+        this.currentSizeLabel.zIndex = 1;        
         this.currentSizeLabel.resolution = this.resolution;
         this.currentSizeLabel.cacheAsBitmap = true;
 
@@ -143,6 +156,7 @@ export class TwitterGraphCommunityHotspotView extends PIXI.Container
 
         this.totalSizeLabelBounds = this.totalSizeLabel.getLocalBounds(new PIXI.Rectangle());
 
+        this.totalSizeLabel.zIndex = 1;
         this.totalSizeLabel.resolution = this.resolution;
         this.totalSizeLabel.cacheAsBitmap = true;
         this.totalSizeLabel.visible = false;
