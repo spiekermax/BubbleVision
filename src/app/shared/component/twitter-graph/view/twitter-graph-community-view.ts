@@ -20,8 +20,11 @@ export class TwitterGraphCommunityView extends PIXI.Container
     private lodScalingFactor: number = TwitterGraphCamera.getLodScalingFactor(this.lod);
 
     // State
-    private sizeLabel?: PIXI.Text;
-    private sizeLabelBounds?: PIXI.Rectangle;
+    private currentSizeLabel?: PIXI.Text;
+    private currentSizeLabelBounds?: PIXI.Rectangle;
+
+    private totalSizeLabel?: PIXI.Text;
+    private totalSizeLabelBounds?: PIXI.Rectangle;
 
     // Events
     private clickSubject: Subject<void> = new Subject();
@@ -42,7 +45,7 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
         //
         this.addBackground();
-        this.addLabel();
+        this.addLabels();
     }
 
 
@@ -81,12 +84,12 @@ export class TwitterGraphCommunityView extends PIXI.Container
         this.addChild(maskedContainer);
     }
 
-    private addLabel() : void
+    private addLabels() : void
     {
         const nameLabel: PIXI.Text = new PIXI.Text("#" + this.community.name?.toLowerCase() || "error", new PIXI.TextStyle
         ({ 
             fill: "white",
-            fontSize: (200 / this.lodScalingFactor) * this.community.radius,
+            fontSize: (200 / this.lodScalingFactor) * this.community.radius + 4.5 * Math.log(100 / this.community.radius),
             fontFamily: "Roboto", 
             align: "center",
             letterSpacing: 1.5,
@@ -105,10 +108,10 @@ export class TwitterGraphCommunityView extends PIXI.Container
 
         this.addChild(nameLabel);
 
-        this.sizeLabel = new PIXI.Text(this.community.size.toString() || "???", new PIXI.TextStyle
+        this.currentSizeLabel = new PIXI.Text(this.community.size.toString() || "???", new PIXI.TextStyle
         ({ 
             fill: "white",
-            fontSize: (150 / this.lodScalingFactor) * this.community.radius,
+            fontSize: (130 / this.lodScalingFactor) * this.community.radius + 4.5 * Math.log(100 / this.community.radius),
             fontFamily: "Roboto", 
             align: "center",
             letterSpacing: 1.5,
@@ -116,16 +119,35 @@ export class TwitterGraphCommunityView extends PIXI.Container
             wordWrapWidth: (1200 / this.lodScalingFactor) * this.community.radius
         }));
         
-        this.sizeLabelBounds = this.sizeLabel.getLocalBounds(new PIXI.Rectangle());
-        const sizeLabelWidth: number = this.sizeLabelBounds.width;
-        const sizeLabelHeight: number = this.sizeLabelBounds.height;
+        this.currentSizeLabelBounds = this.currentSizeLabel.getLocalBounds(new PIXI.Rectangle());
+        const currentSizeLabelWidth: number = this.currentSizeLabelBounds.width;
+        const currentSizeLabelHeight: number = this.currentSizeLabelBounds.height;
 
-        this.sizeLabel.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - this.community.radius) + ((1000 / this.lodScalingFactor) * this.community.radius) - sizeLabelWidth / 2;
-        this.sizeLabel.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - this.community.radius) + ((1100 / this.lodScalingFactor) * this.community.radius) - sizeLabelHeight / 2 + nameLabelHeight;
-        this.sizeLabel.resolution = this.resolution;
-        this.sizeLabel.cacheAsBitmap = true;
+        this.currentSizeLabel.position.x = (1000 / this.lodScalingFactor) * (this.community.centroid[0] - this.community.radius) + ((1000 / this.lodScalingFactor) * this.community.radius) - currentSizeLabelWidth / 2;
+        this.currentSizeLabel.position.y = (1000 / this.lodScalingFactor) * (this.community.centroid[1] - this.community.radius) + ((1200 / this.lodScalingFactor) * this.community.radius) - currentSizeLabelHeight / 2 + nameLabelHeight / 2;
+        this.currentSizeLabel.resolution = this.resolution;
+        this.currentSizeLabel.cacheAsBitmap = true;
 
-        this.addChild(this.sizeLabel);
+        this.addChild(this.currentSizeLabel);
+
+        this.totalSizeLabel = new PIXI.Text(`/${this.community.size}` || "???", new PIXI.TextStyle
+        ({ 
+            fill: "white",
+            fontSize: (75 / this.lodScalingFactor) * this.community.radius + 4.5 * Math.log(100 / this.community.radius),
+            fontFamily: "Roboto", 
+            align: "center",
+            letterSpacing: 1.5,
+            wordWrap: true,
+            wordWrapWidth: (1200 / this.lodScalingFactor) * this.community.radius
+        }));
+
+        this.totalSizeLabelBounds = this.totalSizeLabel.getLocalBounds(new PIXI.Rectangle());
+
+        this.totalSizeLabel.resolution = this.resolution;
+        this.totalSizeLabel.cacheAsBitmap = true;
+        this.totalSizeLabel.visible = false;
+
+        this.addChild(this.totalSizeLabel);
     }
 
 
@@ -151,24 +173,43 @@ export class TwitterGraphCommunityView extends PIXI.Container
         // Update graphics
         this.removeChildren();
         this.addBackground();
-        this.addLabel();
+        this.addLabels();
     }
     
-    public updateSizeLabel(size: number) : void
+    public updateCurrentSize(size: number) : void
     {
-        if(!this.sizeLabel) return;
+        if(!this.currentSizeLabel || !this.totalSizeLabel) return;
 
         // Update text
-        this.sizeLabel.cacheAsBitmap = false;
-        this.sizeLabel.text = size.toString();
-        this.sizeLabel.cacheAsBitmap = true;
+        this.currentSizeLabel.cacheAsBitmap = false;
+        this.currentSizeLabel.text = size.toString();
+        this.currentSizeLabel.cacheAsBitmap = true;
 
         //
-        const oldSizeLabelBounds = this.sizeLabelBounds!;
-        this.sizeLabelBounds = this.sizeLabel.getLocalBounds(new PIXI.Rectangle());
+        if(size != this.community.size && !this.totalSizeLabel.visible)
+        {
+            this.currentSizeLabel.position.x -= this.totalSizeLabelBounds!.width / 2;
+        }
+        
+        //
+        if(size == this.community.size && this.totalSizeLabel.visible)
+        {
+            this.currentSizeLabel.position.x += this.totalSizeLabelBounds!.width / 2;
+        }
+
+        // 
+        this.totalSizeLabel.visible = size != this.community.size;
 
         //
-        this.sizeLabel.position.x -= (this.sizeLabelBounds.width - oldSizeLabelBounds.width) / 2;
+        const oldSizeLabelBounds: PIXI.Rectangle = this.currentSizeLabelBounds!;
+        this.currentSizeLabelBounds = this.currentSizeLabel.getLocalBounds(new PIXI.Rectangle());
+
+        //
+        this.currentSizeLabel.position.x -= (this.currentSizeLabelBounds.width - oldSizeLabelBounds.width) / 2;
+
+        //
+        this.totalSizeLabel.position.x = this.currentSizeLabel.position.x + this.currentSizeLabelBounds.width * 1.1;
+        this.totalSizeLabel.position.y = this.currentSizeLabel.position.y + this.currentSizeLabelBounds.height * 0.085;
     }
 
 

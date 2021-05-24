@@ -340,6 +340,22 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             this.camera.lod0Layer.addChild(communityView);
 
             //
+            if(!community.hotspots.length)
+            {
+                // Create view
+                const communityView: TwitterGraphCommunityView = new TwitterGraphCommunityView(community, this.app!.renderer, 1, this.communityResolution);
+
+                // Cache view reference
+                this.communityViews.push(communityView);
+
+                // Bind callbacks
+                communityView.clickedEvent.subscribe(() => this.onCommunityClicked(community));
+
+                // Add view
+                this.camera.lod1Layer.addChild(communityView);
+            }
+
+            //
             for(const communityHotspot of community.hotspots)
             {
                 if(communityHotspot.radius < 0.1) continue;
@@ -460,7 +476,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             {
                 //
                 communityView.sharpen();
-                communityView.updateSizeLabel(highlightedCommunityMemberCount[communityId]);
+                communityView.updateCurrentSize(highlightedCommunityMemberCount[communityId]);
             }
             else
             {
@@ -479,7 +495,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             {
                 //
                 communityHotspotView.sharpen();
-                communityHotspotView.updateSizeLabel(highlightedCommunityHotspotMemberCount[communityHotspotId]);
+                communityHotspotView.updateCurrentSize(highlightedCommunityHotspotMemberCount[communityHotspotId]);
             }
             else
             {

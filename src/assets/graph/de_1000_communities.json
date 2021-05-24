@@ -2,7 +2,7 @@
     {
         "id": "1",
         "numericId": 1,
-        "name": "TODO",
+        "name": "Unterhaltung",
         "centroid": [
             4.925214391760528,
             -1.0752447969280183
@@ -123,7 +123,7 @@
         "hotspots": [
             {
                 "id": "1_0",
-                "name": "TODO",
+                "name": "Rap",
                 "centroid": [
                     12.991684306751598,
                     -4.884368354623968
@@ -162,7 +162,7 @@
             },
             {
                 "id": "1_1",
-                "name": "TODO",
+                "name": "Indie",
                 "centroid": [
                     3.0752821564674377,
                     4.14379088083903
@@ -194,7 +194,7 @@
             },
             {
                 "id": "1_2",
-                "name": "TODO",
+                "name": "TV & Pop",
                 "centroid": [
                     6.0926114695944955,
                     -1.8206322590953536
@@ -275,7 +275,7 @@
     {
         "id": "0",
         "numericId": 0,
-        "name": "TODO",
+        "name": "Gemeinwesen",
         "centroid": [
             -20.756372564179557,
             -0.12519089175122125
@@ -672,7 +672,7 @@
         "hotspots": [
             {
                 "id": "0_0",
-                "name": "TODO",
+                "name": "Magazine & Zeitungen",
                 "centroid": [
                     -22.89587100346883,
                     -15.489124602741665
@@ -761,7 +761,7 @@
             },
             {
                 "id": "0_1",
-                "name": "TODO",
+                "name": "Comedy & Podcasts",
                 "centroid": [
                     -4.017479675156729,
                     7.880896659124465
@@ -799,7 +799,7 @@
             },
             {
                 "id": "0_2",
-                "name": "TODO",
+                "name": "Politik",
                 "centroid": [
                     -29.04261934380782,
                     4.719459112557141
@@ -911,7 +911,7 @@
             },
             {
                 "id": "0_3",
-                "name": "TODO",
+                "name": "News",
                 "centroid": [
                     -26.99921022142683,
                     -5.4150383813040595
@@ -956,7 +956,7 @@
             },
             {
                 "id": "0_4",
-                "name": "TODO",
+                "name": "Satire",
                 "centroid": [
                     -10.035412823712385,
                     14.85780864291721
@@ -990,7 +990,9 @@
                     "TStraeter44149",
                     "heuteshow",
                     "MartinSonneborn",
-                    "erzaehlmirnix"
+                    "erzaehlmirnix",
+                    "Der_Postillon",
+                    "Faktillon"
                 ],
                 "twitterList": {
                     "id": "1396389060403474433",
@@ -1000,7 +1002,7 @@
             },
             {
                 "id": "0_5",
-                "name": "TODO",
+                "name": "Journalismus",
                 "centroid": [
                     -16.57256514231364,
                     13.022756512959798
@@ -1047,7 +1049,7 @@
             },
             {
                 "id": "0_6",
-                "name": "TODO",
+                "name": "Öffentliche Ordnung",
                 "centroid": [
                     -15.657555351257324,
                     -1.741427194327116
@@ -1097,7 +1099,7 @@
     {
         "id": "2",
         "numericId": 2,
-        "name": "TODO",
+        "name": "Sport",
         "centroid": [
             13.021748297285326,
             36.26144267544888
@@ -1244,12 +1246,14 @@
             "PetterNorthugJr",
             "teomakinen",
             "MiikoAlbornoz",
-            "timblnt"
+            "timblnt",
+            "mertesacker",
+            "seadk6"
         ],
         "hotspots": [
             {
                 "id": "2_0",
-                "name": "TODO",
+                "name": "BVB",
                 "centroid": [
                     15.720774332682291,
                     40.07922490437826
@@ -1272,7 +1276,7 @@
             },
             {
                 "id": "2_1",
-                "name": "TODO",
+                "name": "Vereine",
                 "centroid": [
                     8.945434669653574,
                     41.46661567687988
@@ -1327,7 +1331,8 @@
                     "FCErzgebirgeAue",
                     "fsv_frankfurt",
                     "kicker_live",
-                    "FAZ_Sport"
+                    "FAZ_Sport",
+                    "fcstpauli"
                 ],
                 "twitterList": {
                     "id": "1396389063612043271",
@@ -1337,7 +1342,7 @@
             },
             {
                 "id": "2_2",
-                "name": "TODO",
+                "name": "Sportler",
                 "centroid": [
                     15.36068602531187,
                     34.29011950954314
@@ -1375,7 +1380,6 @@
                     "MatthiasKilling",
                     "Mazingu_Dinzey",
                     "MOpdenhoevel",
-                    "fcstpauli",
                     "FCBjuniorteam",
                     "Mariobasler",
                     "LewisHoltby",
@@ -1406,7 +1410,9 @@
                     "AndreasBeck87",
                     "wataru0209",
                     "TBoyd91",
-                    "PetterNorthugJr"
+                    "PetterNorthugJr",
+                    "mertesacker",
+                    "seadk6"
                 ],
                 "twitterList": {
                     "id": "1396389064450977793",
@@ -1424,7 +1430,7 @@
     {
         "id": "6",
         "numericId": 6,
-        "name": "TODO",
+        "name": "Gaming",
         "centroid": [
             32.27789833121104,
             -18.8112309207655
@@ -1582,7 +1588,7 @@
         "hotspots": [
             {
                 "id": "6_0",
-                "name": "TODO",
+                "name": "YouTube",
                 "centroid": [
                     37.52104798678694,
                     -14.556190276968069
@@ -1657,7 +1663,7 @@
             },
             {
                 "id": "6_1",
-                "name": "TODO",
+                "name": "Twitch",
                 "centroid": [
                     29.567216532570974,
                     -22.812874180930002
@@ -1730,7 +1736,7 @@
             },
             {
                 "id": "6_2",
-                "name": "TODO",
+                "name": "Sonstiges",
                 "centroid": [
                     21.445825978329307,
                     -19.429888273540296
@@ -1774,12 +1780,12 @@
     {
         "id": "3",
         "numericId": 3,
-        "name": "TODO",
+        "name": "Social Media",
         "centroid": [
-            35.854987388433415,
-            -2.43411564653696
+            32.854987388433415,
+            -3.43411564653696
         ],
-        "radius": 3.283910460394855,
+        "radius": 6.283910460394855,
         "size": 63,
         "members": [
             "dielochis",
@@ -1849,7 +1855,7 @@
         "hotspots": [
             {
                 "id": "3_0",
-                "name": "TODO",
+                "name": "Social Media",
                 "centroid": [
                     35.84512072476474,
                     -2.732849789478562
@@ -1921,12 +1927,12 @@
             },
             {
                 "id": "3_1",
-                "name": "TODO",
+                "name": "Lifestyle",
                 "centroid": [
                     26.603198187691824,
                     -3.157502753393991
                 ],
-                "radius": 0.9907334122971873,
+                "radius": 1.4907334122971873,
                 "size": 7,
                 "members": [
                     "bravomagazin",
@@ -1951,40 +1957,9 @@
         }
     },
     {
-        "id": "9",
-        "numericId": 9,
-        "name": "TODO",
-        "centroid": [
-            -15.117932319641113,
-            -10.357556819915771
-        ],
-        "radius": 0.007118544297049518,
-        "size": 2,
-        "members": [
-            "HuffPostDE",
-            "KaiDiekmann"
-        ],
-        "hotspots": [
-            {
-                "id": "9_0",
-                "name": "TODO",
-                "centroid": [
-                    -15.117932319641113,
-                    -10.357556819915771
-                ],
-                "radius": 0.006422746734180015,
-                "size": 2,
-                "members": [
-                    "HuffPostDE",
-                    "KaiDiekmann"
-                ]
-            }
-        ]
-    },
-    {
         "id": "7",
         "numericId": 7,
-        "name": "TODO",
+        "name": "Österreich",
         "centroid": [
             -36.50738242820457,
             -14.288582377963596
@@ -2023,52 +1998,7 @@
             "webstandardat",
             "KURIERat"
         ],
-        "hotspots": [
-            {
-                "id": "7_0",
-                "name": "TODO",
-                "centroid": [
-                    -36.50738242820457,
-                    -14.288582377963596
-                ],
-                "radius": 2.3709478938677635,
-                "size": 27,
-                "members": [
-                    "misik",
-                    "florianklenk",
-                    "Gawhary",
-                    "ArminWolf",
-                    "DieTagespresse",
-                    "DiePressecom",
-                    "profilonline",
-                    "lou_lorenz",
-                    "RomanRafreider",
-                    "WKogler",
-                    "KernChri",
-                    "corinnamilborn",
-                    "IngridThurnher",
-                    "LPDWien",
-                    "HBrandstaetter",
-                    "NEWS",
-                    "michelreimon",
-                    "derStandardat",
-                    "matstrolz",
-                    "ORF",
-                    "MartinThuer",
-                    "vanderbellen",
-                    "ORFBreakingNews",
-                    "HannoSettele",
-                    "falter_at",
-                    "webstandardat",
-                    "KURIERat"
-                ],
-                "twitterList": {
-                    "id": "1396389079625895936",
-                    "slug": "ba-v2-7-0-11637",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678472440303616",
             "slug": "ba-v1-7-17117",
@@ -2078,7 +2008,7 @@
     {
         "id": "14",
         "numericId": 14,
-        "name": "TODO",
+        "name": "Virologie",
         "centroid": [
             -18.245229721069336,
             14.863780975341797
@@ -2090,22 +2020,7 @@
             "CiesekSandra",
             "florian_krammer"
         ],
-        "hotspots": [
-            {
-                "id": "14_0",
-                "name": "TODO",
-                "centroid": [
-                    -18.245229721069336,
-                    14.863780975341797
-                ],
-                "radius": 0.03516162564857391,
-                "size": 2,
-                "members": [
-                    "BrinkmannLab",
-                    "CiesekSandra"
-                ]
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678474512375811",
             "slug": "ba-v1-14-13757",
@@ -2115,40 +2030,19 @@
     {
         "id": "13",
         "numericId": 13,
-        "name": "TODO",
+        "name": "Umweltschutz",
         "centroid": [
             -16.81436030069987,
             15.32468064626058
         ],
-        "radius": 0.3906601813995658,
+        "radius": 0,
         "size": 3,
         "members": [
             "beyond_ideology",
             "sciforfuture",
             "VQuaschning"
         ],
-        "hotspots": [
-            {
-                "id": "13_0",
-                "name": "TODO",
-                "centroid": [
-                    -16.81436030069987,
-                    15.32468064626058
-                ],
-                "radius": 0.35247535163870597,
-                "size": 3,
-                "members": [
-                    "beyond_ideology",
-                    "sciforfuture",
-                    "VQuaschning"
-                ],
-                "twitterList": {
-                    "id": "1396389088228433920",
-                    "slug": "ba-v2-13-0-19718",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678476735320065",
             "slug": "ba-v1-13-64627",
@@ -2158,7 +2052,7 @@
     {
         "id": "5",
         "numericId": 5,
-        "name": "TODO",
+        "name": "FIFA",
         "centroid": [
             33.79912390027727,
             -29.382440975734166
@@ -2181,39 +2075,7 @@
             "ELoTRiX",
             "GunElite"
         ],
-        "hotspots": [
-            {
-                "id": "5_0",
-                "name": "TODO",
-                "centroid": [
-                    33.79912390027727,
-                    -29.382440975734166
-                ],
-                "radius": 1.6521117594251573,
-                "size": 14,
-                "members": [
-                    "MontanaBlack",
-                    "EAFussball",
-                    "NoHandGamingYT",
-                    "EliasN97",
-                    "KamoLRF",
-                    "GamerBr0ski",
-                    "ViscaBarcaCoD",
-                    "MoAuba",
-                    "JuliusFGU",
-                    "TisiSchubecH",
-                    "MarcelScorpion",
-                    "flyinguwe",
-                    "ELoTRiX",
-                    "GunElite"
-                ],
-                "twitterList": {
-                    "id": "1396389092007583745",
-                    "slug": "ba-v2-5-0-63050",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678478677331975",
             "slug": "ba-v1-5-48208",
@@ -2223,7 +2085,7 @@
     {
         "id": "11",
         "numericId": 11,
-        "name": "TODO",
+        "name": "Schweiz",
         "centroid": [
             -31.54346752166748,
             -12.600419521331787
@@ -2246,17 +2108,19 @@
             "alain_berset",
             "migros",
             "schweiz",
-            "srfnews"
+            "srfnews",
+            "MikeMuellerLate",
+            "viktorgiacobbo"
         ],
         "hotspots": [
             {
                 "id": "11_0",
-                "name": "TODO",
+                "name": "Schweiz",
                 "centroid": [
                     -31.54346752166748,
                     -12.600419521331787
                 ],
-                "radius": 1.2623490014022372,
+                "radius": 1.5623490014022372,
                 "size": 6,
                 "members": [
                     "20min_digital",
@@ -2273,33 +2137,13 @@
                 }
             },
             {
-                "id": "11_1",
-                "name": "TODO",
-                "centroid": [
-                    -23.92636235555013,
-                    -13.650418599446615
-                ],
-                "radius": 0.2654172247704292,
-                "size": 3,
-                "members": [
-                    "20min",
-                    "Blickch",
-                    "hypebyblick"
-                ],
-                "twitterList": {
-                    "id": "1396389097137131524",
-                    "slug": "ba-v2-11-1-12842",
-                    "author": "spiekermax"
-                }
-            },
-            {
                 "id": "11_2",
-                "name": "TODO",
+                "name": "Schweiz",
                 "centroid": [
                     -22.696298122406006,
                     -5.575653553009033
                 ],
-                "radius": 0.8722498843950532,
+                "radius": 1.1722498843950532,
                 "size": 4,
                 "members": [
                     "srf3",
@@ -2323,40 +2167,19 @@
     {
         "id": "19",
         "numericId": 19,
-        "name": "TODO",
+        "name": "Tech",
         "centroid": [
-            -11.485759735107422,
+            -11.2,
             -10.799005826314291
         ],
-        "radius": 0.5039764978100802,
+        "radius": 0,
         "size": 3,
         "members": [
             "GoogleDE",
             "deutschetelekom",
             "TwitterDE"
         ],
-        "hotspots": [
-            {
-                "id": "19_0",
-                "name": "TODO",
-                "centroid": [
-                    -11.485759735107422,
-                    -10.799005826314291
-                ],
-                "radius": 0.4547156371218769,
-                "size": 3,
-                "members": [
-                    "GoogleDE",
-                    "deutschetelekom",
-                    "TwitterDE"
-                ],
-                "twitterList": {
-                    "id": "1396389100601626626",
-                    "slug": "ba-v2-19-0-21358",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678482758160384",
             "slug": "ba-v1-19-10265",
@@ -2366,12 +2189,12 @@
     {
         "id": "10",
         "numericId": 10,
-        "name": "TODO",
+        "name": "AfD",
         "centroid": [
             -37.123870849609375,
-            -1.664840845125062
+            -1.14
         ],
-        "radius": 0.9404490834929439,
+        "radius": 1.5404490834929439,
         "size": 7,
         "members": [
             "RolandTichy",
@@ -2382,32 +2205,7 @@
             "Joerg_Meuthen",
             "reitschuster"
         ],
-        "hotspots": [
-            {
-                "id": "10_0",
-                "name": "TODO",
-                "centroid": [
-                    -37.123870849609375,
-                    -1.664840845125062
-                ],
-                "radius": 0.8485254888658139,
-                "size": 7,
-                "members": [
-                    "RolandTichy",
-                    "AfD",
-                    "HGMaassen",
-                    "SteinbachErika",
-                    "Alice_Weidel",
-                    "Joerg_Meuthen",
-                    "reitschuster"
-                ],
-                "twitterList": {
-                    "id": "1396389104896589827",
-                    "slug": "ba-v2-10-0-15910",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678484779995138",
             "slug": "ba-v1-10-97305",
@@ -2417,40 +2215,19 @@
     {
         "id": "15",
         "numericId": 15,
-        "name": "TODO",
+        "name": "Wissenschaft",
         "centroid": [
-            -26.31572977701823,
+            -26.2,
             11.700300216674805
         ],
-        "radius": 0.37292994043269506,
+        "radius": 0,
         "size": 3,
         "members": [
             "dw_wissenschaft",
             "spektrum",
             "helmholtz_de"
         ],
-        "hotspots": [
-            {
-                "id": "15_0",
-                "name": "TODO",
-                "centroid": [
-                    -26.31572977701823,
-                    11.700300216674805
-                ],
-                "radius": 0.336478141743785,
-                "size": 3,
-                "members": [
-                    "dw_wissenschaft",
-                    "spektrum",
-                    "helmholtz_de"
-                ],
-                "twitterList": {
-                    "id": "1396389108801576961",
-                    "slug": "ba-v2-15-0-10430",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678487086796801",
             "slug": "ba-v1-15-21286",
@@ -2460,7 +2237,7 @@
     {
         "id": "22",
         "numericId": 22,
-        "name": "TODO",
+        "name": "Dortmund",
         "centroid": [
             -9.580440521240234,
             -13.296118259429932
@@ -2471,32 +2248,17 @@
             "stadtdortmund",
             "RN_DORTMUND"
         ],
-        "hotspots": [
-            {
-                "id": "22_0",
-                "name": "TODO",
-                "centroid": [
-                    -9.580440521240234,
-                    -13.296118259429932
-                ],
-                "radius": 0.011970517954452364,
-                "size": 2,
-                "members": [
-                    "stadtdortmund",
-                    "RN_DORTMUND"
-                ]
-            }
-        ]
+        "hotspots": []
     },
     {
         "id": "18",
         "numericId": 18,
-        "name": "TODO",
+        "name": "Marketing",
         "centroid": [
             -15.734584331512451,
             -21.489370918273927
         ],
-        "radius": 1.0773087940198676,
+        "radius": 1.5773087940198676,
         "size": 19,
         "members": [
             "besserwerber",
@@ -2519,35 +2281,7 @@
             "JuergenAuer",
             "magento"
         ],
-        "hotspots": [
-            {
-                "id": "18_0",
-                "name": "TODO",
-                "centroid": [
-                    -15.734584331512451,
-                    -21.489370918273927
-                ],
-                "radius": 0.9720079344540157,
-                "size": 10,
-                "members": [
-                    "besserwerber",
-                    "TorstenNeumann",
-                    "affiliate",
-                    "regioortenau",
-                    "rrb_immobilien",
-                    "Oberhauser",
-                    "SunnyRainer",
-                    "twitt_erfolg_de",
-                    "heiternet",
-                    "Doc_Sibylle"
-                ],
-                "twitterList": {
-                    "id": "1396389117211156486",
-                    "slug": "ba-v2-18-0-11249",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678491239227393",
             "slug": "ba-v1-18-75166",
@@ -2555,87 +2289,25 @@
         }
     },
     {
-        "id": "23",
-        "numericId": 23,
-        "name": "TODO",
-        "centroid": [
-            22.58547019958496,
-            33.82695960998535
-        ],
-        "radius": 0.04030486203063265,
-        "size": 2,
-        "members": [
-            "mertesacker",
-            "seadk6"
-        ],
-        "hotspots": [
-            {
-                "id": "23_0",
-                "name": "TODO",
-                "centroid": [
-                    22.58547019958496,
-                    33.82695960998535
-                ],
-                "radius": 0.03636528905019487,
-                "size": 2,
-                "members": [
-                    "mertesacker",
-                    "seadk6"
-                ]
-            }
-        ]
-    },
-    {
         "id": "16",
         "numericId": 16,
-        "name": "TODO",
+        "name": "Köln",
         "centroid": [
             -14.559953212738037,
             -6.941888332366943
         ],
-        "radius": 0.0638365776200911,
+        "radius": 0,
         "size": 2,
         "members": [
             "KSTA",
             "koeln_de"
-        ],
-        "hotspots": [
-            {
-                "id": "16_0",
-                "name": "TODO",
-                "centroid": [
-                    -14.559953212738037,
-                    -6.941888332366943
-                ],
-                "radius": 0.05759691213842805,
-                "size": 2,
-                "members": [
-                    "KSTA",
-                    "koeln_de"
-                ]
-            }
-        ]
-    },
-    {
-        "id": "29",
-        "numericId": 29,
-        "name": "TODO",
-        "centroid": [
-            21.248600006103516,
-            38.98851776123047
-        ],
-        "radius": 0,
-        "size": 2,
-        "members": [
-            "HotBoysLove",
-            "GaysPro"
         ],
         "hotspots": []
     },
     {
         "id": "8",
         "numericId": 8,
-        "name": "TODO",
+        "name": "Pornographie",
         "centroid": [
             17.07550720941453,
             4.850527252469744
@@ -2667,48 +2339,14 @@
             "lexyroxxcom",
             "JuliaPinkcom",
             "SweetSophiede",
-            "bbw_frauen"
+            "bbw_frauen",
+            "HotBoysLove",
+            "GaysPro",
+            "devilsflix",
+            "PornoSexBilder",
+            "DailyFittGirls"
         ],
-        "hotspots": [
-            {
-                "id": "8_0",
-                "name": "TODO",
-                "centroid": [
-                    17.07550720941453,
-                    4.850527252469744
-                ],
-                "radius": 1.397757541553076,
-                "size": 21,
-                "members": [
-                    "ModelRoxxyX",
-                    "LenaNitro1",
-                    "LexyyLoou",
-                    "milaelaine1",
-                    "LenaHeart3",
-                    "MeliDeluxe",
-                    "coxx_cat",
-                    "TaylorBurtonhot",
-                    "bibixxx90",
-                    "JolyneJoy",
-                    "SweetMelli84",
-                    "Julietta_com",
-                    "LilliePrivat",
-                    "TightTini",
-                    "LeoniePur",
-                    "FariBanx",
-                    "nightkiss661",
-                    "VikaViktoriaCam",
-                    "DayniaXXX",
-                    "lexyroxxcom",
-                    "JuliaPinkcom"
-                ],
-                "twitterList": {
-                    "id": "1396389134789447684",
-                    "slug": "ba-v2-8-0-10448",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678499430633472",
             "slug": "ba-v1-8-15263",
@@ -2718,183 +2356,23 @@
     {
         "id": "12",
         "numericId": 12,
-        "name": "TODO",
+        "name": "München",
         "centroid": [
-            -17.067304611206055,
-            -10.139060974121094
+            -16.8,
+            -10
         ],
-        "radius": 0.21281710585630845,
+        "radius": 0,
         "size": 3,
         "members": [
             "muenchen",
             "StadtMuenchen",
             "SZ_Muenchen"
         ],
-        "hotspots": [
-            {
-                "id": "12_0",
-                "name": "TODO",
-                "centroid": [
-                    -17.067304611206055,
-                    -10.139060974121094
-                ],
-                "radius": 0.19201543385531586,
-                "size": 3,
-                "members": [
-                    "muenchen",
-                    "StadtMuenchen",
-                    "SZ_Muenchen"
-                ],
-                "twitterList": {
-                    "id": "1396389138333581317",
-                    "slug": "ba-v2-12-0-19939",
-                    "author": "spiekermax"
-                }
-            }
-        ],
+        "hotspots": [],
         "twitterList": {
             "id": "1390678501725020161",
             "slug": "ba-v1-12-71143",
             "author": "spiekermax"
         }
-    },
-    {
-        "id": "17",
-        "numericId": 17,
-        "name": "TODO",
-        "centroid": [
-            -40.09430694580078,
-            -9.790667533874512
-        ],
-        "radius": 0.016140009987336387,
-        "size": 2,
-        "members": [
-            "MikeMuellerLate",
-            "viktorgiacobbo"
-        ],
-        "hotspots": [
-            {
-                "id": "17_0",
-                "name": "TODO",
-                "centroid": [
-                    -40.09430694580078,
-                    -9.790667533874512
-                ],
-                "radius": 0.014562415026168167,
-                "size": 2,
-                "members": [
-                    "MikeMuellerLate",
-                    "viktorgiacobbo"
-                ]
-            }
-        ]
-    },
-    {
-        "id": "25",
-        "numericId": 25,
-        "name": "TODO",
-        "centroid": [
-            20.848506927490234,
-            -20.882442474365234
-        ],
-        "radius": 0,
-        "size": 2,
-        "members": [
-            "FollowEGM",
-            "PlayArtifact"
-        ],
-        "hotspots": []
-    },
-    {
-        "id": "24",
-        "numericId": 24,
-        "name": "TODO",
-        "centroid": [
-            -13.080479621887207,
-            17.370927810668945
-        ],
-        "radius": 0,
-        "size": 3,
-        "members": [
-            "devilsflix",
-            "PornoSexBilder",
-            "DailyFittGirls"
-        ],
-        "hotspots": [],
-        "twitterList": {
-            "id": "1390678508003803138",
-            "slug": "ba-v1-24-11028",
-            "author": "spiekermax"
-        }
-    },
-    {
-        "id": "28",
-        "numericId": 28,
-        "name": "TODO",
-        "centroid": [
-            -6.0560688972473145,
-            9.29672622680664
-        ],
-        "radius": 0,
-        "size": 3,
-        "members": [
-            "paddingtonbear",
-            "BoneheadsPage",
-            "UltrasTifo"
-        ],
-        "hotspots": [],
-        "twitterList": {
-            "id": "1390678509920690178",
-            "slug": "ba-v1-28-70530",
-            "author": "spiekermax"
-        }
-    },
-    {
-        "id": "27",
-        "numericId": 27,
-        "name": "TODO",
-        "centroid": [
-            25.264652252197266,
-            -24.138486862182617
-        ],
-        "radius": 0,
-        "size": 2,
-        "members": [
-            "whgkdud_d",
-            "olys011"
-        ],
-        "hotspots": []
-    },
-    {
-        "id": "26",
-        "numericId": 26,
-        "name": "TODO",
-        "centroid": [
-            4.012571334838867,
-            7.435860633850098
-        ],
-        "radius": 0,
-        "size": 2,
-        "members": [
-            "video_168",
-            "radnature"
-        ],
-        "hotspots": []
-    },
-    {
-        "id": "20",
-        "numericId": 20,
-        "name": "TODO",
-        "centroid": [
-            37.16481399536133,
-            -28.712060928344727
-        ],
-        "radius": 0,
-        "size": 2,
-        "members": [
-            "KhleoThomas",
-            "CraigAnderson41"
-        ],
-        "hotspots": []
     }
 ]
