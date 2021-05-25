@@ -25,8 +25,9 @@ import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-
 import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
 
 import { WelcomeDialog } from "../../dialog/welcome/welcome.dialog";
-import { HelpDialog } from "../../dialog/help/help.dialog";
 import { LoadingDialog } from "../../dialog/loading/loading.dialog";
+import { ErrorDialog } from "../../dialog/error/error.dialog";
+import { HelpDialog } from "../../dialog/help/help.dialog";
 import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 
 import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
@@ -182,6 +183,14 @@ export class HomePage implements OnInit, AfterViewInit
                         this.zoomToTwitterProfile(profile, 500);
 
                     }, 250);
+                },
+                error =>
+                {
+                    //
+                    loadingDialog.close();
+                    
+                    //
+                    this.openErrorDialog("Profil nicht gefunden", "Bitte beachten Sie Groß- und Kleinschreibung.");
                 });
 
                 // Cancel loading if dialog closed
@@ -381,6 +390,11 @@ export class HomePage implements OnInit, AfterViewInit
     public openHelpDialog() : void
     {
         this.dialog.open(HelpDialog);
+    }
+
+    public openErrorDialog(title: string, message: string) : void
+    {
+        this.dialog.open(ErrorDialog, { data: { title: title, message: message }});
     }
 
     public openSettingsDialog() : void

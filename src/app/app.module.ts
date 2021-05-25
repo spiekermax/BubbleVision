@@ -31,8 +31,9 @@ import { AppRoutingModule } from "./app-routing.module";
 import { HomePage } from "./feature/page/home/home.page";
 
 import { WelcomeDialog } from "./feature/dialog/welcome/welcome.dialog";
-import { HelpDialog } from "./feature/dialog/help/help.dialog";
 import { LoadingDialog } from "./feature/dialog/loading/loading.dialog";
+import { ErrorDialog } from "./feature/dialog/error/error.dialog";
+import { HelpDialog } from "./feature/dialog/help/help.dialog";
 import { SettingsDialog } from "./feature/dialog/settings/settings.dialog";
 
 import { TwitterCommunityDialog } from "./feature/dialog/twitter-community/twitter-community.dialog";
@@ -49,8 +50,9 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         HomePage,
 
         WelcomeDialog,
-        HelpDialog,
         LoadingDialog,
+        ErrorDialog,
+        HelpDialog,
         SettingsDialog,
 
         TwitterCommunityDialog,
