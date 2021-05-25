@@ -917,7 +917,7 @@
                     -5.4150383813040595
                 ],
                 "radius": 3.3584945318290025,
-                "size": 28,
+                "size": 29,
                 "members": [
                     "DasErste",
                     "ZDF",
@@ -946,7 +946,8 @@
                     "aktuelle_stunde",
                     "rlpNews",
                     "hessenschau",
-                    "LVZ"
+                    "LVZ",
+                    "tagesschau"
                 ],
                 "twitterList": {
                     "id": "1396389060000768008",
