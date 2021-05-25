@@ -70,6 +70,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     private lastVisibleProfileViews: TwitterGraphProfileView[] = [];
 
     private highlightConditions: Record<string, (profile: TwitterProfile) => boolean> = {};
+    private highlightedProfileViews?: TwitterGraphProfileView[];
 
 
     /* LIFECYCLE */
@@ -435,6 +436,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         const conditions = Object.values(this.highlightConditions);
 
         //
+        this.highlightedProfileViews = [];
+
+        //
         const highlightedCommunityMemberCount: Record<string, number> = {};
         const highlightedCommunityHotspotMemberCount: Record<string, number> = {};
 
@@ -450,6 +454,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
             //
             profileView.sharpen();
+
+            //
+            this.highlightedProfileViews.push(profileView);
 
             //
             if(!profileView.data.communityId) continue;
@@ -561,6 +568,16 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this.onProfilesChanged();
     }
 
+    public get visibleProfiles() : TwitterProfile[]
+    {
+        return this.lastVisibleProfileViews.map(profileView => profileView.data);
+    }
+
+    public get highlightedProfiles() : TwitterProfile[]
+    {
+        return this.highlightedProfileViews?.map(profileView => profileView.data) || this.profiles;
+    }
+
     public get communities() : TwitterCommunity[]
     {
         return this._communities;
@@ -574,6 +591,11 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
         //
         this.onCommunitiesChanged();
+    }
+
+    public get highlightedCommunities() : TwitterCommunity[]
+    {
+        throw new Error("Unimplemented!");
     }
 
     public get profileResolution() : number

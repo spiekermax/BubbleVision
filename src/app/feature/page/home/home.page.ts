@@ -420,4 +420,17 @@ export class HomePage implements OnInit, AfterViewInit
     {
         return (+this.isFolloweeFilterActive) + (+this.isMinTwitterFollowersFilterActive) + (+this.isMaxTwitterFollowersFilterActive);
     }
+
+    public get highlightedTwitterGraphProfiles() : TwitterProfile[]
+    {
+        if(!this.twitterGraph) return [];
+
+        return this.twitterGraph.highlightedProfiles;
+    }
+
+    public get highlightedVisibleTwitterGraphProfiles() : TwitterProfile[]
+    {
+        const highlightedTwitterGraphProfiles: Set<TwitterProfile> = new Set(this.highlightedTwitterGraphProfiles);
+        return this.visibleTwitterGraphProfiles.filter(twitterProfile => highlightedTwitterGraphProfiles.has(twitterProfile));
+    }
 }
