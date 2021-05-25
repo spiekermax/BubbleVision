@@ -30,6 +30,7 @@ import { AppRoutingModule } from "./app-routing.module";
 
 import { HomePage } from "./feature/page/home/home.page";
 
+import { WelcomeDialog } from "./feature/dialog/welcome/welcome.dialog";
 import { HelpDialog } from "./feature/dialog/help/help.dialog";
 import { LoadingDialog } from "./feature/dialog/loading/loading.dialog";
 import { SettingsDialog } from "./feature/dialog/settings/settings.dialog";
@@ -47,6 +48,7 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         AppRoot,
         HomePage,
 
+        WelcomeDialog,
         HelpDialog,
         LoadingDialog,
         SettingsDialog,

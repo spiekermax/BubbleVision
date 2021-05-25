@@ -24,6 +24,7 @@ import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-
 
 import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
 
+import { WelcomeDialog } from "../../dialog/welcome/welcome.dialog";
 import { HelpDialog } from "../../dialog/help/help.dialog";
 import { LoadingDialog } from "../../dialog/loading/loading.dialog";
 import { SettingsDialog } from "../../dialog/settings/settings.dialog";
@@ -101,6 +102,9 @@ export class HomePage implements OnInit, AfterViewInit
 
     public constructor(private dialog: MatDialog, private preferenceService: PreferenceService, private twitterDataService: TwitterDataService)
     {
+        //
+        this.openWelcomeDialog();
+
         // Load twitter profiles
         this.twitterDataService.loadProfiles().subscribe(twitterProfiles => 
         {
@@ -368,6 +372,11 @@ export class HomePage implements OnInit, AfterViewInit
     
 
     /* METHODS - DIALOGS */
+
+    public openWelcomeDialog() : void
+    {
+        this.dialog.open(WelcomeDialog);
+    }
 
     public openHelpDialog() : void
     {
