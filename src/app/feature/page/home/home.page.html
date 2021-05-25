@@ -8,7 +8,8 @@
     (profileClicked)="openTwitterProfileDialog($event)"
     (communityClicked)="openTwitterCommunityDialog($event)"
     (communityHotspotClicked)="openTwitterCommunityHotspotDialog($event)"
-    (visibleProfilesChanged)="onVisibleTwitterGraphProfilesChanged($event)">
+    (visibleProfilesChanged)="onVisibleTwitterGraphProfilesChanged($event)"
+    (highlightedProfilesChanged)="onHighlightedTwitterGraphProfilesChanged($event)">
 </twitter-graph>
 
 <!-- Searchbar -->
@@ -119,9 +120,9 @@
             
                 <ng-template matTabContent>
 
-                    <tweet *ngFor="let tweet of visibleTwitterGraphProfileTweets" [data]="tweet"></tweet>
+                    <tweet *ngFor="let tweet of highlightedVisibleTwitterGraphProfileTweets" [data]="tweet"></tweet>
 
-                    <div *ngIf="!visibleTwitterGraphProfileTweets.length" class="empty-list-hint">
+                    <div *ngIf="!highlightedVisibleTwitterGraphProfileTweets.length" class="empty-list-hint">
                         <mat-icon class="icon">search_off</mat-icon>
                         <span>Keine Tweets gefunden</span>
                     </div>

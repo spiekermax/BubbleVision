@@ -80,9 +80,11 @@ export class HomePage implements OnInit, AfterViewInit
 
     // Twitter graph state
     public visibleTwitterGraphProfiles: TwitterProfile[] = [];
+    public highlightedTwitterGraphProfiles: Set<TwitterProfile> = new Set();
 
-    public visibleTwitterGraphProfileTweets: Tweet[] = [];
-    public visibleTwitterGraphProfileTweetsSubscription?: Subscription;
+    public highlightedVisibleTwitterGraphProfiles: TwitterProfile[] = [];
+    public highlightedVisibleTwitterGraphProfileTweets: Tweet[] = [];
+    public highlightedVisibleTwitterGraphProfileTweetsSubscription?: Subscription;
 
     // Filter state
     public minFollowersLimit: number = HomePage.MIN_FOLLOWERS_DEFAULT;
@@ -241,19 +243,40 @@ export class HomePage implements OnInit, AfterViewInit
     public onVisibleTwitterGraphProfilesChanged(visibleTwitterProfiles: TwitterProfile[]) : void
     {
         //
-        this.visibleTwitterGraphProfileTweetsSubscription?.unsubscribe();
-
-        //
         this.visibleTwitterGraphProfiles = visibleTwitterProfiles.sort((a, b) => b.followerCount - a.followerCount);
 
         //
-        if(!this.visibleTwitterGraphProfiles.length) return;
+        this.onHighlightedVisibleTwitterGraphProfilesChanged();
+    }
+
+    public onHighlightedTwitterGraphProfilesChanged(highlightedTwitterProfiles: TwitterProfile[]) : void
+    {
+        //
+        this.highlightedTwitterGraphProfiles = new Set(highlightedTwitterProfiles);
 
         //
-        this.visibleTwitterGraphProfileTweetsSubscription = this.twitterDataService.loadTweets(visibleTwitterProfiles).subscribe((tweets: any[]) =>
+        this.onHighlightedVisibleTwitterGraphProfilesChanged();
+    }
+
+    public onHighlightedVisibleTwitterGraphProfilesChanged() : void
+    {
+        //
+        this.highlightedVisibleTwitterGraphProfileTweetsSubscription?.unsubscribe();
+
+        //
+        this.highlightedVisibleTwitterGraphProfiles = this.visibleTwitterGraphProfiles
+            .filter(twitterProfile => this.highlightedTwitterGraphProfiles.has(twitterProfile));
+
+        //
+        if(!this.highlightedVisibleTwitterGraphProfiles.length)
         {
-            this.visibleTwitterGraphProfileTweets = tweets;
-        });
+            this.highlightedVisibleTwitterGraphProfileTweets = [];
+            return;
+        }
+
+        //
+        this.highlightedVisibleTwitterGraphProfileTweetsSubscription = this.twitterDataService.loadTweets(this.highlightedVisibleTwitterGraphProfiles)
+            .subscribe((tweets: Tweet[]) => this.highlightedVisibleTwitterGraphProfileTweets = tweets);
     }
 
 
@@ -419,18 +442,5 @@ export class HomePage implements OnInit, AfterViewInit
     public get activeFilterCount() : number
     {
         return (+this.isFolloweeFilterActive) + (+this.isMinTwitterFollowersFilterActive) + (+this.isMaxTwitterFollowersFilterActive);
-    }
-
-    public get highlightedTwitterGraphProfiles() : TwitterProfile[]
-    {
-        if(!this.twitterGraph) return [];
-
-        return this.twitterGraph.highlightedProfiles;
-    }
-
-    public get highlightedVisibleTwitterGraphProfiles() : TwitterProfile[]
-    {
-        const highlightedTwitterGraphProfiles: Set<TwitterProfile> = new Set(this.highlightedTwitterGraphProfiles);
-        return this.visibleTwitterGraphProfiles.filter(twitterProfile => highlightedTwitterGraphProfiles.has(twitterProfile));
     }
 }

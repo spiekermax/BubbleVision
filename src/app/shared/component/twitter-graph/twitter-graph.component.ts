@@ -49,6 +49,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     @Output()
     public visibleProfilesChanged: EventEmitter<TwitterProfile[]> = new EventEmitter();
 
+    @Output()
+    public highlightedProfilesChanged: EventEmitter<TwitterProfile[]> = new EventEmitter();
+
 
     /* ATTRIBUTES */
 
@@ -70,8 +73,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     private lastVisibleProfileViews: TwitterGraphProfileView[] = [];
 
     private highlightConditions: Record<string, (profile: TwitterProfile) => boolean> = {};
-    private highlightedProfileViews?: TwitterGraphProfileView[];
-
+    private lastHighlightedProfileViews?: TwitterGraphProfileView[];
+    
 
     /* LIFECYCLE */
 
@@ -285,7 +288,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     /* CALLBACKS - STATE */
 
-    private onProfilesChanged() : void
+    private onProfilesDirectiveChanged() : void
     {
         //
         if(!this.camera) return;
@@ -312,9 +315,12 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             // Add view
             this.camera.baseLayer.addChild(profileView);
         }
+
+        //
+        this.updateHighlights();
     }
 
-    private onCommunitiesChanged() : void
+    private onCommunitiesDirectiveChanged() : void
     {
         if(!this.camera) return;
 
@@ -374,15 +380,18 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
                 this.camera.lod1Layer.addChild(communityHotspotView);
             }
         }
+
+        //
+        this.updateHighlights();
     }
 
-    private onProfileResolutionChanged() : void
+    private onProfileResolutionDirectiveChanged() : void
     {
         for(const profileView of this.profileViews)
             profileView.updateResolution(this.profileResolution);
     }
 
-    private onCommunityResolutionChanged() : void
+    private onCommunityResolutionDirectiveChanged() : void
     {
         for(const communityView of this.communityViews)
             communityView.updateResolution(this.communityResolution);
@@ -413,6 +422,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     
         // Add view
         this.camera.baseLayer.addChild(profileView);
+
+        //
+        this.updateHighlights();
     }
 
     public removeProfile(profile: TwitterProfile) : void
@@ -436,7 +448,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         const conditions = Object.values(this.highlightConditions);
 
         //
-        this.highlightedProfileViews = [];
+        const highlightedProfileViews: TwitterGraphProfileView[] = [];
+        let highlightedProfileViewsChanged: boolean = !this.lastHighlightedProfileViews;
 
         //
         const highlightedCommunityMemberCount: Record<string, number> = {};
@@ -456,7 +469,8 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             profileView.sharpen();
 
             //
-            this.highlightedProfileViews.push(profileView);
+            const highlightedProfileViewIndex: number = highlightedProfileViews.push(profileView) - 1;
+            highlightedProfileViewsChanged = highlightedProfileViewsChanged || profileView != this.lastHighlightedProfileViews![highlightedProfileViewIndex];
 
             //
             if(!profileView.data.communityId) continue;
@@ -471,6 +485,14 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             //
             const profileCommunityHotspotId: string = profileView.data.communityHotspotId;
             highlightedCommunityHotspotMemberCount[profileCommunityHotspotId] = (highlightedCommunityHotspotMemberCount[profileCommunityHotspotId] || 0) + 1;
+        }
+
+        //
+        if(highlightedProfileViewsChanged)
+        {
+            //
+            this.ngZone.run(() => this.highlightedProfilesChanged.emit(highlightedProfileViews.map(profileView => profileView.data)));
+            this.lastHighlightedProfileViews = highlightedProfileViews;
         }
 
         //
@@ -565,17 +587,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this._profiles = newProfiles;
 
         //
-        this.onProfilesChanged();
-    }
-
-    public get visibleProfiles() : TwitterProfile[]
-    {
-        return this.lastVisibleProfileViews.map(profileView => profileView.data);
-    }
-
-    public get highlightedProfiles() : TwitterProfile[]
-    {
-        return this.highlightedProfileViews?.map(profileView => profileView.data) || this.profiles;
+        this.onProfilesDirectiveChanged();
     }
 
     public get communities() : TwitterCommunity[]
@@ -590,12 +602,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this._communities = newCommunities;
 
         //
-        this.onCommunitiesChanged();
-    }
-
-    public get highlightedCommunities() : TwitterCommunity[]
-    {
-        throw new Error("Unimplemented!");
+        this.onCommunitiesDirectiveChanged();
     }
 
     public get profileResolution() : number
@@ -610,7 +617,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this._profileResolution = newProfileResolution;
 
         //
-        this.onProfileResolutionChanged();
+        this.onProfileResolutionDirectiveChanged();
     }
 
     public get communityResolution() : number
@@ -625,7 +632,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this._communityResolution = newCommunityResolution;
 
         //
-        this.onCommunityResolutionChanged();
+        this.onCommunityResolutionDirectiveChanged();
     }
 
     public get cullingEnabled() : boolean
