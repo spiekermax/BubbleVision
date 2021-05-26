@@ -198,8 +198,8 @@
                     class="filter-slider" 
                     color="primary"
                     min="0"
-                    max="1000"
-                    step="1"
+                    max="100"
+                    step="0.1"
                     value="0"
                     (change)="onFollowersLimitSliderChanged()"
                     (input)="onMinFollowersLimitSliderMoved($event.value)">
@@ -221,15 +221,15 @@
                     class="filter-slider"
                     color="primary"
                     min="0"
-                    max="1000"
-                    step="1"
-                    value="1000"
+                    max="100"
+                    step="0.1"
+                    value="100"
                     (change)="onFollowersLimitSliderChanged()"
                     (input)="onMaxFollowersLimitSliderMoved($event.value)">
                 </mat-slider>
             </div>
             <button class="filter-slider-reset-button" mat-icon-button 
-                (click)="maxFollowersLimitSlider.value = 1000; onMaxFollowersLimitSliderMoved(1000); onFollowersLimitSliderChanged();">
+                (click)="maxFollowersLimitSlider.value = 100; onMaxFollowersLimitSliderMoved(100); onFollowersLimitSliderChanged();">
                 <mat-icon>refresh</mat-icon>
             </button>
         </div>

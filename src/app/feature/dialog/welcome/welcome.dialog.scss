@@ -3,9 +3,54 @@
 }
 
 .body {
-    max-width: 32vw;
+    margin-bottom: -8px;
+
+    max-width: 40vw;
+
+    .step-content {
+        padding: 12px;
+
+        .step-image-container {
+            display: flex;
+            flex-direction: row;
+
+            margin-bottom: 12px;
+            width: 100%;
+
+            justify-content: space-evenly;
+
+            .step-image {
+                width: 45%;
+                image-rendering: -webkit-optimize-contrast;
+            }
+        }
+
+        .step-text-container {
+            display: flex; 
+            align-items: center;
+
+            height: 80px; 
+
+            .step-text {
+                margin: 0 calc(5% - 16px);
+            }
+        }
+    }
+
+    .step-footer {
+        display: flex;
+        justify-content: flex-end;
+    
+        width: 100%;
+    }
 }
 
-.footer {
-    justify-content: flex-end;
+:host {
+    ::ng-deep .mat-step-header {
+        border-radius: 16px;
+    }
+
+    ::ng-deep .mat-horizontal-content-container {
+        padding: 0;
+    }
 }

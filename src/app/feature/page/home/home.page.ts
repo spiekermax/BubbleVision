@@ -212,14 +212,14 @@ export class HomePage implements OnInit, AfterViewInit
     {
         if(value === null) return;
 
-        this.minFollowersLimit = 10 * value * value;
+        this.minFollowersLimit = 10 * value * value * value;
     }
 
     public onMaxFollowersLimitSliderMoved(value: number | null) : void
     {
         if(value === null) return;
 
-        this.maxFollowersLimit = 10 * value * value;
+        this.maxFollowersLimit = 10 * value * value * value;
     }
 
     public onFolloweeFilterOptionSelected(twitterProfile: TwitterProfile) : void
@@ -384,7 +384,7 @@ export class HomePage implements OnInit, AfterViewInit
 
     public openWelcomeDialog() : void
     {
-        this.dialog.open(WelcomeDialog);
+        this.dialog.open(WelcomeDialog, { disableClose: true });
     }
 
     public openHelpDialog() : void

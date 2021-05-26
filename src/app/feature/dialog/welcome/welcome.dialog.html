@@ -1,24 +1,77 @@
 <h1 mat-dialog-title class="title">Herzlich willkommen!</h1>
 <div mat-dialog-content class="body">
-    <b>Allgemein</b>
-    <p>
-        Mit <i>BubbleVision</i> können Sie visuell und explorativ Einsicht in deutsche Twitter-Gemeinschaften gewinnen.
-        Gemeinschaften werden farblich hervorgehoben. Individuen sind schwarz markiert.
-    </p>
-    
-    <b>Bedienung</b>
-    <p>
-        Sie können den Graphen bewegen, indem ihn Sie mit gedrückter Maustaste umherziehen.
-        Um herein oder heraus zu zoomen, können Sie das Mausrad (auf Laptops die Scrollgeste) verwenden.
-        Mit einem Klick auf ein Profil oder eine Gemeinschaft können Sie sich Zusatzinformationen anzeigen lassen.
-    </p>
-
-    <b>Mehr</b>
-    <p>
-        Zusätzliche Informationen können Sie im Hilfemenü erhalten.
-        Viel Spaß bei der Erkundung!
-    </p>
-</div>
-<div mat-dialog-actions class="footer">
-    <button mat-button color="primary" mat-dialog-close cdkFocusInitial>LOS GEHTS</button>
+    <mat-horizontal-stepper>
+        <mat-step label="Einleitung" matStepperIcon="number">
+            <div class="step-content">
+                <div class="step-image-container">
+                    <img class="step-image" src="assets/logo.png">
+                </div>
+                <div class="step-text-container">
+                    <p class="step-text">
+                        Mit <b>BubbleVision</b> können Sie visuell und explorativ Einsicht in deutsche Twitter-Gemeinschaften gewinnen.
+                        <a target="_blank" rel="noopener noreferrer" href="https://de.wikipedia.org/wiki/Twitter">Twitter</a> ist ein soziales Netzwerk, mit dem Benutzer telegrammartige Kurznachrichten teilen können.
+                    </p>
+                </div>
+            </div>
+            <div class="step-footer">
+                <button mat-button color="primary" matStepperNext cdkFocusInitial>WEITER</button>
+            </div>
+        </mat-step>
+        <mat-step label="Darstellung" matStepperIcon="number">
+            <div class="step-content">
+                <div class="step-image-container">
+                    <img class="step-image" src="assets/guided-tour/depiction-1.png">
+                    <img class="step-image" src="assets/guided-tour/depiction-2.png">
+                </div>
+                <div class="step-text-container">
+                    <p class="step-text">
+                        Profile mit ähnlichen Followern befinden sich in der Nähe voneinander.
+                        Gemeinschaften sind farblich hervorgehoben, Individuen schwarz.
+                        Profilbilder werden erst geladen, wenn Sie nah genug herangezoomt haben.
+                    </p>
+                </div>
+            </div>
+            <div class="step-footer">
+                <button mat-button matStepperPrevious cdkFocusInitial>ZURÜCK</button>
+                <button mat-button color="primary" matStepperNext cdkFocusInitial>WEITER</button>
+            </div>
+        </mat-step>
+        <mat-step label="Bedienung" matStepperIcon="number">
+            <div class="step-content">
+                <div class="step-image-container">
+                    <img class="step-image" src="assets/guided-tour/interaction-1.png">
+                    <img class="step-image" src="assets/guided-tour/interaction-2.png">
+                </div>
+                <div class="step-text-container">
+                    <p class="step-text">
+                        Sie können den Graphen bewegen, indem ihn Sie mit gedrückter Maustaste umherziehen.
+                        Um herein oder heraus zu zoomen, können Sie das Mausrad (auf Laptops die Scrollgeste) verwenden.
+                        Mit einem Klick auf ein Profil oder eine Gemeinschaft können Sie sich Zusatzinformationen anzeigen lassen.
+                    </p>
+                </div>
+            </div>
+            <div class="step-footer">
+                <button mat-button matStepperPrevious cdkFocusInitial>ZURÜCK</button>
+                <button mat-button color="primary" matStepperNext cdkFocusInitial>WEITER</button>
+            </div>
+        </mat-step>
+        <mat-step label="Fertig" matStepperIcon="number">
+            <div class="step-content">
+                <div class="step-image-container">
+                    <img class="step-image" src="assets/guided-tour/help-1.png">
+                    <img class="step-image" src="assets/guided-tour/help-2.png">
+                </div>
+                <div class="step-text-container">
+                    <p class="step-text">
+                        Zusätzliche Informationen können Sie im Hilfemenü erhalten.
+                        <b>Viel Spaß bei der Erkundung!</b>
+                    </p>
+                </div>
+            </div>
+            <div class="step-footer">
+                <button mat-button matStepperPrevious cdkFocusInitial>ZURÜCK</button>
+                <button mat-button color="primary" mat-dialog-close cdkFocusInitial>LOS GEHTS</button>
+            </div>
+        </mat-step>
+    </mat-horizontal-stepper>
 </div>

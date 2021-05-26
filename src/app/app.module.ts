@@ -21,6 +21,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from "@angular/material/sidenav";
 import { MatSliderModule } from "@angular/material/slider";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatStepperModule } from "@angular/material/stepper";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 
@@ -85,6 +86,7 @@ import { TwitterGraphComponent } from "./shared/component/twitter-graph/twitter-
         MatSidenavModule,
         MatSliderModule,
         MatSlideToggleModule,
+        MatStepperModule,
         MatTabsModule,
         MatToolbarModule
     ],
