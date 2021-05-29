@@ -212,14 +212,14 @@ export class HomePage implements OnInit, AfterViewInit
     {
         if(value === null) return;
 
-        this.minFollowersLimit = 10 * value * value * value;
+        this.minFollowersLimit = Utils.dynamicRound(10 * Math.pow(value, 6));
     }
 
     public onMaxFollowersLimitSliderMoved(value: number | null) : void
     {
         if(value === null) return;
 
-        this.maxFollowersLimit = 10 * value * value * value;
+        this.maxFollowersLimit = Utils.dynamicRound(10 * Math.pow(value, 6));
     }
 
     public onFolloweeFilterOptionSelected(twitterProfile: TwitterProfile) : void
