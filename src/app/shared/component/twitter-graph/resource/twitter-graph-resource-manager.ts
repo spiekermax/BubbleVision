@@ -77,4 +77,10 @@ export class TwitterGraphResourceManager
 
         return subject;
     }
+
+    public static addAndAwait(url: string) : Observable<PIXI.LoaderResource>
+    {
+        this.add(url);
+        return this.await(url);
+    }
 }

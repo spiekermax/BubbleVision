@@ -5,6 +5,8 @@ import { Observable, Subject } from "rxjs";
 import * as PIXI from "pixi.js";
 
 // Internal dependencies
+import { Colors } from "src/app/core/colors";
+
 import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 import { TwitterGraphResourceManager } from "../resource/twitter-graph-resource-manager";
 
@@ -15,34 +17,10 @@ export class TwitterGraphProfileView extends PIXI.Container
 
     // Constants
     public static readonly DIAMETER: number = 300;
-    private static readonly IMAGE_PADDING: number = 24;
-
-    private static readonly COLOR_MAP: number[] =
-    [
-        0xe6194B,
-        0x3cb44b,
-        0xffe119,
-        0x4363d8,
-        0xf58231,
-        0x911eb4,
-        0x42d4f4,
-        0xf032e6,
-        0xbfef45,
-        0xfabed4,
-        0x469990,
-        0xdcbeff,
-        0x9A6324,
-        0xfffac8,
-        0x800000,
-        0xaaffc3,
-        0x808000,
-        0xffd8b1,
-        0x000075,
-        0xa9a9a9
-    ];
+    public static readonly IMAGE_PADDING: number = 24;
 
     // Variables
-    private static BACKGROUND_TEXTURE_MAP: PIXI.Texture[] = new Array(20);
+    private static BACKGROUND_TEXTURES: Record<number, PIXI.Texture> = {};
 
 
     /* ATTRIBUTES */
@@ -57,7 +35,7 @@ export class TwitterGraphProfileView extends PIXI.Container
 
     /* LIFECYCLE */
 
-    public constructor(private renderer: PIXI.Renderer, private profile: TwitterProfile)
+    public constructor(private renderer: PIXI.Renderer, private profile: TwitterProfile, private resolution: number = 1)
     {
         super();
 
@@ -86,26 +64,30 @@ export class TwitterGraphProfileView extends PIXI.Container
 
     private addBackground() : void
     {
-        if(!TwitterGraphProfileView.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21])
+        if(!TwitterGraphProfileView.BACKGROUND_TEXTURES[this.resolution])
         {
             // Create background graphics
             const circle: PIXI.Graphics = new PIXI.Graphics();
-            circle.beginFill(TwitterGraphProfileView.COLOR_MAP[this.profile.communityId % 21]);
+            circle.beginFill(0xFFFFFF);
             circle.drawCircle(0, 0, TwitterGraphProfileView.DIAMETER / 2);
             circle.endFill();
 
             // Generate texture
-            TwitterGraphProfileView.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21] = this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, 1);
+            TwitterGraphProfileView.BACKGROUND_TEXTURES[this.resolution] =
+                this.renderer.generateTexture(circle, PIXI.SCALE_MODES.LINEAR, this.resolution);
         }
 
-        const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileView.BACKGROUND_TEXTURE_MAP[this.profile.communityId % 21]);
+        //
+        const background: PIXI.Sprite = PIXI.Sprite.from(TwitterGraphProfileView.BACKGROUND_TEXTURES[this.resolution]);
+        background.tint = Colors.getTwitterCommunityColor(this.profile.communityId?.asNumber).asNumber;
 
+        //
         this.addChild(background);
     }
 
     private addLabel() : void
     {
-        const labelStyle: PIXI.TextStyle = new PIXI.TextStyle
+        const label: PIXI.Text = new PIXI.Text(this.profile.username.toUpperCase(), new PIXI.TextStyle
         ({ 
             fill: "white",
             fontSize: 24,
@@ -115,8 +97,7 @@ export class TwitterGraphProfileView extends PIXI.Container
             wordWrap: true,
             wordWrapWidth: 200,
             breakWords: true
-        });
-        const label: PIXI.Text = new PIXI.Text(this.profile.username.toUpperCase(), labelStyle);
+        }));
 
         const labelBounds: PIXI.Rectangle = label.getLocalBounds(new PIXI.Rectangle());
         const labelWidth: number = labelBounds.width;
@@ -124,6 +105,7 @@ export class TwitterGraphProfileView extends PIXI.Container
         
         label.position.x = (1.00 * TwitterGraphProfileView.DIAMETER - labelWidth) / 2;
         label.position.y = (1.65 * TwitterGraphProfileView.DIAMETER - labelHeight) / 2;
+        label.resolution = this.resolution;
         label.cacheAsBitmap = true;
         
         this.label = label;
@@ -132,11 +114,11 @@ export class TwitterGraphProfileView extends PIXI.Container
 
     private addPlaceholderImage() : void
     {
-        TwitterGraphResourceManager.await("assets/avatar.jpg").subscribe(((imageResource) =>
+        TwitterGraphResourceManager.await("assets/avatar.jpg").subscribe(((imageResource: PIXI.LoaderResource) =>
         {
             const image: PIXI.Sprite = PIXI.Sprite.from(imageResource.texture);
-            
             const imageSize: number = TwitterGraphProfileView.DIAMETER - TwitterGraphProfileView.IMAGE_PADDING;
+            
             image.width = imageSize;
             image.height = imageSize;
             
@@ -150,24 +132,24 @@ export class TwitterGraphProfileView extends PIXI.Container
             maskedContainer.addChild(imageMask);
             maskedContainer.mask = imageMask;
 
-            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, 1);
+            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, this.resolution);
+            const maskedImage = PIXI.Sprite.from(maskedImageTexture);
 
-            const placeholderImage = PIXI.Sprite.from(maskedImageTexture);
-            placeholderImage.position.x = TwitterGraphProfileView.IMAGE_PADDING / 2;
-            placeholderImage.position.y = TwitterGraphProfileView.IMAGE_PADDING / 2 - 30;
+            maskedImage.position.x = TwitterGraphProfileView.IMAGE_PADDING / 2;
+            maskedImage.position.y = TwitterGraphProfileView.IMAGE_PADDING / 2 - 30;
 
-            this.image = placeholderImage;
-            this.addChild(placeholderImage);
+            this.image = maskedImage;
+            this.addChild(maskedImage);
         }));
     }
 
     private addImage() : void
     {
-        TwitterGraphResourceManager.await(this.profile.imageUrl).subscribe((imageResource) =>
+        TwitterGraphResourceManager.await(this.profile.imageUrl).subscribe((imageResource: PIXI.LoaderResource) =>
         {
             const image: PIXI.Sprite = new PIXI.Sprite(imageResource.texture);
-            
             const imageSize: number = TwitterGraphProfileView.DIAMETER - TwitterGraphProfileView.IMAGE_PADDING;
+            
             image.width = imageSize;
             image.height = imageSize;
             
@@ -181,15 +163,17 @@ export class TwitterGraphProfileView extends PIXI.Container
             maskedContainer.addChild(imageMask);
             maskedContainer.mask = imageMask;
 
-            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, 1);
-
+            const maskedImageTexture: PIXI.Texture = this.renderer.generateTexture(maskedContainer, PIXI.SCALE_MODES.LINEAR, this.resolution);
             const maskedImage: PIXI.Sprite = PIXI.Sprite.from(maskedImageTexture);
+
             maskedImage.position.x = TwitterGraphProfileView.IMAGE_PADDING / 2;
             maskedImage.position.y = TwitterGraphProfileView.IMAGE_PADDING / 2;
 
             this.addChild(maskedImage);
 
-            if(this.image) this.removeChild(this.image);
+            if(this.image)
+                this.removeChild(this.image);
+
             this.image = maskedImage;
         });
     }
@@ -223,6 +207,21 @@ export class TwitterGraphProfileView extends PIXI.Container
 
         if(this.label)
             this.label.visible = true;
+    }
+
+    public updateResolution(newResolution: number) : void
+    {
+        if(newResolution == this.resolution) return;
+
+        // Update resolution
+        this.resolution = newResolution;
+
+        // Update graphics
+        this.removeChildren();
+        this.addBackground();
+        this.addLabel();
+        this.addPlaceholderImage();
+        this.addImage();
     }
 
 

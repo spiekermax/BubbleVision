@@ -7,17 +7,17 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dial
 // Internal dependencies
 import { Utils } from "src/app/core/utils";
 
-import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
+import { TwitterCommunityHotspot } from "src/app/shared/model/twitter/community/twitter-community-hotspot";
 import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
 
 
 @Component
 ({
-    selector: "twitter-community-dialog",
-    templateUrl: "./twitter-community.dialog.html",
-    styleUrls: ["./twitter-community.dialog.scss"]
+    selector: "twitter-community-hotspot-dialog",
+    templateUrl: "./twitter-community-hotspot.dialog.html",
+    styleUrls: ["./twitter-community-hotspot.dialog.scss"]
 })
-export class TwitterCommunityDialog
+export class TwitterCommunityHotspotDialog
 {
     /* NAMESPACES */
 
@@ -37,7 +37,7 @@ export class TwitterCommunityDialog
 
     /* LIFECYCLE */
   
-    public constructor(private dialog: MatDialog, private dialogRef: MatDialogRef<TwitterCommunityDialog>, @Inject(MAT_DIALOG_DATA) private data: [TwitterCommunity, TwitterProfile[]]) {}
+    public constructor(private dialog: MatDialog, private dialogRef: MatDialogRef<TwitterCommunityHotspotDialog>, @Inject(MAT_DIALOG_DATA) private data: [TwitterCommunityHotspot, TwitterProfile[]]) {}
 
 
     /* CALLBACKS */
@@ -59,7 +59,7 @@ export class TwitterCommunityDialog
         (<any> window).twttr.widgets.load().then(() => this.twitterTimelineState = "loaded");
 
         // Timeout
-        setTimeout(() => this.twitterTimelineTimeout = true, TwitterCommunityDialog.TWITTER_TIMELINE_TIMEOUT);
+        setTimeout(() => this.twitterTimelineTimeout = true, TwitterCommunityHotspotDialog.TWITTER_TIMELINE_TIMEOUT);
     }
 
 
@@ -67,7 +67,7 @@ export class TwitterCommunityDialog
 
     public get name() : string
     {
-        return this.community.name;
+        return this.communityHotspot.name;
     }
 
     public get minFollowers() : string
@@ -86,7 +86,7 @@ export class TwitterCommunityDialog
 
     public get twitterListUrl() : string
     {
-        return `https://twitter.com/${this.community.twitterList.author}/lists/${this.community.twitterList.slug}`;
+        return `https://twitter.com/${this.communityHotspot.twitterList.author}/lists/${this.communityHotspot.twitterList.slug}`;
     }
 
     public get membersSortedByFollowers() : TwitterProfile[]
@@ -97,7 +97,7 @@ export class TwitterCommunityDialog
 
     /* UTILITY */
 
-    private get community() : TwitterCommunity
+    private get communityHotspot() : TwitterCommunityHotspot
     {
         return this.data[0];
     }

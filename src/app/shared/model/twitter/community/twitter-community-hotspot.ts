@@ -1,9 +1,18 @@
 export interface TwitterCommunityHotspot
 {
+    id: string;
     name: string;
-    size: number;
     
-    // TODO: Give this type 'Position'
     centroid: [number, number];
     radius: number;
+    size: number;
+
+    members: string[];
+    
+    twitterList:
+    {
+        id: string;
+        slug: string;
+        author: string;
+    };
 }

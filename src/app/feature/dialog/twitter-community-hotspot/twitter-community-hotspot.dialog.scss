@@ -2,7 +2,7 @@
     display: flex; 
     flex-direction: row; 
     
-    .community-name {
+    .community-hotspot-name {
         overflow: hidden;
         max-width: 304px;
     
@@ -11,7 +11,7 @@
         white-space: nowrap
     }
     
-    .community-type {
+    .community-hotspot-type {
         margin-top: -18px;
         margin-bottom: 4px;
         
@@ -19,7 +19,7 @@
         font-size: 14px;
     }
     
-    .community-stats {
+    .community-hotspot-stats {
         font-size: 13px; 
         font-weight: 500;
         letter-spacing: 1px;
@@ -28,7 +28,7 @@
         margin-top: 8px;
     }
     
-    .community-help-button {
+    .community-hotspot-help-button {
         margin-left: auto;
         color: black;
     }
@@ -48,7 +48,7 @@
         margin-right: 8px;
     }
 
-    .community-member-list {
+    .community-hotspot-member-list {
         display: flex;
         flex-grow: 1;
 
@@ -87,7 +87,7 @@
         }
     }
 
-    .community-timeline-container {
+    .community-hotspot-timeline-container {
         display: flex;
         margin-top: -1px;
         

@@ -4,13 +4,21 @@ import { TwitterCommunityHotspot } from "./twitter-community-hotspot";
 
 export interface TwitterCommunity
 {
-    id: number;
-    
-    name?: string;
+    id: string;
+    numericId: number;
+    name: string;
+
+    centroid: [number, number];
+    radius: number;
     size: number;
 
     members: string[];
-    hotspots: Record<string, TwitterCommunityHotspot[]>;
+    hotspots: TwitterCommunityHotspot[];
 
-    twitterList: { id: string, slug: string, user: string };
+    twitterList:
+    {
+        id: string;
+        slug: string;
+        author: string;
+    };
 }

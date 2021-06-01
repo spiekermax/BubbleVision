@@ -6,26 +6,33 @@ import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 
 // Reactive X
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 
 // Internal dependencies
+import { Colors } from "src/app/core/colors";
 import { Utils } from "src/app/core/utils";
 
+import { Tweet } from "src/app/shared/model/twitter/tweet/tweet";
 import { TwitterCommunity } from "src/app/shared/model/twitter/community/twitter-community";
+import { TwitterCommunityHotspot } from "src/app/shared/model/twitter/community/twitter-community-hotspot";
 import { TwitterProfile } from "src/app/shared/model/twitter/profile/twitter-profile";
+import { SearchResult } from "./model/search-result";
 
-import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
+import { PreferenceService } from "src/app/shared/service/preference/preference-service";
 import { TwitterDataService } from "src/app/shared/service/twitter-data/twitter-data.service";
 
-import { HelpDialog } from "../../dialog/help/help.dialog";
+import { TwitterGraphComponent } from "src/app/shared/component/twitter-graph/twitter-graph.component";
+
+import { WelcomeDialog } from "../../dialog/welcome/welcome.dialog";
 import { LoadingDialog } from "../../dialog/loading/loading.dialog";
+import { ErrorDialog } from "../../dialog/error/error.dialog";
+import { HelpDialog } from "../../dialog/help/help.dialog";
 import { SettingsDialog } from "../../dialog/settings/settings.dialog";
 
 import { TwitterProfileDialog } from "../../dialog/twitter-profile/twitter-profile.dialog";
 import { TwitterCommunityDialog } from "../../dialog/twitter-community/twitter-community.dialog";
-
-import { SearchResult } from "./model/search-result";
+import { TwitterCommunityHotspotDialog } from "../../dialog/twitter-community-hotspot/twitter-community-hotspot.dialog";
 
 
 @Component
@@ -38,13 +45,14 @@ export class HomePage implements OnInit, AfterViewInit
 {
     /* NAMESPACES */
 
+    public Colors = Colors;
     public Utils = Utils;
 
 
     /* CONSTANTS */
 
-    private static readonly MIN_TWITTER_FOLLOWERS_DEFAULT: number = 0;
-    private static readonly MAX_TWITTER_FOLLOWERS_DEFAULT: number = 10e6;
+    private static readonly MIN_FOLLOWERS_DEFAULT: number = 0;
+    private static readonly MAX_FOLLOWERS_DEFAULT: number = 10e6;
 
 
     /* COMPONENTS */
@@ -55,29 +63,49 @@ export class HomePage implements OnInit, AfterViewInit
 
     /* ATTRIBUTES */
 
-    public searchFormControl: FormControl = new FormControl();
-    public searchResults?: Observable<SearchResult[]>;
-
-    public followeeFilterFormControl: FormControl = new FormControl();
-    public followeeFilterOptions?: Observable<TwitterProfile[]>;
-
+    // Data
     public twitterProfiles: TwitterProfile[] = [];
     public twitterCommunities: TwitterCommunity[] = [];
 
-    private isFolloweeFilterActive: boolean = false;
-    private isMinTwitterFollowersFilterActive: boolean = false;
-    private isMaxTwitterFollowersFilterActive: boolean = false;
+    // Preferences
+    public twitterGraphCullingEnabled: boolean = this.preferenceService.cullingEnabled;
+    public twitterGraphProfileResolution: number = this.preferenceService.twitterProfileResolution;
+    public twitterGraphCommunityResolution: number = this.preferenceService.twitterCommunityResolution;
 
-    public isLoadingFolloweeFilterData: boolean = false;
+    // Search controls
+    public searchFormControl: FormControl = new FormControl();
+    public searchResults?: Observable<SearchResult[]>;
 
-    public minTwitterFollowersLimit: number = HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
-    public maxTwitterFollowersLimit: number = HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
+    // Filter controls
+    public followeeFilterFormControl: FormControl = new FormControl();
+    public followeeFilterOptions?: Observable<TwitterProfile[]>;
+
+    // Twitter graph state
+    public visibleTwitterGraphProfiles: TwitterProfile[] = [];
+    public highlightedTwitterGraphProfiles: Set<TwitterProfile> = new Set();
+
+    public highlightedVisibleTwitterGraphProfiles: TwitterProfile[] = [];
+    public highlightedVisibleTwitterGraphProfileTweets: Tweet[] = [];
+    public highlightedVisibleTwitterGraphProfileTweetsSubscription?: Subscription;
+
+    // Filter state
+    public minFollowersLimit: number = HomePage.MIN_FOLLOWERS_DEFAULT;
+    public maxFollowersLimit: number = HomePage.MAX_FOLLOWERS_DEFAULT;
+    
+    public isFolloweeFilterActive: boolean = false;
+    public isFolloweeFilterLoading: boolean = false;
+
+    public isMinTwitterFollowersFilterActive: boolean = false;
+    public isMaxTwitterFollowersFilterActive: boolean = false;
 
 
     /* LIFECYCLE */
 
-    public constructor(private dialog: MatDialog, private twitterDataService: TwitterDataService)
+    public constructor(private dialog: MatDialog, private preferenceService: PreferenceService, private twitterDataService: TwitterDataService)
     {
+        //
+        this.openWelcomeDialog();
+
         // Load twitter profiles
         this.twitterDataService.loadProfiles().subscribe(twitterProfiles => 
         {
@@ -115,35 +143,13 @@ export class HomePage implements OnInit, AfterViewInit
         //
         this.twitterGraph?.putHighlightCondition("reach", (twitterProfile: TwitterProfile) =>
         {
-            return twitterProfile.followerCount >= this.minTwitterFollowersLimit 
-                && twitterProfile.followerCount <= this.maxTwitterFollowersLimit;
+            return twitterProfile.followerCount >= this.minFollowersLimit 
+                && twitterProfile.followerCount <= this.maxFollowersLimit;
         });
     }
 
 
     /* CALLBACKS */
-
-    public onTwitterFollowersLimitSliderChanged() : void
-    {
-        this.twitterGraph?.updateHighlights();
-
-        this.isMinTwitterFollowersFilterActive = this.minTwitterFollowersLimit != HomePage.MIN_TWITTER_FOLLOWERS_DEFAULT;
-        this.isMaxTwitterFollowersFilterActive = this.maxTwitterFollowersLimit != HomePage.MAX_TWITTER_FOLLOWERS_DEFAULT;
-    }
-
-    public onMinTwitterFollowersLimitSliderMoved(value: number | null) : void
-    {
-        if(value === null) return;
-
-        this.minTwitterFollowersLimit = 10 * value * value;
-    }
-
-    public onMaxTwitterFollowersLimitSliderMoved(value: number | null) : void
-    {
-        if(value === null) return;
-
-        this.maxTwitterFollowersLimit = 10 * value * value;
-    }
 
     public onSearchResultSelected(searchResult: SearchResult) : void
     {
@@ -152,7 +158,7 @@ export class HomePage implements OnInit, AfterViewInit
             case "existing-twitter-profile":
             {
                 // Zoom to selected profile
-                setTimeout(() => this.twitterGraph?.zoomToProfile(searchResult.data), 100);
+                this.zoomToTwitterProfile(searchResult.data, 100);
                 break;
             }
             case "custom-twitter-profile":
@@ -174,29 +180,58 @@ export class HomePage implements OnInit, AfterViewInit
                         loadingDialog.close();
 
                         // Zoom to added profile
-                        setTimeout(() => this.twitterGraph?.zoomToProfile(profile), 500);
+                        this.zoomToTwitterProfile(profile, 500);
 
                     }, 250);
+                },
+                error =>
+                {
+                    //
+                    loadingDialog.close();
+                    
+                    //
+                    this.openErrorDialog("Profil nicht gefunden", "Bitte beachten Sie Groß- und Kleinschreibung.");
                 });
 
                 // Cancel loading if dialog closed
                 loadingDialog.afterClosed().subscribe(() => loadingObservable.unsubscribe());
-
                 break;
             }
         }
     }
 
+    public onFollowersLimitSliderChanged() : void
+    {
+        this.twitterGraph?.updateHighlights();
+
+        this.isMinTwitterFollowersFilterActive = this.minFollowersLimit != HomePage.MIN_FOLLOWERS_DEFAULT;
+        this.isMaxTwitterFollowersFilterActive = this.maxFollowersLimit != HomePage.MAX_FOLLOWERS_DEFAULT;
+    }
+
+    public onMinFollowersLimitSliderMoved(value: number | null) : void
+    {
+        if(value === null) return;
+
+        this.minFollowersLimit = Utils.dynamicRound(10 * Math.pow(value, 6));
+    }
+
+    public onMaxFollowersLimitSliderMoved(value: number | null) : void
+    {
+        if(value === null) return;
+
+        this.maxFollowersLimit = Utils.dynamicRound(10 * Math.pow(value, 6));
+    }
+
     public onFolloweeFilterOptionSelected(twitterProfile: TwitterProfile) : void
     {
         //
-        this.isLoadingFolloweeFilterData = true;
+        this.isFolloweeFilterLoading = true;
 
         //
-        this.twitterDataService.loadProfileFollowees(twitterProfile.username).subscribe(data =>
+        this.twitterDataService.loadProfileFollowees(twitterProfile.username).subscribe(followees =>
         {
             //
-            const followeeIds: number[] = data.map(followee => followee.id!);
+            const followeeIds: number[] = followees.map(followee => followee.id!);
 
             //
             this.twitterGraph?.putHighlightCondition("followee", twitterProfile => followeeIds.includes(twitterProfile.id));
@@ -204,7 +239,7 @@ export class HomePage implements OnInit, AfterViewInit
 
             //
             this.isFolloweeFilterActive = true;
-            this.isLoadingFolloweeFilterData = false;
+            this.isFolloweeFilterLoading = false;
         });
     }
 
@@ -216,6 +251,45 @@ export class HomePage implements OnInit, AfterViewInit
         this.twitterGraph?.updateHighlights();
 
         this.isFolloweeFilterActive = false;
+    }
+
+    public onVisibleTwitterGraphProfilesChanged(visibleTwitterProfiles: TwitterProfile[]) : void
+    {
+        //
+        this.visibleTwitterGraphProfiles = visibleTwitterProfiles.sort((a, b) => b.followerCount - a.followerCount);
+
+        //
+        this.onHighlightedVisibleTwitterGraphProfilesChanged();
+    }
+
+    public onHighlightedTwitterGraphProfilesChanged(highlightedTwitterProfiles: TwitterProfile[]) : void
+    {
+        //
+        this.highlightedTwitterGraphProfiles = new Set(highlightedTwitterProfiles);
+
+        //
+        this.onHighlightedVisibleTwitterGraphProfilesChanged();
+    }
+
+    public onHighlightedVisibleTwitterGraphProfilesChanged() : void
+    {
+        //
+        this.highlightedVisibleTwitterGraphProfileTweetsSubscription?.unsubscribe();
+
+        //
+        this.highlightedVisibleTwitterGraphProfiles = this.visibleTwitterGraphProfiles
+            .filter(twitterProfile => this.highlightedTwitterGraphProfiles.has(twitterProfile));
+
+        //
+        if(!this.highlightedVisibleTwitterGraphProfiles.length)
+        {
+            this.highlightedVisibleTwitterGraphProfileTweets = [];
+            return;
+        }
+
+        //
+        this.highlightedVisibleTwitterGraphProfileTweetsSubscription = this.twitterDataService.loadTweets(this.highlightedVisibleTwitterGraphProfiles)
+            .subscribe((tweets: Tweet[]) => this.highlightedVisibleTwitterGraphProfileTweets = tweets);
     }
 
 
@@ -299,18 +373,45 @@ export class HomePage implements OnInit, AfterViewInit
 
         return `${twitterProfile.username}`;
     }
+
+    public zoomToTwitterProfile(twitterProfile: TwitterProfile, delay: number = 0) : void
+    {
+        setTimeout(() => this.twitterGraph?.zoomToProfile(twitterProfile), delay);
+    }
     
 
     /* METHODS - DIALOGS */
+
+    public openWelcomeDialog() : void
+    {
+        this.dialog.open(WelcomeDialog, { disableClose: true });
+    }
 
     public openHelpDialog() : void
     {
         this.dialog.open(HelpDialog);
     }
 
+    public openErrorDialog(title: string, message: string) : void
+    {
+        this.dialog.open(ErrorDialog, { data: { title: title, message: message }});
+    }
+
     public openSettingsDialog() : void
     {
-        this.dialog.open(SettingsDialog);
+        this.dialog.open(SettingsDialog).afterClosed().subscribe((settings: any) =>
+        {
+            if(!settings) return;
+
+            if(settings.cullingEnabled !== undefined)
+                this.twitterGraphCullingEnabled = settings.cullingEnabled;
+
+            if(settings.twitterProfileResolution !== undefined)
+                this.twitterGraphProfileResolution = settings.twitterProfileResolution;
+            
+            if(settings.twitterCommunityResolution !== undefined)
+                this.twitterGraphCommunityResolution = settings.twitterCommunityResolution;
+        });
     }
 
     public openTwitterProfileDialog(twitterProfile: TwitterProfile) : void
@@ -336,7 +437,25 @@ export class HomePage implements OnInit, AfterViewInit
             if(!clickedMember) return;
 
             // Zoom to selected profile
-            setTimeout(() => this.twitterGraph?.zoomToProfile(clickedMember), 100);
+            this.zoomToTwitterProfile(clickedMember, 100);
+        });
+    }
+
+    public openTwitterCommunityHotspotDialog(twitterCommunityHotspot: TwitterCommunityHotspot) : void
+    {
+        const twitterCommunityMembers: TwitterProfile[] = this.twitterProfiles.filter(profile => twitterCommunityHotspot.members.includes(profile.username));
+
+        this.dialog.open(TwitterCommunityHotspotDialog,
+        { 
+            data: [twitterCommunityHotspot, twitterCommunityMembers],
+            width: "514px"
+        })
+        .afterClosed().subscribe((clickedMember?: TwitterProfile) =>
+        {
+            if(!clickedMember) return;
+
+            // Zoom to selected profile
+            this.zoomToTwitterProfile(clickedMember, 100);
         });
     }
 

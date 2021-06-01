@@ -1,10 +1,10 @@
 <div class="header">
     <div>
-        <h1 mat-dialog-title class="community-name">{{name}}</h1>
-        <div class="community-type">Gemeinschaft</div>
-        <p class="community-stats">{{minFollowers}} - {{maxFollowers}} Follower</p>
+        <h1 mat-dialog-title class="community-hotspot-name">{{name}}</h1>
+        <div class="community-hotspot-type">Subgemeinschaft</div>
+        <p class="community-hotspot-stats">{{minFollowers}} - {{maxFollowers}} Follower</p>
     </div>
-    <button class="community-help-button" mat-icon-button [matMenuTriggerFor]="helpMenu"> 
+    <button class="community-hotspot-help-button" mat-icon-button [matMenuTriggerFor]="helpMenu"> 
         <mat-icon>help_outline</mat-icon>
     </button>
 </div>
@@ -20,7 +20,7 @@
             </ng-template>
 
             <ng-template matTabContent>
-                <mat-action-list class="community-member-list">
+                <mat-action-list class="community-hotspot-member-list">
                     <cdk-virtual-scroll-viewport class="virtual-scroll" [itemSize]="72">
                         <ng-container *cdkVirtualFor="let member of membersSortedByFollowers">
                             <mat-list-item class="profile-item" (click)="onMemberClicked(member)">
@@ -43,7 +43,7 @@
             </ng-template>
 
             <ng-template matTabContent>
-                <div class="community-timeline-container">
+                <div class="community-hotspot-timeline-container">
                     <div class="twitter-timeline-loading">
                         <mat-spinner [diameter]="36"></mat-spinner>
                         <span>Lade Tweets...</span>
@@ -69,5 +69,5 @@
 <!-- Help menu -->
 <mat-menu #helpMenu="matMenu" class="help-menu">
     <div class="menu-title">Info</div>
-    <p style="margin-left: 16px; margin-right: 16px;">Eine Gemeinschaft ist eine Ansammlung von Profilen, die viele Follower gemeinsam haben.</p>
+    <p style="margin-left: 16px; margin-right: 16px;">Eine Subgemeinschaft ist ein Teil einer Gemeinschaft, mit einer großen Schnittmenge an Followern.</p>
 </mat-menu>

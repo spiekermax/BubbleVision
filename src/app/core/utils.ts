@@ -5,6 +5,21 @@ import twemoji from "twemoji";
 export class Utils
 {
     /**
+     * TODO
+     * @param number
+     * @returns 
+     */
+    public static dynamicRound(number: number) : number
+    {
+        const integer: number = Math.round(number);
+        const integerString: string = integer.toString();
+        const integerLength: number = integerString.length;
+        const integerHead: number = +(integerString + "0").substring(0, 2);
+
+        return integerHead * Math.pow(10, integerLength - 2);
+    }
+
+    /**
      * See https://stackoverflow.com/a/32638472/5723449
      * @param number 
      * @returns 

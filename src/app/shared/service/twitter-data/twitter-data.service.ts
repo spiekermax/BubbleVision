@@ -8,6 +8,7 @@ import { concatMap, filter, map, switchMap, take } from "rxjs/operators";
 
 // Internal dependencies
 import { Position } from "../../model/position/position";
+import { Tweet } from "../../model/twitter/tweet/tweet";
 
 import { TwitterCommunity } from "../../model/twitter/community/twitter-community";
 import { TwitterProfile } from "../../model/twitter/profile/twitter-profile";
@@ -38,10 +39,10 @@ export class TwitterDataService
     {
         return forkJoin
         ({
-            mapping: this.http.get<any>("assets/graph/de_1000_mapping_base.json"),
-            communities: this.http.get<any>("assets/graph/de_1000_communities_weighted_louvain.json")
+            mapping: this.http.get<any>("assets/graph/de_1000_profiles.json"),
+            communities: this.http.get<TwitterCommunity[]>("assets/graph/de_1000_communities.json")
         })
-        .pipe(map((json: any) =>
+        .pipe(map(json =>
         {
             // Transform data
             return json.mapping.profiles.map((profileDTO: any) =>
@@ -66,13 +67,29 @@ export class TwitterDataService
                 };
 
                 // Find associated community
-                for(const communityId of Object.keys(json.communities))
+                for(const community of json.communities)
                 {
-                    if(json.communities[communityId].includes(profileDTO.username))
+                    if(!community.members.includes(profileDTO.username)) continue;
+
+                    //
+                    profile.communityId =
                     {
-                        profile.communityId = Number(communityId);
+                        asString: community.id,
+                        asNumber: community.numericId
+                    }
+
+                    //
+                    for(const communityHotspot of community.hotspots)
+                    {
+                        if(!communityHotspot.members.includes(profileDTO.username)) continue;
+                        
+                        //
+                        profile.communityHotspotId = communityHotspot.id;
                         break;
                     }
+
+                    //
+                    break;
                 }
 
                 return profile;
@@ -86,13 +103,13 @@ export class TwitterDataService
         {
             return this.postToTwitterMinerAPI(`export/distances`,
             {
-                "langs": {
-                    "de": {
-                        "num_profiles": 0
+                langs: {
+                    de: {
+                        num_profiles: 0
                     }
                 },
-                "include_usernames": [username],
-                "landmarks": landmarks.map(landmark => landmark.username)
+                include_usernames: [username],
+                landmarks: landmarks.map(landmark => landmark.username)
             })
             .pipe(switchMap(() =>
             {
@@ -125,8 +142,7 @@ export class TwitterDataService
 
                 const profile: TwitterProfile =
                 {
-                    id: data.info.twitterId,
-                    communityId: 101 * 21 - 1,
+                    id: data.info.twitter_id,
                     name: data.info.name,
                     username: data.info.username,
                     description: data.info.description || "",
@@ -165,7 +181,29 @@ export class TwitterDataService
 
     public loadCommunities() : Observable<TwitterCommunity[]>
     {
-        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_community_info.json");
+        return this.http.get<TwitterCommunity[]>("assets/graph/de_1000_communities.json");
+    }
+
+    public loadTweets(profiles: TwitterProfile[]) : Observable<Tweet[]>
+    {
+        if(!profiles.length) return of([]);
+
+        return this.getFromTwitterMinerAPI<any[]>(`tweets/multi?twitter_ids=${profiles.map(profile => profile.id)}`).pipe(map((data: any[]) =>
+        {
+            return data.filter((instance: any) => !instance.tweet.is_retweet && !instance.tweet.is_quote).map((instance: any) =>
+            ({
+                id: instance.tweet.twitter_id_str,
+                author:
+                {
+                    name: instance.profile.name,
+                    username: instance.profile.username,
+                    verified: instance.profile.verified,
+                    imageUrl: instance.profile.profile_image_url
+                },
+                text: instance.tweet.text,
+                timestamp: instance.tweet.timestamp
+            }));
+        }));
     }
 
 

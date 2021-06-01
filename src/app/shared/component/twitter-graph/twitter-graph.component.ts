@@ -8,12 +8,14 @@ import * as PIXI from "pixi.js";
 import { Position } from "../../model/position/position";
 
 import { TwitterCommunity } from "../../model/twitter/community/twitter-community";
+import { TwitterCommunityHotspot } from "../../model/twitter/community/twitter-community-hotspot";
 import { TwitterProfile } from "../../model/twitter/profile/twitter-profile";
 
 import { TwitterGraphCamera } from "./camera/twitter-graph-camera";
 import { TwitterGraphResourceManager } from "./resource/twitter-graph-resource-manager";
 
 import { TwitterGraphCommunityView } from "./view/twitter-graph-community-view";
+import { TwitterGraphCommunityHotspotView } from "./view/twitter-graph-community-hotspot-view";
 import { TwitterGraphProfileView } from "./view/twitter-graph-profile-view";
 
 
@@ -30,11 +32,25 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     private _profiles: TwitterProfile[] = [];
     private _communities: TwitterCommunity[] = [];
 
+    private _profileResolution: number = 1;
+    private _communityResolution: number = 1;
+
+    private _cullingEnabled: boolean = true;
+
     @Output()
     public profileClicked: EventEmitter<TwitterProfile> = new EventEmitter();
     
     @Output()
     public communityClicked: EventEmitter<TwitterCommunity> = new EventEmitter();
+
+    @Output()
+    public communityHotspotClicked: EventEmitter<TwitterCommunityHotspot> = new EventEmitter();
+
+    @Output()
+    public visibleProfilesChanged: EventEmitter<TwitterProfile[]> = new EventEmitter();
+
+    @Output()
+    public highlightedProfilesChanged: EventEmitter<TwitterProfile[]> = new EventEmitter();
 
 
     /* ATTRIBUTES */
@@ -47,13 +63,18 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
 
     private profileViews: TwitterGraphProfileView[] = [];
     private communityViews: TwitterGraphCommunityView[] = [];
+    private communityHotspotViews: TwitterGraphCommunityHotspotView[] = [];
     
     // State
     private lastMouseDownPosition?: Position;
     private isDragGestureActive: boolean = false;
 
-    private highlightConditions: Record<string, (profile: TwitterProfile) => boolean> = {};
+    private lastVisibleBounds?: PIXI.Rectangle;
+    private lastVisibleProfileViews: TwitterGraphProfileView[] = [];
 
+    private highlightConditions: Record<string, (profile: TwitterProfile) => boolean> = {};
+    private lastHighlightedProfileViews?: TwitterGraphProfileView[];
+    
 
     /* LIFECYCLE */
 
@@ -114,39 +135,65 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     {
         if(!this.camera) return;
 
-        // Hide profile details when zoomed out
         if(this.camera.zoom < 0.04)
         {
+            // Hide profile details when zoomed out
             for(const profileView of this.profileViews)
                 profileView.hideDetails();
-
-            return;
+        }
+        else
+        {
+            // Show profile details when zoomed in
+            for(const profileView of this.profileViews)
+                profileView.showDetails();
         }
 
-        // Show profile details when zoomed in
-        for(const profileView of this.profileViews)
-            profileView.showDetails();
-
         //
-        if(this.lastMouseDownPosition || this.camera.zoom < 0.1 || this.camera.isAnimating(10)) return;
-
-        //
-        if(!this.profiles) return;
-
+        if(this.lastMouseDownPosition || this.camera.isAnimating(10)) return;
+        
         // Get visible bounds
         const visibleBounds: PIXI.Rectangle = this.camera.calculateVisibleBounds();
+        const visibleBoundsChanged: boolean = !this.lastVisibleBounds
+            || this.lastVisibleBounds.top != visibleBounds.top
+            || this.lastVisibleBounds.left != visibleBounds.left
+            || this.lastVisibleBounds.bottom != visibleBounds.bottom
+            || this.lastVisibleBounds.right != visibleBounds.right;
 
-        // Request visible images
-        for(const profile of this.profiles)
+        //
+        if(!visibleBoundsChanged) return;
+        this.lastVisibleBounds = visibleBounds;
+
+        // Find visible profiles
+        const visibleProfileViews: TwitterGraphProfileView[] = this.profileViews.filter(profileView =>
         {
-            if(profile.position.x < visibleBounds.left || profile.position.y < visibleBounds.top) continue;
-            if(profile.position.x > visibleBounds.right || profile.position.y > visibleBounds.bottom) continue;
-    
-            TwitterGraphResourceManager.add(profile.imageUrl);
+            const isVisible: boolean = profileView.data.position.x >= visibleBounds.left - TwitterGraphProfileView.DIAMETER
+                && profileView.data.position.y >= visibleBounds.top - TwitterGraphProfileView.DIAMETER
+                && profileView.data.position.x <= visibleBounds.right
+                && profileView.data.position.y <= visibleBounds.bottom;
+
+            profileView.visible = !this.cullingEnabled || isVisible;
+
+            return isVisible;
+        });
+        const visibleProfileViewsChanged: boolean = visibleProfileViews.length != this.lastVisibleProfileViews.length
+            || !visibleProfileViews.every((value, index) => value == this.lastVisibleProfileViews[index]);
+
+        //
+        if(!visibleProfileViewsChanged) return;
+        this.lastVisibleProfileViews = visibleProfileViews;
+
+        if(this.camera.zoom >= 0.1)
+        {
+            //
+            for(const visibleProfileView of visibleProfileViews)
+                TwitterGraphResourceManager.add(visibleProfileView.data.imageUrl);
+
+            // Load visible images
+            TwitterGraphResourceManager.load();
         }
 
-        // Load visible images
-        TwitterGraphResourceManager.load();
+        //
+        this.ngZone.run(() => this.visibleProfilesChanged.emit(visibleProfileViews.map(profileView => profileView.data)));
     }
 
 
@@ -231,10 +278,17 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this.ngZone.run(() => this.communityClicked.emit(community));
     }
 
+    private onCommunityHotspotClicked(communityHotspot: TwitterCommunityHotspot) : void
+    {
+        if(this.isDragGestureActive) return;
+
+        this.ngZone.run(() => this.communityHotspotClicked.emit(communityHotspot));
+    }
+
 
     /* CALLBACKS - STATE */
 
-    private onProfilesChanged() : void
+    private onProfilesDirectiveChanged() : void
     {
         //
         if(!this.camera) return;
@@ -250,7 +304,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         for(const profile of this._profiles)
         {
             // Create view
-            const profileView: TwitterGraphProfileView = new TwitterGraphProfileView(this.app!.renderer, profile);
+            const profileView: TwitterGraphProfileView = new TwitterGraphProfileView(this.app!.renderer, profile, this.profileResolution);
 
             // Cache view reference
             this.profileViews.push(profileView);
@@ -261,9 +315,12 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             // Add view
             this.camera.baseLayer.addChild(profileView);
         }
+
+        //
+        this.updateHighlights();
     }
 
-    private onCommunitiesChanged() : void
+    private onCommunitiesDirectiveChanged() : void
     {
         if(!this.camera) return;
 
@@ -274,31 +331,73 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         // Add new views
         for(const community of this.communities)
         {
-            // Create view
-            const communityViewLOD0: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 0);
-
-            // Cache view reference
-            this.communityViews.push(communityViewLOD0);
-
-            // Bind callbacks
-            communityViewLOD0.clickedEvent.subscribe(() => this.onCommunityClicked(community));
-
-            // Add view
-            this.camera.lod0Layer.addChild(communityViewLOD0);
-
+            //
+            if(community.radius < 0.1) continue;
 
             // Create view
-            const communityViewLOD1: TwitterGraphCommunityView = new TwitterGraphCommunityView(this.app!.renderer, community, 1);
+            const communityView: TwitterGraphCommunityView = new TwitterGraphCommunityView(community, this.app!.renderer, 0, this.communityResolution);
 
             // Cache view reference
-            this.communityViews.push(communityViewLOD1);
+            this.communityViews.push(communityView);
 
             // Bind callbacks
-            communityViewLOD1.clickedEvent.subscribe(() => this.onCommunityClicked(community));
+            communityView.clickedEvent.subscribe(() => this.onCommunityClicked(community));
 
             // Add view
-            this.camera.lod1Layer.addChild(communityViewLOD1);
+            this.camera.lod0Layer.addChild(communityView);
+
+            //
+            if(!community.hotspots.length)
+            {
+                // Create view
+                const communityView: TwitterGraphCommunityView = new TwitterGraphCommunityView(community, this.app!.renderer, 1, this.communityResolution);
+
+                // Cache view reference
+                this.communityViews.push(communityView);
+
+                // Bind callbacks
+                communityView.clickedEvent.subscribe(() => this.onCommunityClicked(community));
+
+                // Add view
+                this.camera.lod1Layer.addChild(communityView);
+            }
+
+            //
+            for(const communityHotspot of community.hotspots)
+            {
+                if(communityHotspot.radius < 0.1) continue;
+
+                // Create view
+                const communityHotspotView: TwitterGraphCommunityHotspotView = new TwitterGraphCommunityHotspotView(community, communityHotspot, this.app!.renderer, 1, this.communityResolution);
+
+                // Cache view reference
+                this.communityHotspotViews.push(communityHotspotView);
+
+                // Bind callbacks
+                communityHotspotView.clickedEvent.subscribe(() => this.onCommunityHotspotClicked(communityHotspot));
+
+                // Add view
+                this.camera.lod1Layer.addChild(communityHotspotView);
+            }
         }
+
+        //
+        this.updateHighlights();
+    }
+
+    private onProfileResolutionDirectiveChanged() : void
+    {
+        for(const profileView of this.profileViews)
+            profileView.updateResolution(this.profileResolution);
+    }
+
+    private onCommunityResolutionDirectiveChanged() : void
+    {
+        for(const communityView of this.communityViews)
+            communityView.updateResolution(this.communityResolution);
+
+        for(const communityHotspotView of this.communityHotspotViews)
+            communityHotspotView.updateResolution(this.communityResolution);
     }
 
 
@@ -323,6 +422,9 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
     
         // Add view
         this.camera.baseLayer.addChild(profileView);
+
+        //
+        this.updateHighlights();
     }
 
     public removeProfile(profile: TwitterProfile) : void
@@ -346,41 +448,88 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         const conditions = Object.values(this.highlightConditions);
 
         //
-        const highlightedCommunityMemberCount: Record<number, number> = {};
+        const highlightedProfileViews: TwitterGraphProfileView[] = [];
+        let highlightedProfileViewsChanged: boolean = !this.lastHighlightedProfileViews;
+
+        //
+        const highlightedCommunityMemberCount: Record<string, number> = {};
+        const highlightedCommunityHotspotMemberCount: Record<string, number> = {};
+
+        //
         for(const profileView of this.profileViews)
         {
-            if(conditions.every(condition => condition(profileView.data)))
-            {
-                //
-                profileView.sharpen();
-
-                //
-                const profileCommunityId: number = profileView.data.communityId;
-                highlightedCommunityMemberCount[profileCommunityId] = (highlightedCommunityMemberCount[profileCommunityId] || 0) + 1;
-            }
-            else
+            if(!conditions.every(condition => condition(profileView.data)))
             {
                 //
                 profileView.blur();
+                continue;
             }
+
+            //
+            profileView.sharpen();
+
+            //
+            const highlightedProfileViewIndex: number = highlightedProfileViews.push(profileView) - 1;
+            highlightedProfileViewsChanged = highlightedProfileViewsChanged || profileView != this.lastHighlightedProfileViews![highlightedProfileViewIndex];
+
+            //
+            if(!profileView.data.communityId) continue;
+
+            //
+            const profileCommunityId: string = profileView.data.communityId.asString;
+            highlightedCommunityMemberCount[profileCommunityId] = (highlightedCommunityMemberCount[profileCommunityId] || 0) + 1;
+
+            //
+            if(!profileView.data.communityHotspotId) continue;
+
+            //
+            const profileCommunityHotspotId: string = profileView.data.communityHotspotId;
+            highlightedCommunityHotspotMemberCount[profileCommunityHotspotId] = (highlightedCommunityHotspotMemberCount[profileCommunityHotspotId] || 0) + 1;
+        }
+
+        //
+        if(highlightedProfileViewsChanged)
+        {
+            //
+            this.ngZone.run(() => this.highlightedProfilesChanged.emit(highlightedProfileViews.map(profileView => profileView.data)));
+            this.lastHighlightedProfileViews = highlightedProfileViews;
         }
 
         //
         for(const communityView of this.communityViews)
         {
             //
-            const communityId: number = communityView.data.id;
+            const communityId: string = communityView.data.id;
 
             if(communityId in highlightedCommunityMemberCount)
             {
                 //
                 communityView.sharpen();
-                communityView.updateSizeLabel(highlightedCommunityMemberCount[communityId]);
+                communityView.updateCurrentSize(highlightedCommunityMemberCount[communityId]);
             }
             else
             {
                 //
                 communityView.blur();
+            }
+        }
+
+        //
+        for(const communityHotspotView of this.communityHotspotViews)
+        {
+            //
+            const communityHotspotId: string = communityHotspotView.data.id;
+
+            if(communityHotspotId in highlightedCommunityHotspotMemberCount)
+            {
+                //
+                communityHotspotView.sharpen();
+                communityHotspotView.updateCurrentSize(highlightedCommunityHotspotMemberCount[communityHotspotId]);
+            }
+            else
+            {
+                //
+                communityHotspotView.blur();
             }
         }
     }
@@ -412,7 +561,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
             y: (mousePosition.y - this.camera.position.y) / this.camera.zoom
         };
 
-        const newZoom: number = this.camera.zoom * scalingFactor;
+        const newZoom: number = Math.max(Math.min(this.camera.zoom * scalingFactor, 1), 0.005);
         const newPosition: Position =
         {
             x: mousePosition.x - (normalizedMousePosition.x * newZoom),
@@ -438,7 +587,7 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this._profiles = newProfiles;
 
         //
-        this.onProfilesChanged();
+        this.onProfilesDirectiveChanged();
     }
 
     public get communities() : TwitterCommunity[]
@@ -453,6 +602,47 @@ export class TwitterGraphComponent implements OnInit, OnDestroy
         this._communities = newCommunities;
 
         //
-        this.onCommunitiesChanged();
+        this.onCommunitiesDirectiveChanged();
+    }
+
+    public get profileResolution() : number
+    {
+        return this._profileResolution;
+    }
+
+    @Input()
+    public set profileResolution(newProfileResolution: number)
+    {
+        //
+        this._profileResolution = newProfileResolution;
+
+        //
+        this.onProfileResolutionDirectiveChanged();
+    }
+
+    public get communityResolution() : number
+    {
+        return this._communityResolution;
+    }
+
+    @Input()
+    public set communityResolution(newCommunityResolution: number)
+    {
+        //
+        this._communityResolution = newCommunityResolution;
+
+        //
+        this.onCommunityResolutionDirectiveChanged();
+    }
+
+    public get cullingEnabled() : boolean
+    {
+        return this._cullingEnabled;
+    }
+
+    @Input()
+    public set cullingEnabled(newCullingEnabled: boolean)
+    {
+        this._cullingEnabled = newCullingEnabled;
     }
 }

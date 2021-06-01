@@ -1,0 +1,25 @@
+<ng-container *ngIf="this.data">
+
+    <div class="container" (click)="openTweetOnNewTab()">
+        <img class="author-image" [src]="data.author.imageUrl" (click)="openProfileOnNewTab()">
+        <div class="content">
+            <div class="author-name">
+                <div [innerHTML]="authorName" (click)="openProfileOnNewTab()"></div>
+                <div *ngIf="authorVerified" class="verified-icon" (click)="openProfileOnNewTab()"></div>
+                <div class="logo-icon"></div>
+            </div>
+            <div class="author-username" (click)="openProfileOnNewTab()">@{{authorUsername}}</div>
+            <div class="text" [innerHTML]="text"></div>
+    
+            <div class="footer">
+                <div class="heart-icon" title="Gefällt mir" (click)="likeTweetOnNewTab()"></div>
+                <div class="timestamp">
+                    {{creationTime.value}}<abbr>{{creationTime.unit}}</abbr>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <mat-divider class="divider"></mat-divider>
+
+</ng-container>
